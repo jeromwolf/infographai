@@ -7,6 +7,7 @@ import { prisma } from '../lib/database';
 import { costMonitor } from '../lib/cost-monitor';
 import { asyncHandler, AppError } from '../middleware/error';
 import { validateRequest, videoValidation } from '../middleware/validation';
+import { startSimpleVideoGeneration } from '../services/simple-video-generator';
 
 const router = Router();
 
@@ -196,6 +197,85 @@ router.get('/:id/subtitles',
     });
 
     res.json(subtitles);
+  })
+);
+
+// Generate video endpoint
+router.post('/generate',
+  asyncHandler(async (req, res) => {
+    const { scenarioId, projectId } = req.body;
+
+    if (!scenarioId || !projectId) {
+      throw new AppError('scenarioId and projectId are required', 400);
+    }
+
+    // Verify project ownership
+    const project = await prisma.project.findFirst({
+      where: {
+        id: projectId,
+        userId: req.user!.id
+      }
+    });
+
+    if (!project) {
+      throw new AppError('Project not found', 404);
+    }
+
+    // Verify scenario exists
+    const scenario = await prisma.scenario.findFirst({
+      where: {
+        id: scenarioId,
+        projectId
+      }
+    });
+
+    if (!scenario) {
+      throw new AppError('Scenario not found', 404);
+    }
+
+    // Check cost limits before creating
+    const estimatedCost = 0.05; // Estimate based on subtitle-only approach
+    const canProceed = await costMonitor.addCost({
+      service: 'compute',
+      amount: estimatedCost,
+      timestamp: new Date(),
+      userId: req.user!.id
+    });
+
+    if (!canProceed) {
+      throw new AppError('Cost limit exceeded. Please try again later.', 429);
+    }
+
+    // Create video record
+    const video = await prisma.video.create({
+      data: {
+        projectId,
+        title: scenario.title || 'Generated Video',
+        description: scenario.description,
+        topic: project.topic,
+        duration: scenario.totalDuration || 120,
+        status: 'QUEUED'
+      }
+    });
+
+    // Record cost
+    await prisma.cost.create({
+      data: {
+        user: { connect: { id: req.user!.id } },
+        project: { connect: { id: projectId } },
+        service: 'OTHER',
+        action: `video_generation:${video.id}`,
+        amount: estimatedCost
+      }
+    });
+
+    // Trigger video generation process
+    await startSimpleVideoGeneration(video.id, projectId, scenarioId);
+
+    res.status(201).json({
+      message: 'Video generation started',
+      video
+    });
   })
 );
 

@@ -150,30 +150,59 @@ enum ScenarioType {
 
 model Video {
   id       String @id @default(cuid())
-  filename String
-  url      String // S3 URL
-  size     Int    // bytes
-  duration Int    // seconds
+  
+  // Basic info
+  title         String
+  description   String?
+  topic         String?
+  targetAudience String?
+  
+  // File info (optional until generated)
+  filename String?
+  url      String? // S3 URL
+  size     Int?    // bytes
+  duration Int     @default(120) // seconds
   
   // Metadata
-  width    Int
-  height   Int
-  fps      Int    @default(30)
-  codec    String @default("h264")
+  width    Int     @default(1920)
+  height   Int     @default(1080)
+  fps      Int     @default(30)
+  codec    String  @default("h264")
+  
+  // Status
+  status   VideoStatus @default(QUEUED)
+  progress Int         @default(0) // 0-100
+  error    String?
   
   // Relationships
   projectId String
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  subtitles Subtitle[]
+  assets    VideoAsset[]
   
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   
   @@index([projectId])
+  @@index([status])
+}
+
+enum VideoStatus {
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
 }
 
 model Subtitle {
   id        String   @id @default(cuid())
-  projectId String
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  // Relationships
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  videoId   String?
+  video     Video?   @relation(fields: [videoId], references: [id], onDelete: Cascade)
   
   // Content
   text      String
@@ -198,6 +227,22 @@ model Subtitle {
   updatedAt DateTime @updatedAt
   
   @@index([projectId, startTime])
+  @@index([videoId, startTime])
+}
+
+// Video assets (images, icons, backgrounds used in video)
+model VideoAsset {
+  id       String @id @default(cuid())
+  videoId  String
+  video    Video  @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  
+  type     String // "image", "icon", "background"
+  url      String
+  metadata Json?
+  
+  createdAt DateTime @default(now())
+  
+  @@index([videoId])
 }
 
 enum Position {

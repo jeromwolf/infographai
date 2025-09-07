@@ -35,12 +35,17 @@ export default function ProjectsPage() {
   const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await api.createProject({ name: newProject.title, description: newProject.description, topic: newProject.topic });
+      await api.createProject({ 
+        title: newProject.title, 
+        description: newProject.description, 
+        topic: newProject.topic || newProject.title 
+      });
       setShowNewProject(false);
       setNewProject({ title: '', description: '', topic: '' });
       fetchProjects();
     } catch (error) {
       console.error('Failed to create project:', error);
+      alert('프로젝트 생성에 실패했습니다: ' + (error as Error).message);
     }
   };
 

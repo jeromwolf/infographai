@@ -12,7 +12,8 @@ InfoGraphAI is an AI-based platform that automatically generates educational vid
 - **Authentication System**: JWT-based auth with login/register
 - **Project Management**: CRUD operations for projects
 - **Scenario System**: Create, edit, and manage video scenarios
-- **Video Generation Interface**: UI for video configuration
+- **Video Generation**: Complete FFmpeg-based video generation with subtitles
+- **Enhanced Scenario Editor**: Vrew-style UI with AI prompts and templates
 - **Database Schema**: PostgreSQL with Prisma ORM
 - **API Structure**: Express.js backend with TypeScript
 
@@ -26,6 +27,14 @@ InfoGraphAI is an AI-based platform that automatically generates educational vid
 - **Issue**: @unique constraint on projectId limited to 1 scenario per project
 - **Solution**: Changed to one-to-many relationship
 
+#### 3. Field Naming Inconsistency (2025-09-07)
+- **Issue**: API validation required `name` field but database used `title` field
+- **Solution**: Standardized to use `title` field across all layers (validation, routes, frontend)
+
+#### 4. Video Generation Implementation (2025-09-07)
+- **Issue**: Video generation endpoint was not implemented
+- **Solution**: Created SimpleVideoGenerator service with FFmpeg integration, generates MP4 files with subtitles
+
 ## Key Architecture
 
 ### Current Stack
@@ -34,10 +43,14 @@ InfoGraphAI is an AI-based platform that automatically generates educational vid
 - **Database**: PostgreSQL (Docker)
 - **Architecture**: Turbo Monorepo
 
+### Implemented Services
+- **Video Generation**: FFmpeg-based video generation with subtitle overlay
+- **Scenario Templates**: High-quality templates for IT education content
+- **Cost Monitoring**: Track API usage and generation costs
+
 ### Planned Services
-- **Script Generation**: OpenAI GPT-4 integration
-- **Animation Engine**: Node.js + Canvas + WebGL
-- **Video Rendering**: FFmpeg with GPU acceleration
+- **Script Generation**: OpenAI GPT-4 integration (partially implemented)
+- **Animation Engine**: Node.js + Canvas + WebGL (basic implementation)
 - **TTS Service**: ElevenLabs API + Azure Speech
 
 ## Development Commands

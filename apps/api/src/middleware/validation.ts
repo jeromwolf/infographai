@@ -146,7 +146,7 @@ export const authValidation = {
 
 export const projectValidation = {
   create: [
-    { field: 'name', type: 'string' as const, required: true, minLength: 1, maxLength: 200 },
+    { field: 'title', type: 'string' as const, required: true, minLength: 1, maxLength: 200 },
     { field: 'description', type: 'string' as const, maxLength: 1000 },
     { field: 'topic', type: 'string' as const, required: true }
   ] as ValidationRule[]

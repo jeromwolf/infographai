@@ -62,11 +62,11 @@ router.get('/:id',
 router.post('/',
   validateRequest(projectValidation.create),
   asyncHandler(async (req, res) => {
-    const { name, description, topic } = req.body;
+    const { title, description, topic } = req.body;
 
     const project = await prisma.project.create({
       data: {
-        title: name,
+        title,
         description,
         topic,
         userId: req.user!.id

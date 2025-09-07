@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Video, Play, Download, Clock, AlertCircle, CheckCircle, Loader } from 'lucide-react';
+import { Video, Play, Download, Clock, AlertCircle, CheckCircle, Loader, RefreshCw } from 'lucide-react';
 import { api } from '@/lib/api';
 
 export default function VideosPage() {
@@ -11,7 +11,17 @@ export default function VideosPage() {
 
   useEffect(() => {
     fetchVideos();
-  }, []);
+    
+    // PROCESSING 상태의 비디오가 있으면 자동 새로고침
+    const interval = setInterval(() => {
+      const hasProcessingVideos = videos.some(v => v.status?.toUpperCase() === 'PROCESSING');
+      if (hasProcessingVideos) {
+        fetchVideos();
+      }
+    }, 3000); // 3초마다 체크
+    
+    return () => clearInterval(interval);
+  }, [videos]);
 
   const fetchVideos = async () => {
     try {
@@ -24,38 +34,58 @@ export default function VideosPage() {
     }
   };
 
-  const handleDownload = async (id: string, title: string) => {
-    try {
-      const response = await api.downloadVideo(id);
-      // 다운로드 로직 구현
-      console.log('Downloading video:', title);
-    } catch (error) {
-      console.error('Failed to download video:', error);
+  const handleDownload = async (video: any) => {
+    if (!video.url) {
+      alert('비디오 파일이 아직 생성되지 않았습니다.');
+      return;
     }
+    
+    // API 서버 URL로 직접 다운로드
+    const downloadUrl = `http://localhost:4906${video.url}`;
+    window.open(downloadUrl, '_blank');
+  };
+
+  const handlePlay = (video: any) => {
+    if (!video.url) {
+      alert('비디오 파일이 아직 생성되지 않았습니다.');
+      return;
+    }
+    
+    // 새 창에서 비디오 재생
+    const playUrl = `http://localhost:4906${video.url}`;
+    window.open(playUrl, '_blank');
+  };
+
+  const handleRefresh = async () => {
+    await fetchVideos();
   };
 
   const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'completed':
+    switch (status?.toUpperCase()) {
+      case 'COMPLETED':
         return <CheckCircle className="w-5 h-5 text-green-500" />;
-      case 'processing':
+      case 'PROCESSING':
         return <Loader className="w-5 h-5 text-blue-500 animate-spin" />;
-      case 'failed':
+      case 'FAILED':
         return <AlertCircle className="w-5 h-5 text-red-500" />;
+      case 'QUEUED':
+      case 'PENDING':
+        return <Clock className="w-5 h-5 text-gray-500" />;
       default:
         return <Clock className="w-5 h-5 text-gray-500" />;
     }
   };
 
   const getStatusText = (status: string) => {
-    switch (status) {
-      case 'completed':
+    switch (status?.toUpperCase()) {
+      case 'COMPLETED':
         return '완료';
-      case 'processing':
+      case 'PROCESSING':
         return '처리 중';
-      case 'failed':
+      case 'FAILED':
         return '실패';
-      case 'pending':
+      case 'QUEUED':
+      case 'PENDING':
         return '대기 중';
       default:
         return status;
@@ -75,13 +105,23 @@ export default function VideosPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">비디오</h1>
-          <Link
-            href="/dashboard/scenarios/new"
-            className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
-          >
-            <Video className="w-5 h-5 mr-2" />
-            새 비디오 생성
-          </Link>
+          <div className="flex gap-2">
+            <button
+              onClick={handleRefresh}
+              className="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+              disabled={loading}
+            >
+              <RefreshCw className={`w-5 h-5 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              새로고침
+            </button>
+            <Link
+              href="/dashboard/scenarios/new"
+              className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
+            >
+              <Video className="w-5 h-5 mr-2" />
+              새 비디오 생성
+            </Link>
+          </div>
         </div>
 
         {videos.length === 0 ? (
@@ -99,8 +139,11 @@ export default function VideosPage() {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {videos.map((video) => (
-              <div key={video.id} className="bg-white rounded-lg shadow overflow-hidden">
-                <div className="aspect-video bg-gray-200 relative">
+              <div key={video.id} className="bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                <div 
+                  className="aspect-video bg-gray-200 relative"
+                  onClick={() => video.status?.toUpperCase() === 'COMPLETED' && handlePlay(video)}
+                >
                   {video.thumbnailUrl ? (
                     <img
                       src={video.thumbnailUrl}
@@ -112,10 +155,15 @@ export default function VideosPage() {
                       <Video className="w-12 h-12 text-gray-400" />
                     </div>
                   )}
-                  {video.status === 'completed' && (
-                    <button className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 hover:bg-opacity-40 transition-opacity">
+                  {video.status?.toUpperCase() === 'COMPLETED' && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 hover:bg-opacity-40 transition-opacity">
                       <Play className="w-12 h-12 text-white" />
-                    </button>
+                    </div>
+                  )}
+                  {video.status?.toUpperCase() === 'PROCESSING' && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                      <Loader className="w-12 h-12 text-white animate-spin" />
+                    </div>
                   )}
                 </div>
                 <div className="p-4">
@@ -136,9 +184,12 @@ export default function VideosPage() {
                   </div>
                   <div className="flex items-center justify-between text-sm text-gray-500">
                     <span>{new Date(video.createdAt).toLocaleDateString()}</span>
-                    {video.status === 'completed' && (
+                    {video.status?.toUpperCase() === 'COMPLETED' && (
                       <button
-                        onClick={() => handleDownload(video.id, video.title)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDownload(video);
+                        }}
                         className="flex items-center text-primary-600 hover:text-primary-700"
                       >
                         <Download className="w-4 h-4 mr-1" />
@@ -146,6 +197,17 @@ export default function VideosPage() {
                       </button>
                     )}
                   </div>
+                  {video.status?.toUpperCase() === 'PROCESSING' && video.progress !== undefined && (
+                    <div className="mt-3">
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${video.progress}%` }}
+                        />
+                      </div>
+                      <span className="text-xs text-gray-500 mt-1">{video.progress}% 완료</span>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

@@ -9,6 +9,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
 import dotenv from 'dotenv';
+import path from 'path';
 import { prisma } from './lib/database';
 import { costMonitor } from './lib/cost-monitor';
 
@@ -53,6 +54,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Rate limiting
 app.use(rateLimiter);
+
+// Serve static files (videos and previews)
+app.use('/videos', express.static(path.join(__dirname, '../public/videos')));
+app.use('/public', express.static(path.join(__dirname, '../public')));
 
 // Health check (public)
 app.use('/health', healthRoutes);

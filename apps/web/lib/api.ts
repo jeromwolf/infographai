@@ -146,16 +146,10 @@ class ApiClient {
     return this.request<Project>(`/api/projects/${id}`);
   }
 
-  async createProject(data: { name?: string; title?: string; description?: string; topic: string }): Promise<Project> {
-    // API 서버가 title을 기대하는 경우 처리
-    const payload = {
-      title: data.title || data.name || '새 프로젝트',
-      description: data.description,
-      topic: data.topic
-    };
+  async createProject(data: { title: string; description?: string; topic: string }): Promise<Project> {
     return this.request<Project>('/api/projects', {
       method: 'POST',
-      body: JSON.stringify(payload),
+      body: JSON.stringify(data),
     });
   }
 

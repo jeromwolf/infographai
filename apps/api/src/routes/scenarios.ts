@@ -218,6 +218,23 @@ router.post('/',
             );
           }
           break;
+          
+        default:
+          // Default case - use provided content or generate
+          if (req.body.scenes) {
+            // Direct scene data provided
+            scenario = {
+              id: `scenario_${Date.now()}`,
+              title: req.body.title || 'New Scenario',
+              description: req.body.description || '',
+              scenes: req.body.scenes || [],
+              metadata: {}
+            };
+          } else {
+            // Generate if no scenes provided
+            scenario = await scenarioManager.generateScenario(generationOptions, userId);
+          }
+          break;
       }
 
       // DB에 시나리오 저장
