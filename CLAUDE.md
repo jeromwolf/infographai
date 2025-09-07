@@ -6,47 +6,82 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 InfoGraphAI is an AI-based platform that automatically generates educational videos for IT technical topics. The system takes a topic as input and produces complete YouTube-ready videos with scripts, infographic animations, and voice synthesis.
 
+## Current Implementation Status
+
+### ✅ Completed
+- **Authentication System**: JWT-based auth with login/register
+- **Project Management**: CRUD operations for projects
+- **Scenario System**: Create, edit, and manage video scenarios
+- **Video Generation Interface**: UI for video configuration
+- **Database Schema**: PostgreSQL with Prisma ORM
+- **API Structure**: Express.js backend with TypeScript
+
+### 🔧 Key Technical Issues Resolved
+
+#### 1. Webpack Caching Problem
+- **Issue**: `api.createScenario is not a function` error due to webpack caching singleton pattern
+- **Solution**: Created separate API files (scenario-api.ts, video-api.ts) instead of using single api.ts
+
+#### 2. Database Schema Issue  
+- **Issue**: @unique constraint on projectId limited to 1 scenario per project
+- **Solution**: Changed to one-to-many relationship
+
 ## Key Architecture
 
-The project will follow a microservices architecture:
+### Current Stack
+- **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS
+- **Backend**: Express.js, TypeScript, Prisma ORM
+- **Database**: PostgreSQL (Docker)
+- **Architecture**: Turbo Monorepo
 
-### Frontend
-- **Framework**: React 18 + Next.js 14
-- **UI**: Tailwind CSS + Radix UI
-- **Animation**: Framer Motion + Lottie
-- **Canvas**: Fabric.js + Three.js
-- **State Management**: Zustand + React Query
-
-### Backend Services
-- **API Gateway**: Node.js/Express
-- **Content Analysis**: Python/FastAPI + Transformers
+### Planned Services
 - **Script Generation**: OpenAI GPT-4 integration
 - **Animation Engine**: Node.js + Canvas + WebGL
 - **Video Rendering**: FFmpeg with GPU acceleration
 - **TTS Service**: ElevenLabs API + Azure Speech
 
-### Infrastructure
-- **Cloud**: AWS (primary) + Vercel (frontend)
-- **Database**: PostgreSQL + Redis
-- **Storage**: S3 + CloudFront CDN
-- **Queue**: Redis Bull Queue
-- **Monitoring**: DataDog + Sentry
-
 ## Development Commands
 
-Since this is a new project, commands will be established as the codebase develops. Expected commands based on the tech stack:
-
-### Frontend (when implemented)
+### Setup
 ```bash
 # Install dependencies
 npm install
 
-# Run development server
+# Setup database
+docker-compose up -d
+
+# Run database migrations
+cd apps/api && npx prisma migrate dev
+
+# Setup environment variables
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.local.example apps/web/.env.local
+```
+
+### Development
+```bash
+# Run all services (recommended)
 npm run dev
 
-# Build for production
-npm run build
+# Run services individually
+cd apps/api && npm run dev  # Backend on port 4906
+cd apps/web && npm run dev  # Frontend on port 3000
+```
 
+### Database
+```bash
+# View database in Prisma Studio
+cd apps/api && npx prisma studio
+
+# Generate Prisma client
+cd apps/api && npx prisma generate
+
+# Create migration
+cd apps/api && npx prisma migrate dev --name <migration-name>
+```
+
+### Testing
+```bash
 # Run tests
 npm test
 
@@ -57,37 +92,37 @@ npm run lint
 npm run typecheck
 ```
 
-### Backend Services (when implemented)
-```bash
-# Python services
-pip install -r requirements.txt
-python -m pytest
-python -m uvicorn main:app --reload
-
-# Node.js services
-npm install
-npm run dev
-npm test
-```
-
-## Project Structure (planned)
+## Project Structure (Current)
 
 ```
-/
-├── frontend/               # Next.js application
-│   ├── app/               # App router pages
-│   ├── components/        # React components
-│   ├── hooks/            # Custom React hooks
-│   └── lib/              # Utilities and API clients
-├── backend/
-│   ├── api-gateway/      # Express API gateway
-│   ├── content-service/  # Python content analysis
-│   ├── script-service/   # GPT-4 script generation
-│   ├── animation-service/# Animation engine
-│   ├── tts-service/      # Text-to-speech
-│   └── render-service/   # Video rendering
-├── shared/               # Shared types and utilities
-└── infrastructure/       # AWS CDK or Terraform configs
+infographai/
+├── apps/
+│   ├── api/              # Express.js Backend
+│   │   ├── src/
+│   │   │   ├── routes/   # API endpoints
+│   │   │   │   ├── auth.ts      # Authentication
+│   │   │   │   ├── projects.ts  # Project management
+│   │   │   │   ├── scenarios.ts # Scenario management
+│   │   │   │   └── videos.ts    # Video generation
+│   │   │   ├── middleware/       # Express middleware
+│   │   │   └── lib/             # Utilities
+│   │   └── prisma/
+│   │       └── schema.prisma    # Database schema
+│   └── web/              # Next.js Frontend
+│       ├── app/          # App Router pages
+│       │   ├── dashboard/        # Main application
+│       │   │   ├── projects/    # Project pages
+│       │   │   ├── scenarios/   # Scenario pages
+│       │   │   └── videos/      # Video pages
+│       │   ├── login/           # Authentication
+│       │   └── register/
+│       └── lib/          # API clients
+│           ├── api.ts           # Main API (has caching issues)
+│           ├── scenario-api.ts  # Scenario-specific API
+│           └── video-api.ts     # Video-specific API
+├── assets/               # Static resources
+├── docker-compose.yml    # PostgreSQL database
+└── package.json         # Monorepo root
 ```
 
 ## Core Features to Implement
