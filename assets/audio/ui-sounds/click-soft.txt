@@ -1,0 +1,8 @@
+# Placeholder for click-soft.wav
+# 부드러운 UI 클릭 사운드 파일
+# 실제 WAV 파일로 교체 필요
+
+Duration: 0.2초
+Format: WAV, 44.1kHz, 16-bit
+Source: Freesound.org 또는 UI-sounds.com
+License: CC0 또는 CC BY

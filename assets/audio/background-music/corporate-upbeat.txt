@@ -1,0 +1,9 @@
+# Placeholder for corporate-upbeat.mp3
+# 밝고 활기찬 기업용 배경음악
+
+Duration: 60초 (루프 가능)
+Format: MP3, 128kbps, 44.1kHz
+Mood: 긍정적, 전문적, 에너지틱
+Usage: 기업 소개, 제품 데모, 교육 영상
+Source: YouTube Audio Library - "Upbeat Corporate"
+License: Creative Commons

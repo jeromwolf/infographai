@@ -1,0 +1,340 @@
+// Prisma Schema for InfoGraphAI
+// �� � � �1 ��
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== User & Auth ====================
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String?  // null for OAuth users
+  provider  Provider @default(LOCAL)
+  image     String?
+  
+  // Cost limits
+  dailySpendLimit   Float   @default(5.0)
+  monthlySpendLimit Float   @default(100.0)
+  
+  // Relationships
+  projects    Project[]
+  costs       Cost[]
+  
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  lastLoginAt DateTime?
+  
+  @@index([email])
+}
+
+enum Provider {
+  LOCAL
+  GOOGLE
+  GITHUB
+}
+
+// ==================== Core Business ====================
+
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  topic       String   // IT � (: "React Hooks", "Docker")
+  
+  // Configuration
+  duration    Int      @default(180) // seconds
+  language    Language @default(KOREAN)
+  quality     Quality  @default(HD_1080P)
+  
+  // Status
+  status      ProjectStatus @default(DRAFT)
+  progress    Int           @default(0) // 0-100
+  
+  // Cost tracking
+  estimatedCost Float?
+  actualCost    Float    @default(0)
+  
+  // Relationships
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scenarios   Scenario[]
+  videos      Video[]
+  subtitles   Subtitle[]
+  costs       Cost[]
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  completedAt DateTime?
+  
+  @@index([userId, status])
+  @@index([createdAt])
+}
+
+enum ProjectStatus {
+  DRAFT
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum Language {
+  KOREAN
+  ENGLISH
+  JAPANESE
+}
+
+enum Quality {
+  SD_720P
+  HD_1080P
+  UHD_4K
+}
+
+// ==================== Scenario Management ====================
+
+model Scenario {
+  id          String        @id @default(cuid())
+  projectId   String
+  project     Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  // Type
+  type        ScenarioType  @default(HYBRID)
+  
+  // Content
+  title       String
+  description String?
+  scenes      Json          // Array of scene objects
+  
+  // Template
+  templateId  String?
+  template    Template?     @relation(fields: [templateId], references: [id])
+  
+  // Version control
+  version     Int           @default(1)
+  isDraft     Boolean       @default(true)
+  
+  // Metadata
+  totalDuration Int         // Total duration in seconds
+  sceneCount    Int
+  
+  // AI generation parameters
+  aiPrompt      String?     // Original prompt if AI generated
+  aiModel       String?     // Model used for generation
+  
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  publishedAt DateTime?
+  
+  @@index([projectId])
+  @@index([type])
+  @@index([templateId])
+}
+
+enum ScenarioType {
+  AUTO_GENERATED  // Fully AI generated
+  USER_INPUT      // Fully user created
+  HYBRID          // Mix of AI and user input
+}
+
+// ==================== Video & Subtitles ====================
+
+model Video {
+  id       String @id @default(cuid())
+  filename String
+  url      String // S3 URL
+  size     Int    // bytes
+  duration Int    // seconds
+  
+  // Metadata
+  width    Int
+  height   Int
+  fps      Int    @default(30)
+  codec    String @default("h264")
+  
+  // Relationships
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  
+  @@index([projectId])
+}
+
+model Subtitle {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  // Content
+  text      String
+  startTime Float    // seconds
+  endTime   Float    // seconds
+  
+  // Korean specific
+  hasParticles Boolean @default(false) // p� �� �
+  keywords     String[] // p ���
+  
+  // Style
+  fontSize     Int      @default(24)
+  fontWeight   String   @default("500")
+  color        String   @default("#FFFFFF")
+  bgColor      String   @default("rgba(0,0,0,0.8)")
+  position     Position @default(BOTTOM_CENTER)
+  
+  // Animation
+  animationType AnimationType @default(FADE_IN)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([projectId, startTime])
+}
+
+enum Position {
+  TOP_LEFT
+  TOP_CENTER
+  TOP_RIGHT
+  MIDDLE_LEFT
+  MIDDLE_CENTER
+  MIDDLE_RIGHT
+  BOTTOM_LEFT
+  BOTTOM_CENTER
+  BOTTOM_RIGHT
+}
+
+enum AnimationType {
+  NONE
+  FADE_IN
+  SLIDE_UP
+  TYPEWRITER
+  HIGHLIGHT
+}
+
+// ==================== Cost Management ====================
+
+model Cost {
+  id        String   @id @default(cuid())
+  
+  // Source
+  service   Service
+  action    String   // "script_generation", "rendering", "storage"
+  
+  // Amount
+  amount    Float
+  currency  String   @default("USD")
+  
+  // Metadata
+  tokens    Int?     // For GPT usage
+  bytes     Int?     // For storage
+  seconds   Int?     // For compute time
+  
+  // Relationships
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id])
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  
+  @@index([userId, createdAt])
+  @@index([projectId])
+  @@index([service, createdAt])
+}
+
+enum Service {
+  OPENAI_GPT4
+  OPENAI_GPT35
+  AWS_S3
+  AWS_EC2
+  AWS_CLOUDFRONT
+  REDIS
+  POSTGRES
+  OTHER
+}
+
+// ==================== Templates & Assets ====================
+
+model Template {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  description String?
+  category    TemplateType
+  
+  // Configuration
+  config      Json         // Template specific settings
+  thumbnail   String?
+  
+  // Usage tracking
+  usageCount  Int          @default(0)
+  rating      Float        @default(0)
+  
+  // Relationships
+  scenarios   Scenario[]
+  
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  
+  @@index([category])
+}
+
+enum TemplateType {
+  COMPARISON     // A vs B
+  PROCESS        // Step by step
+  ARCHITECTURE   // System design
+  CONCEPT        // Abstract explanation
+  TUTORIAL       // How-to guide
+}
+
+model Asset {
+  id       String    @id @default(cuid())
+  type     AssetType
+  name     String
+  url      String    // S3 URL or CDN URL
+  metadata Json?     // Additional info (dimensions, duration, etc.)
+  
+  createdAt DateTime @default(now())
+  
+  @@index([type])
+}
+
+enum AssetType {
+  ICON
+  ILLUSTRATION
+  BACKGROUND
+  SOUND_EFFECT
+  BACKGROUND_MUSIC
+  FONT
+}
+
+// ==================== System & Monitoring ====================
+
+model SystemLog {
+  id        String   @id @default(cuid())
+  level     LogLevel
+  service   String
+  message   String
+  metadata  Json?
+  createdAt DateTime @default(now())
+  
+  @@index([level, createdAt])
+  @@index([service, createdAt])
+}
+
+enum LogLevel {
+  DEBUG
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+}

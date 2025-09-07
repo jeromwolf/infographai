@@ -1,0 +1,1 @@
+{"name": "@infographai/asset-loader", "version": "1.0.0", "description": "InfoGraphAI Asset 로더 시스템", "main": "dist/index.js", "types": "dist/index.d.ts", "scripts": {"build": "tsc", "test": "jest"}, "dependencies": {}, "devDependencies": {"@types/node": "^20.0.0", "typescript": "^5.0.0"}}

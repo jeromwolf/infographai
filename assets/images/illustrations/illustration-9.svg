@@ -1,0 +1,13 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad9" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#dafce4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a09e61;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#grad9)" rx="20"/>
+  <circle cx="280" cy="215" r="47" fill="white" opacity="0.4"/>
+  <rect x="185" y="240" width="330" height="125" fill="white" opacity="0.7" rx="15"/>
+  <path d="M240 245 L335 252 L340 247 Z" fill="white" opacity="0.5"/>
+  <text x="200" y="270" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">Illustration 9</text>
+</svg>

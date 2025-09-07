@@ -1,0 +1,9 @@
+# Placeholder for whoosh-transition.wav
+# 부드러운 전환 효과음
+
+Duration: 1.2초
+Format: WAV, 44.1kHz, 16-bit  
+Usage: 씬 전환, 슬라이드 이동, 페이지 전환
+Frequency: 200Hz-8kHz (중고음역 중심)
+Source: Zapsplat 또는 Freesound
+License: CC BY

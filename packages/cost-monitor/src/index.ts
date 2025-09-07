@@ -39,17 +39,22 @@ export interface CostStatus {
 }
 
 export class CostMonitor extends EventEmitter {
-  private redis: RedisClientType;
+  private redis: RedisClientType | null = null;
   private logger: winston.Logger;
   private limits: CostLimits;
   private checkInterval: NodeJS.Timer | null = null;
   private isBlocked: boolean = false;
+  private isInitialized: boolean = false;
 
-  constructor(redisUrl: string, limits: CostLimits) {
+  constructor() {
     super();
     
-    this.limits = limits;
-    this.redis = createClient({ url: redisUrl });
+    // Default limits - will be overridden by initialize()
+    this.limits = {
+      daily: { soft: 8, hard: 10 },
+      hourly: { soft: 1.5, hard: 2 },
+      perUser: { daily: 1, monthly: 20 }
+    };
     
     // Winston logger 설정
     this.logger = winston.createLogger({
@@ -63,13 +68,36 @@ export class CostMonitor extends EventEmitter {
         new winston.transports.File({ filename: 'cost-monitor.log' })
       ]
     });
-
-    this.initialize();
   }
 
-  private async initialize() {
+  public async initialize(redisUrl?: string, limits?: CostLimits) {
+    if (this.isInitialized) {
+      this.logger.warn('Cost Monitor already initialized');
+      return;
+    }
+
     try {
+      // Use provided values or environment defaults
+      const url = redisUrl || process.env.REDIS_URL || 'redis://localhost:6379';
+      if (limits) {
+        this.limits = limits;
+      } else {
+        this.limits = {
+          daily: { 
+            soft: Number(process.env.DAILY_COST_LIMIT) * 0.8 || 8, 
+            hard: Number(process.env.DAILY_COST_LIMIT) || 10 
+          },
+          hourly: { 
+            soft: Number(process.env.HOURLY_COST_LIMIT) * 0.8 || 1.5, 
+            hard: Number(process.env.HOURLY_COST_LIMIT) || 2 
+          },
+          perUser: { daily: 1, monthly: 20 }
+        };
+      }
+
+      this.redis = createClient({ url });
       await this.redis.connect();
+      this.isInitialized = true;
       this.logger.info('Cost Monitor initialized', { limits: this.limits });
       
       // 1분마다 비용 체크
@@ -87,6 +115,11 @@ export class CostMonitor extends EventEmitter {
    * 비용 추가 및 한도 체크
    */
   public async addCost(cost: ServiceCost): Promise<boolean> {
+    if (!this.isInitialized || !this.redis) {
+      this.logger.error('Cost Monitor not initialized');
+      return false;
+    }
+
     if (this.isBlocked) {
       this.logger.warn('Service blocked due to cost limit', { cost });
       return false;
@@ -154,6 +187,15 @@ export class CostMonitor extends EventEmitter {
    * 현재 비용 상태 조회
    */
   public async getCurrentStatus(): Promise<CostStatus> {
+    if (!this.redis) {
+      return {
+        current: { daily: 0, hourly: 0, monthly: 0 },
+        limits: this.limits,
+        percentage: { daily: 0, hourly: 0 },
+        alert: 'normal'
+      };
+    }
+
     const now = new Date();
     const dayKey = `cost:daily:${now.toISOString().split('T')[0]}`;
     const hourKey = `cost:hourly:${now.getHours()}`;
@@ -252,12 +294,52 @@ export class CostMonitor extends EventEmitter {
   }
 
   /**
+   * 비용 추적 (trackUsage 별칭)
+   */
+  public async trackUsage(cost: ServiceCost) {
+    return this.addCost(cost);
+  }
+
+  /**
+   * 한도 체크
+   */
+  public async checkLimit(): Promise<boolean> {
+    const status = await this.getCurrentStatus();
+    return status.alert !== 'blocked';
+  }
+
+  /**
+   * 현재 사용량 조회
+   */
+  public async getCurrentUsage() {
+    if (!this.isInitialized || !this.redis) {
+      return { daily: 0, hourly: 0, monthly: 0 };
+    }
+
+    const now = new Date();
+    const dayKey = `cost:daily:${now.toISOString().split('T')[0]}`;
+    const hourKey = `cost:hourly:${now.getHours()}`;
+    const monthKey = `cost:monthly:${now.getFullYear()}-${now.getMonth() + 1}`;
+
+    const [daily, hourly, monthly] = await Promise.all([
+      this.redis.get(dayKey).then(v => parseFloat(v || '0')),
+      this.redis.get(hourKey).then(v => parseFloat(v || '0')),
+      this.redis.get(monthKey).then(v => parseFloat(v || '0'))
+    ]);
+
+    return { daily, hourly, monthly };
+  }
+
+  /**
    * 정리
    */
   public async cleanup() {
     if (this.checkInterval) {
-      clearInterval(this.checkInterval);
+      clearInterval(this.checkInterval as NodeJS.Timeout);
     }
-    await this.redis.quit();
+    if (this.redis) {
+      await this.redis.quit();
+    }
+    this.isInitialized = false;
   }
 }

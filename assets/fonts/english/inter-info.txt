@@ -1,0 +1,7 @@
+Inter 폰트 다운로드 방법:
+1. https://fonts.google.com/specimen/Inter 방문
+2. Download family 클릭
+3. 압축 해제 후 이 디렉토리에 복사
+
+또는 웹폰트 사용:
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');

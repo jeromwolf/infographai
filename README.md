@@ -8,6 +8,9 @@
 - Node.js v20+
 - Docker & Docker Compose
 - npm v10+
+- FFmpeg (필수!)
+- PostgreSQL 15+
+- Redis 7+
 
 ### Installation
 
@@ -37,10 +40,15 @@ infographai/
 │   ├── web/          # Next.js frontend
 │   └── api/          # Express.js backend
 ├── packages/
-│   ├── shared/       # Shared types and utilities
-│   ├── ui/           # UI components library
-│   ├── cost-monitor/ # 💰 Cost monitoring system (CRITICAL!)
-│   └── config/       # Configuration files
+│   ├── cost-monitor/         # 💰 비용 모니터링 (CRITICAL!)
+│   ├── gpt-service/          # GPT API 통합
+│   ├── infographic-generator/# 인포그래픽 생성
+│   ├── korean-subtitle/      # 한국어 자막 처리
+│   ├── scenario-manager/     # 시나리오 관리
+│   ├── subtitle-generator/   # 자막 생성
+│   ├── video-orchestrator/   # 워크플로우 관리
+│   ├── video-synthesizer/    # FFmpeg 비디오 합성
+│   └── shared/               # 공통 타입/유틸
 ├── docker-compose.yml
 └── turbo.json
 ```
@@ -76,18 +84,22 @@ npm run cost:status
 
 ## 📊 Development Status
 
-### Week 1 Progress
-- ✅ Repository setup
-- ✅ Monorepo structure (Turborepo)
-- ✅ TypeScript & ESLint configuration  
-- ✅ Docker environment
-- ✅ Cost monitoring system
+### ✅ 완료된 작업 (90%)
+- ✅ Turborepo 모노레포 구조
+- ✅ PostgreSQL + Prisma 데이터베이스 구성
+- ✅ 비용 모니터링 시스템 (자동 차단 기능)
+- ✅ 한국어 조사 처리 시스템
+- ✅ 시나리오 관리 (자동/수동/하이브리드)
+- ✅ GPT 기반 콘텐츠 생성
+- ✅ FFmpeg 비디오 합성 모듈
+- ✅ JWT 인증 시스템
+- ✅ Docker 프로덕션 환경
+- ✅ TTS 제거 (60% 비용 절감)
 
-### Next Steps (Week 1, Day 2)
-- [ ] Database schema & Prisma setup
-- [ ] Korean subtitle processing module
-- [ ] Basic API structure
-- [ ] Frontend initialization
+### 🔧 남은 작업 (10%)
+- [ ] TypeScript 컴파일 에러 수정
+- [ ] 프론트엔드 UI 완성
+- [ ] 통합 테스트 완료
 
 ## 🧪 Testing
 

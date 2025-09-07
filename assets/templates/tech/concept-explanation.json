@@ -1,0 +1,245 @@
+{
+  "templateId": "tech-concept-explain-001",
+  "name": "기술 개념 설명 템플릿", 
+  "category": "tech",
+  "subcategory": "concept-explanation",
+  "description": "복잡한 기술 개념을 단계별로 설명하는 템플릿",
+  "duration": 15,
+  "resolution": {
+    "width": 1920,
+    "height": 1080
+  },
+  "scenes": [
+    {
+      "id": "scene-1",
+      "duration": 3,
+      "background": {
+        "type": "solid",
+        "color": "#0f172a"
+      },
+      "elements": [
+        {
+          "type": "text",
+          "id": "concept-title",
+          "content": "{{conceptName}}",
+          "style": {
+            "fontSize": 54,
+            "fontFamily": "JetBrains Mono",
+            "fontWeight": "bold", 
+            "color": "#06b6d4",
+            "textAlign": "center"
+          },
+          "position": {
+            "x": "center",
+            "y": 300
+          },
+          "animation": {
+            "in": "typewriter",
+            "duration": 2
+          }
+        },
+        {
+          "type": "text",
+          "id": "concept-subtitle", 
+          "content": "{{conceptCategory}}",
+          "style": {
+            "fontSize": 24,
+            "fontFamily": "Pretendard",
+            "color": "#64748b",
+            "textAlign": "center"
+          },
+          "position": {
+            "x": "center",
+            "y": 380
+          },
+          "animation": {
+            "in": "fadeIn",
+            "delay": 1.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-2",
+      "duration": 4,
+      "background": {
+        "type": "solid", 
+        "color": "#1e293b"
+      },
+      "elements": [
+        {
+          "type": "text",
+          "id": "definition-title",
+          "content": "정의",
+          "style": {
+            "fontSize": 32,
+            "fontFamily": "Pretendard",
+            "fontWeight": "bold",
+            "color": "#f1f5f9"
+          },
+          "position": {
+            "x": 100,
+            "y": 120
+          }
+        },
+        {
+          "type": "text",
+          "id": "definition-content",
+          "content": "{{definition}}",
+          "style": {
+            "fontSize": 24,
+            "fontFamily": "Pretendard", 
+            "color": "#cbd5e1",
+            "lineHeight": 1.6,
+            "maxWidth": 1600
+          },
+          "position": {
+            "x": 100,
+            "y": 180
+          },
+          "animation": {
+            "in": "fadeInUp",
+            "delay": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-3",
+      "duration": 5,
+      "background": {
+        "type": "solid",
+        "color": "#334155"  
+      },
+      "elements": [
+        {
+          "type": "text",
+          "id": "how-it-works-title",
+          "content": "동작 원리",
+          "style": {
+            "fontSize": 32,
+            "fontFamily": "Pretendard",
+            "fontWeight": "bold",
+            "color": "#f1f5f9"
+          },
+          "position": {
+            "x": 100,
+            "y": 100
+          }
+        },
+        {
+          "type": "diagram",
+          "id": "process-diagram",
+          "diagramType": "flowchart",
+          "steps": [
+            "{{step1}}",
+            "{{step2}}", 
+            "{{step3}}"
+          ],
+          "style": {
+            "stepBackground": "#475569",
+            "stepTextColor": "#ffffff",
+            "arrowColor": "#06b6d4",
+            "fontSize": 18
+          },
+          "position": {
+            "x": 200,
+            "y": 200
+          },
+          "animation": {
+            "in": "slideInRight",
+            "stagger": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-4", 
+      "duration": 3,
+      "background": {
+        "type": "solid",
+        "color": "#475569"
+      },
+      "elements": [
+        {
+          "type": "text",
+          "id": "example-title",
+          "content": "실제 예시",
+          "style": {
+            "fontSize": 32,
+            "fontFamily": "Pretendard",
+            "fontWeight": "bold",
+            "color": "#f1f5f9" 
+          },
+          "position": {
+            "x": 100,
+            "y": 120
+          }
+        },
+        {
+          "type": "code",
+          "id": "code-example",
+          "language": "{{language}}",
+          "content": "{{codeExample}}",
+          "style": {
+            "fontSize": 18,
+            "fontFamily": "JetBrains Mono",
+            "theme": "dark",
+            "showLineNumbers": true
+          },
+          "position": {
+            "x": 100,
+            "y": 200
+          },
+          "animation": {
+            "in": "fadeIn"
+          }
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "conceptName": {
+      "type": "text",
+      "required": true,
+      "placeholder": "React Hooks"
+    },
+    "conceptCategory": {
+      "type": "text",
+      "required": true,
+      "placeholder": "React.js 개념"
+    },
+    "definition": {
+      "type": "text",
+      "required": true,
+      "placeholder": "개념의 정의를 입력하세요"
+    },
+    "step1": {
+      "type": "text", 
+      "required": true,
+      "placeholder": "첫 번째 단계"
+    },
+    "step2": {
+      "type": "text",
+      "required": true, 
+      "placeholder": "두 번째 단계"
+    },
+    "step3": {
+      "type": "text",
+      "required": true,
+      "placeholder": "세 번째 단계"
+    },
+    "language": {
+      "type": "select",
+      "options": ["javascript", "python", "java", "typescript"],
+      "default": "javascript"
+    },
+    "codeExample": {
+      "type": "code",
+      "required": true,
+      "placeholder": "예시 코드를 입력하세요"
+    }
+  },
+  "tags": ["기술", "개념설명", "프로그래밍", "튜토리얼"],
+  "preview": "assets/templates/tech/previews/concept-explain-001.png"
+}

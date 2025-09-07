@@ -1,0 +1,21 @@
+{
+  "name": "@infographai/education-auth",
+  "version": "1.0.0",
+  "description": "Education institution verification system",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "jsonwebtoken": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.0",
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0"
+  }
+}

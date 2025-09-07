@@ -1,0 +1,234 @@
+{
+  "templateId": "biz-data-viz-001",
+  "name": "데이터 시각화 템플릿",
+  "category": "business", 
+  "subcategory": "data-visualization",
+  "description": "데이터와 통계를 효과적으로 시각화하는 템플릿",
+  "duration": 12,
+  "resolution": {
+    "width": 1920,
+    "height": 1080
+  },
+  "scenes": [
+    {
+      "id": "scene-1",
+      "duration": 3,
+      "background": {
+        "type": "gradient",
+        "colors": ["#2563eb", "#1d4ed8"],
+        "direction": "vertical"
+      },
+      "elements": [
+        {
+          "type": "text", 
+          "id": "data-title",
+          "content": "{{reportTitle}}",
+          "style": {
+            "fontSize": 48,
+            "fontFamily": "Pretendard",
+            "fontWeight": "bold",
+            "color": "#ffffff",
+            "textAlign": "center"
+          },
+          "position": {
+            "x": "center",
+            "y": 400
+          },
+          "animation": {
+            "in": "zoomIn"
+          }
+        },
+        {
+          "type": "text",
+          "id": "data-period",
+          "content": "{{reportPeriod}}",
+          "style": {
+            "fontSize": 24,
+            "fontFamily": "Pretendard", 
+            "color": "#bfdbfe",
+            "textAlign": "center"
+          },
+          "position": {
+            "x": "center",
+            "y": 480
+          },
+          "animation": {
+            "in": "fadeIn",
+            "delay": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-2",
+      "duration": 4,
+      "background": {
+        "type": "solid",
+        "color": "#f8fafc"
+      },
+      "elements": [
+        {
+          "type": "text",
+          "id": "chart-title",
+          "content": "핵심 지표",
+          "style": {
+            "fontSize": 36,
+            "fontFamily": "Pretendard",
+            "fontWeight": "bold",
+            "color": "#1e293b"
+          },
+          "position": {
+            "x": 100,
+            "y": 100
+          }
+        },
+        {
+          "type": "chart",
+          "id": "main-chart",
+          "chartType": "bar",
+          "data": {
+            "labels": ["{{label1}}", "{{label2}}", "{{label3}}", "{{label4}}"],
+            "values": ["{{value1}}", "{{value2}}", "{{value3}}", "{{value4}}"],
+            "colors": ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"]
+          },
+          "style": {
+            "width": 800,
+            "height": 400,
+            "showLabels": true,
+            "showValues": true
+          },
+          "position": {
+            "x": 400,
+            "y": 200
+          },
+          "animation": {
+            "in": "growUp",
+            "stagger": 0.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-3",
+      "duration": 3,
+      "background": {
+        "type": "solid",
+        "color": "#ffffff"
+      },
+      "elements": [
+        {
+          "type": "text",
+          "id": "insights-title", 
+          "content": "주요 인사이트",
+          "style": {
+            "fontSize": 36,
+            "fontFamily": "Pretendard",
+            "fontWeight": "bold",
+            "color": "#1e293b"
+          },
+          "position": {
+            "x": 100,
+            "y": 150
+          }
+        },
+        {
+          "type": "list",
+          "id": "insights-list",
+          "items": [
+            "{{insight1}}",
+            "{{insight2}}",
+            "{{insight3}}"
+          ],
+          "style": {
+            "fontSize": 24,
+            "fontFamily": "Pretendard",
+            "color": "#475569", 
+            "lineHeight": 1.8,
+            "bulletStyle": "arrow"
+          },
+          "position": {
+            "x": 150,
+            "y": 220
+          },
+          "animation": {
+            "in": "slideInLeft",
+            "stagger": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-4",
+      "duration": 2,
+      "background": {
+        "type": "gradient",
+        "colors": ["#059669", "#047857"],
+        "direction": "diagonal"
+      },
+      "elements": [
+        {
+          "type": "text",
+          "id": "summary-text",
+          "content": "{{summaryText}}",
+          "style": {
+            "fontSize": 32,
+            "fontFamily": "Pretendard",
+            "fontWeight": "bold",
+            "color": "#ffffff",
+            "textAlign": "center",
+            "maxWidth": 1400
+          },
+          "position": {
+            "x": "center", 
+            "y": "center"
+          },
+          "animation": {
+            "in": "fadeInScale"
+          }
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "reportTitle": {
+      "type": "text",
+      "required": true,
+      "placeholder": "2024년 1분기 매출 분석"
+    },
+    "reportPeriod": {
+      "type": "text", 
+      "required": true,
+      "placeholder": "2024년 1월 ~ 3월"
+    },
+    "label1": {"type": "text", "required": true, "placeholder": "항목1"},
+    "label2": {"type": "text", "required": true, "placeholder": "항목2"},
+    "label3": {"type": "text", "required": true, "placeholder": "항목3"},
+    "label4": {"type": "text", "required": true, "placeholder": "항목4"},
+    "value1": {"type": "number", "required": true, "placeholder": "100"},
+    "value2": {"type": "number", "required": true, "placeholder": "150"},
+    "value3": {"type": "number", "required": true, "placeholder": "120"},
+    "value4": {"type": "number", "required": true, "placeholder": "180"},
+    "insight1": {
+      "type": "text",
+      "required": true,
+      "placeholder": "첫 번째 인사이트"
+    },
+    "insight2": {
+      "type": "text", 
+      "required": true,
+      "placeholder": "두 번째 인사이트"
+    },
+    "insight3": {
+      "type": "text",
+      "required": true,
+      "placeholder": "세 번째 인사이트"
+    },
+    "summaryText": {
+      "type": "text",
+      "required": true,
+      "placeholder": "요약 및 결론"
+    }
+  },
+  "tags": ["비즈니스", "데이터", "분석", "차트", "리포트"],
+  "preview": "assets/templates/business/previews/data-viz-001.png"
+}

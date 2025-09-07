@@ -1,0 +1,181 @@
+{
+  "templateId": "edu-course-intro-001",
+  "name": "강의 소개 템플릿",
+  "category": "education",
+  "subcategory": "course-introduction",
+  "description": "새로운 강의나 코스를 소개할 때 사용하는 템플릿",
+  "duration": 10,
+  "resolution": {
+    "width": 1920,
+    "height": 1080
+  },
+  "scenes": [
+    {
+      "id": "scene-1",
+      "duration": 3,
+      "background": {
+        "type": "gradient",
+        "colors": ["#667eea", "#764ba2"],
+        "direction": "diagonal"
+      },
+      "elements": [
+        {
+          "type": "text",
+          "id": "title",
+          "content": "{{courseTitle}}",
+          "style": {
+            "fontSize": 48,
+            "fontFamily": "Pretendard",
+            "fontWeight": "bold",
+            "color": "#ffffff",
+            "textAlign": "center"
+          },
+          "position": {
+            "x": "center",
+            "y": 200
+          },
+          "animation": {
+            "in": "fadeInUp",
+            "duration": 1
+          }
+        },
+        {
+          "type": "text", 
+          "id": "subtitle",
+          "content": "{{instructor}} 강사",
+          "style": {
+            "fontSize": 24,
+            "fontFamily": "Pretendard",
+            "fontWeight": "normal", 
+            "color": "#e0e7ff",
+            "textAlign": "center"
+          },
+          "position": {
+            "x": "center", 
+            "y": 280
+          },
+          "animation": {
+            "in": "fadeInUp",
+            "delay": 0.5,
+            "duration": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-2", 
+      "duration": 4,
+      "background": {
+        "type": "solid",
+        "color": "#f8fafc"
+      },
+      "elements": [
+        {
+          "type": "text",
+          "id": "learning-objectives-title",
+          "content": "학습 목표",
+          "style": {
+            "fontSize": 36,
+            "fontFamily": "Pretendard",
+            "fontWeight": "bold",
+            "color": "#1e293b"
+          },
+          "position": {
+            "x": 100,
+            "y": 150
+          },
+          "animation": {
+            "in": "fadeInLeft"
+          }
+        },
+        {
+          "type": "list",
+          "id": "objectives-list",
+          "items": [
+            "{{objective1}}",
+            "{{objective2}}",
+            "{{objective3}}"
+          ],
+          "style": {
+            "fontSize": 24,
+            "fontFamily": "Pretendard", 
+            "color": "#475569",
+            "lineHeight": 1.6,
+            "bulletStyle": "check"
+          },
+          "position": {
+            "x": 150,
+            "y": 220
+          },
+          "animation": {
+            "in": "fadeInUp",
+            "delay": 0.5,
+            "stagger": 0.2
+          }
+        }
+      ]
+    },
+    {
+      "id": "scene-3",
+      "duration": 3,
+      "background": {
+        "type": "gradient", 
+        "colors": ["#4facfe", "#00f2fe"],
+        "direction": "horizontal"
+      },
+      "elements": [
+        {
+          "type": "text",
+          "id": "cta-text",
+          "content": "지금 시작해보세요!",
+          "style": {
+            "fontSize": 42,
+            "fontFamily": "Pretendard",
+            "fontWeight": "bold",
+            "color": "#ffffff",
+            "textAlign": "center"
+          },
+          "position": {
+            "x": "center",
+            "y": "center"
+          },
+          "animation": {
+            "in": "bounceIn",
+            "duration": 1.2
+          }
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "courseTitle": {
+      "type": "text",
+      "required": true,
+      "placeholder": "강의 제목을 입력하세요"
+    },
+    "instructor": {
+      "type": "text", 
+      "required": true,
+      "placeholder": "강사명을 입력하세요"
+    },
+    "objective1": {
+      "type": "text",
+      "required": true, 
+      "placeholder": "첫 번째 학습 목표"
+    },
+    "objective2": {
+      "type": "text",
+      "required": true,
+      "placeholder": "두 번째 학습 목표"  
+    },
+    "objective3": {
+      "type": "text",
+      "required": true,
+      "placeholder": "세 번째 학습 목표"
+    }
+  },
+  "tags": ["교육", "강의소개", "학습목표", "코스"],
+  "preview": "assets/templates/education/previews/course-intro-001.png",
+  "createdAt": "2024-01-01T00:00:00Z",
+  "updatedAt": "2024-01-01T00:00:00Z"
+}
