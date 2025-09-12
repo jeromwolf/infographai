@@ -1,0 +1,1 @@
+{"error":{"message":"Invalid credentials","stack":"AppError: Invalid credentials\n    at <anonymous> (/Users/blockmeta/Desktop/blockmeta/project/infographai/apps/api/src/routes/auth.ts:85:13)"}}

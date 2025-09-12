@@ -8,6 +8,8 @@ import { costMonitor } from '../lib/cost-monitor';
 import { asyncHandler, AppError } from '../middleware/error';
 import { validateRequest, videoValidation } from '../middleware/validation';
 import { startSimpleVideoGeneration } from '../services/simple-video-generator';
+import { startRemotionVideoGeneration } from '../services/remotion-video-generator';
+import { startCanvasVideoGeneration } from '../services/canvas-video-generator';
 
 const router = Router();
 
@@ -270,7 +272,17 @@ router.post('/generate',
     });
 
     // Trigger video generation process
-    await startSimpleVideoGeneration(video.id, projectId, scenarioId);
+    // Use Canvas for infographic videos, Remotion if enabled, otherwise simple generator
+    const useCanvas = process.env.USE_CANVAS === 'true' || true; // Default to Canvas
+    const useRemotion = process.env.USE_REMOTION === 'true';
+    
+    if (useCanvas) {
+      await startCanvasVideoGeneration(video.id, projectId, scenarioId);
+    } else if (useRemotion) {
+      await startRemotionVideoGeneration(video.id, projectId, scenarioId);
+    } else {
+      await startSimpleVideoGeneration(video.id, projectId, scenarioId);
+    }
 
     res.status(201).json({
       message: 'Video generation started',

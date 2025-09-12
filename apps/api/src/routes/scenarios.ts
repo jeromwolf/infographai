@@ -4,14 +4,14 @@
 
 import { Router, Request, Response, NextFunction } from 'express';
 import { PrismaClient } from '@prisma/client';
-import ScenarioManager from '@infographai/scenario-manager';
+import { AutoScenarioGenerator } from '../services/auto-scenario-generator';
 import { authenticate } from '../middleware/auth';
 import { validateRequest } from '../middleware/validation';
 import Joi from 'joi';
 
 const router = Router();
 const prisma = new PrismaClient();
-const scenarioManager = new ScenarioManager();
+const autoScenarioGenerator = new AutoScenarioGenerator();
 
 // 시나리오 생성 검증 스키마
 const createScenarioSchema = Joi.object({
@@ -19,8 +19,8 @@ const createScenarioSchema = Joi.object({
   type: Joi.string().valid('auto', 'user', 'hybrid').required(),
   generationOptions: Joi.object({
     topic: Joi.string().required(),
-    duration: Joi.number().min(30).max(600).required(),
-    targetAudience: Joi.string().required(),
+    duration: Joi.number().min(30).max(600).optional(),
+    targetAudience: Joi.string().optional(),
     language: Joi.string().default('ko'),
     style: Joi.string().default('educational'),
     keywords: Joi.array().items(Joi.string()).optional()
@@ -187,8 +187,12 @@ router.post('/',
 
       switch (type) {
         case 'auto':
-          // AI 자동 생성
-          scenario = await scenarioManager.generateScenario(generationOptions, userId);
+          // AI 자동 생성 - AutoScenarioGenerator 사용
+          const generatedScenario = await autoScenarioGenerator.generateFromTopic(
+            generationOptions.topic,
+            userId
+          );
+          scenario = generatedScenario;
           break;
         
         case 'user':
@@ -209,14 +213,19 @@ router.post('/',
         
         case 'hybrid':
           // AI 생성 후 사용자 수정
-          scenario = await scenarioManager.generateScenario(generationOptions, userId);
+          const hybridScenario = await autoScenarioGenerator.generateFromTopic(
+            generationOptions.topic,
+            userId
+          );
+          // 사용자 수정 적용
           if (userContent) {
-            scenario = await scenarioManager.updateScenario(
-              scenario.id,
-              userContent,
-              userId
-            );
+            hybridScenario.title = userContent.title || hybridScenario.title;
+            hybridScenario.description = userContent.description || hybridScenario.description;
+            if (userContent.scenes) {
+              hybridScenario.scenes = userContent.scenes;
+            }
           }
+          scenario = hybridScenario;
           break;
           
         default:
@@ -230,9 +239,16 @@ router.post('/',
               scenes: req.body.scenes || [],
               metadata: {}
             };
+          } else if (generationOptions?.topic) {
+            // Generate if topic provided
+            const defaultScenario = await autoScenarioGenerator.generateFromTopic(
+              generationOptions.topic,
+              userId
+            );
+            scenario = defaultScenario;
           } else {
-            // Generate if no scenes provided
-            scenario = await scenarioManager.generateScenario(generationOptions, userId);
+            // Error: no scenes or topic provided
+            return res.status(400).json({ error: '시나리오 생성을 위한 정보가 부족합니다' });
           }
           break;
       }
