@@ -339,3 +339,36 @@ cd apps/api && node test-docker-video.js
 - **Visual Quality**: Professional infographics matching KSS education standards
 - **User Satisfaction**: "진짜 학습 비디오" that drives KSS platform adoption
 - **Performance**: <5 minutes generation time, >90% user completion rate
+
+## Recent Updates (2025-09-20)
+
+### 🎨 Scene Builder Enhancements
+- **Enhanced UI Components**: Improved builder interface with full-width layout
+- **Template System**: Added 52+ professional educational animation templates
+- **New Template Added**: "AI Model Creation Process" - 6 steps workflow diagram
+- **Element Creation Tools**: Added buttons for Text, Rectangle, Arrow, Circle elements
+- **Quick Templates**: Functional Docker Setup, API Flow, Database, Network templates
+
+### 🐛 Bug Fixes & Improvements
+- **Text Centering Issues**: Implemented debug logging system for text positioning
+- **Layout Optimization**: Removed unnecessary padding for full-width experience
+- **Canvas Rendering**: Fixed element selection and highlighting in builder
+- **Animation Properties**: Added UI controls for animation type, duration, delay, easing
+
+### 📋 Planned Features
+1. **Drag & Drop**: Mouse-based element movement (Priority 1)
+2. **Resize Handles**: 8-point resize controls for elements
+3. **Font Size Control**: Real-time font size adjustment slider
+4. **Image Support**: Upload and render images on canvas
+5. **Copy/Paste**: Keyboard shortcuts and context menu
+6. **Multi-Selection**: Shift+click and area selection
+7. **Alignment Tools**: Horizontal/vertical alignment and distribution
+8. **Layer Management**: Z-index control and layer panel
+9. **Style Presets**: Save and reuse color/text styles
+10. **Group/Ungroup**: Combine multiple elements
+
+### 🔧 Technical Improvements Needed
+- **Canvas Size**: Increase from 1200x700 to 1920x1080
+- **Collapsible Sidebars**: Toggle panels for more workspace
+- **Zoom Controls**: Canvas zoom in/out functionality
+- **Fullscreen Mode**: Maximize workspace option

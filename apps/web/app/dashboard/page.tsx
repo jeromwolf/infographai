@@ -1,211 +1,188 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { 
-  Video, 
-  FolderOpen, 
-  DollarSign, 
-  TrendingUp,
-  Plus,
-  ArrowRight,
-  Clock
-} from 'lucide-react';
-import { api } from '@/lib/api';
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState({
-    totalProjects: 0,
-    totalVideos: 0,
-    totalCost: 0,
-    monthlyBudget: 10
-  });
-  const [recentProjects, setRecentProjects] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadDashboardData();
-  }, []);
-
-  const loadDashboardData = async () => {
-    try {
-      const [projects, costSummary] = await Promise.all([
-        api.getProjects(),
-        api.getCostSummary()
-      ]);
-      
-      setRecentProjects(projects.slice(0, 3));
-      setStats({
-        totalProjects: projects.length,
-        totalVideos: 0, // Would need to aggregate from projects
-        totalCost: costSummary.month || 0,
-        monthlyBudget: 10
-      });
-    } catch (error) {
-      console.error('Failed to load dashboard data:', error);
-    } finally {
-      setLoading(false);
+  const sections = [
+    {
+      title: 'Scene Builder',
+      description: 'Create professional educational animations with drag-and-drop interface',
+      href: '/dashboard/builder',
+      icon: '🎨',
+      color: 'from-purple-500 to-pink-500',
+      features: ['Drag & Drop', 'Real-time Preview', 'Export to Code']
+    },
+    {
+      title: 'Templates',
+      description: 'Ready-to-use KodeKloud style templates for various topics',
+      href: '/dashboard/templates',
+      icon: '📋',
+      color: 'from-blue-500 to-cyan-500',
+      features: ['Network Diagrams', 'Process Flows', 'Comparisons']
+    },
+    {
+      title: 'Animation Engine',
+      description: 'Advanced animation system with command-based control',
+      href: '/dashboard/animation',
+      icon: '🎬',
+      color: 'from-green-500 to-emerald-500',
+      features: ['Typewriter Text', 'Path Animations', 'Particle Effects']
+    },
+    {
+      title: 'Analytics',
+      description: 'Visual data analytics and dashboard components',
+      href: '/dashboard/analytics',
+      icon: '📊',
+      color: 'from-orange-500 to-red-500',
+      features: ['Network Graphs', 'Geo Maps', 'Radial Networks']
+    },
+    {
+      title: 'Generate',
+      description: 'AI-powered video generation from topics',
+      href: '/dashboard/generate',
+      icon: '🤖',
+      color: 'from-indigo-500 to-purple-500',
+      features: ['AI Scripts', 'Auto Animation', 'Voice Synthesis']
     }
-  };
-
-  const StatCard = ({ title, value, icon: Icon, color }: any) => (
-    <div className="bg-white overflow-hidden shadow rounded-lg">
-      <div className="p-5">
-        <div className="flex items-center">
-          <div className="flex-shrink-0">
-            <Icon className={`h-6 w-6 text-${color}-600`} />
-          </div>
-          <div className="ml-5 w-0 flex-1">
-            <dl>
-              <dt className="text-sm font-medium text-gray-500 truncate">{title}</dt>
-              <dd className="text-lg font-semibold text-gray-900">{value}</dd>
-            </dl>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">로딩 중...</div>
-      </div>
-    );
-  }
+  ];
 
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900">대시보드</h1>
-        <p className="mt-1 text-sm text-gray-600">
-          프로젝트와 비디오 생성 현황을 확인하세요
-        </p>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-        <StatCard
-          title="전체 프로젝트"
-          value={stats.totalProjects}
-          icon={FolderOpen}
-          color="blue"
-        />
-        <StatCard
-          title="생성된 비디오"
-          value={stats.totalVideos}
-          icon={Video}
-          color="green"
-        />
-        <StatCard
-          title="이번 달 비용"
-          value={`$${stats.totalCost.toFixed(2)}`}
-          icon={DollarSign}
-          color="yellow"
-        />
-        <StatCard
-          title="예산 사용률"
-          value={`${((stats.totalCost / stats.monthlyBudget) * 100).toFixed(0)}%`}
-          icon={TrendingUp}
-          color="purple"
-        />
-      </div>
-
-      {/* Quick Actions */}
-      <div className="bg-white shadow rounded-lg p-6 mb-8">
-        <h2 className="text-lg font-medium text-gray-900 mb-4">빠른 작업</h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <Link
-            href="/dashboard/projects"
-            className="relative rounded-lg border border-gray-300 bg-white px-6 py-4 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-500"
-          >
-            <div className="flex-shrink-0">
-              <Plus className="h-6 w-6 text-gray-400" />
+    <div className="min-h-screen bg-gray-950 text-white">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-6xl font-bold mb-4">
+            <span className="bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">
+              SceneCraft Studio
+            </span>
+          </h1>
+          <p className="text-xl text-gray-400" style={{ fontFamily: 'Kalam, cursive' }}>
+            Professional Educational Animation Creation Platform
+          </p>
+          <div className="mt-6 flex justify-center gap-4">
+            <div className="px-4 py-2 bg-gray-800 rounded-lg">
+              <span className="text-green-400 font-bold">KodeKloud Style</span>
             </div>
-            <div className="flex-1 min-w-0">
-              <span className="absolute inset-0" aria-hidden="true" />
-              <p className="text-sm font-medium text-gray-900">새 프로젝트</p>
-              <p className="text-sm text-gray-500">교육 프로젝트 시작</p>
+            <div className="px-4 py-2 bg-gray-800 rounded-lg">
+              <span className="text-blue-400 font-bold">Hand-Drawn Effects</span>
             </div>
-          </Link>
-
-          <Link
-            href="/dashboard/videos"
-            className="relative rounded-lg border border-gray-300 bg-white px-6 py-4 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-500"
-          >
-            <div className="flex-shrink-0">
-              <Video className="h-6 w-6 text-gray-400" />
+            <div className="px-4 py-2 bg-gray-800 rounded-lg">
+              <span className="text-yellow-400 font-bold">Export Ready</span>
             </div>
-            <div className="flex-1 min-w-0">
-              <span className="absolute inset-0" aria-hidden="true" />
-              <p className="text-sm font-medium text-gray-900">비디오 생성</p>
-              <p className="text-sm text-gray-500">AI로 비디오 만들기</p>
-            </div>
-          </Link>
-
-          <Link
-            href="/dashboard/costs"
-            className="relative rounded-lg border border-gray-300 bg-white px-6 py-4 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-500"
-          >
-            <div className="flex-shrink-0">
-              <DollarSign className="h-6 w-6 text-gray-400" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <span className="absolute inset-0" aria-hidden="true" />
-              <p className="text-sm font-medium text-gray-900">비용 확인</p>
-              <p className="text-sm text-gray-500">사용량 모니터링</p>
-            </div>
-          </Link>
-        </div>
-      </div>
-
-      {/* Recent Projects */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-medium text-gray-900">최근 프로젝트</h2>
-            <Link
-              href="/dashboard/projects"
-              className="text-sm font-medium text-primary-600 hover:text-primary-500 inline-flex items-center"
-            >
-              모두 보기
-              <ArrowRight className="ml-1 h-4 w-4" />
-            </Link>
           </div>
         </div>
-        <div className="divide-y divide-gray-200">
-          {recentProjects.length > 0 ? (
-            recentProjects.map((project) => (
-              <Link
-                key={project.id}
-                href={`/dashboard/projects/${project.id}`}
-                className="px-6 py-4 flex items-center justify-between hover:bg-gray-50"
-              >
-                <div className="flex items-center">
-                  <FolderOpen className="h-5 w-5 text-gray-400 mr-3" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">{project.name}</p>
-                    <p className="text-sm text-gray-500">{project.topic}</p>
-                  </div>
+
+        {/* Main Sections Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          {sections.map((section) => (
+            <Link key={section.href} href={section.href}>
+              <div className="group relative overflow-hidden rounded-2xl bg-gray-900 p-6 transition-all hover:scale-105 hover:shadow-2xl cursor-pointer">
+                {/* Background Gradient */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${section.color} opacity-0 group-hover:opacity-10 transition-opacity`} />
+
+                {/* Icon */}
+                <div className="text-5xl mb-4">{section.icon}</div>
+
+                {/* Title */}
+                <h2 className="text-2xl font-bold mb-2" style={{ fontFamily: 'Kalam, cursive' }}>
+                  {section.title}
+                </h2>
+
+                {/* Description */}
+                <p className="text-gray-400 mb-4">
+                  {section.description}
+                </p>
+
+                {/* Features */}
+                <div className="flex flex-wrap gap-2">
+                  {section.features.map((feature) => (
+                    <span
+                      key={feature}
+                      className="px-2 py-1 bg-gray-800 rounded-lg text-xs text-gray-300"
+                    >
+                      {feature}
+                    </span>
+                  ))}
                 </div>
-                <div className="flex items-center text-sm text-gray-500">
-                  <Clock className="h-4 w-4 mr-1" />
-                  {new Date(project.createdAt).toLocaleDateString('ko-KR')}
+
+                {/* Arrow Icon */}
+                <div className="absolute bottom-4 right-4 text-3xl opacity-0 group-hover:opacity-100 transition-opacity">
+                  →
                 </div>
-              </Link>
-            ))
-          ) : (
-            <div className="px-6 py-8 text-center">
-              <FolderOpen className="mx-auto h-12 w-12 text-gray-300" />
-              <p className="mt-2 text-sm text-gray-500">아직 프로젝트가 없습니다</p>
-              <Link
-                href="/dashboard/projects"
-                className="mt-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700"
-              >
-                첫 프로젝트 만들기
-              </Link>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        {/* Quick Stats */}
+        <div className="bg-gray-900 rounded-2xl p-8 mb-12">
+          <h3 className="text-2xl font-bold mb-6 text-center text-green-400" style={{ fontFamily: 'Kalam, cursive' }}>
+            Project Statistics
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-blue-400">5</div>
+              <div className="text-gray-400 text-sm">Template Types</div>
             </div>
-          )}
+            <div className="text-center">
+              <div className="text-3xl font-bold text-green-400">15+</div>
+              <div className="text-gray-400 text-sm">Animation Effects</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-yellow-400">100%</div>
+              <div className="text-gray-400 text-sm">KodeKloud Style</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-purple-400">∞</div>
+              <div className="text-gray-400 text-sm">Possibilities</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Recent Updates */}
+        <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-2xl p-8">
+          <h3 className="text-2xl font-bold mb-6 text-yellow-400" style={{ fontFamily: 'Kalam, cursive' }}>
+            Recent Updates
+          </h3>
+          <div className="space-y-4">
+            <div className="flex items-start gap-4">
+              <div className="text-2xl">✨</div>
+              <div>
+                <h4 className="font-bold text-green-400">Scene Builder Launch</h4>
+                <p className="text-sm text-gray-400">
+                  New drag-and-drop interface for creating animated scenes
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4">
+              <div className="text-2xl">🎨</div>
+              <div>
+                <h4 className="font-bold text-blue-400">KodeKloud Templates</h4>
+                <p className="text-sm text-gray-400">
+                  Pre-built templates matching KodeKloud's signature style
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4">
+              <div className="text-2xl">🚀</div>
+              <div>
+                <h4 className="font-bold text-purple-400">Animation Engine</h4>
+                <p className="text-sm text-gray-400">
+                  Command-based animation system with precise timing control
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Call to Action */}
+        <div className="mt-12 text-center">
+          <Link href="/dashboard/builder">
+            <button className="px-8 py-4 bg-gradient-to-r from-green-500 to-blue-500 text-white text-xl font-bold rounded-xl hover:scale-105 transition-transform shadow-lg">
+              Start Creating →
+            </button>
+          </Link>
         </div>
       </div>
     </div>
