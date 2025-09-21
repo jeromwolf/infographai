@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <style>
+      .cluster { fill: #e6f3ff; stroke: #326ce5; stroke-width: 3; rx: 10; }
+      .node { fill: #f0f9ff; stroke: #0284c7; stroke-width: 2; rx: 8; }
+      .pod { fill: #ffffff; stroke: #10b981; stroke-width: 2; rx: 4; }
+      .container { fill: #ecfdf5; stroke: #059669; stroke-width: 1; rx: 2; }
+      .service { fill: #fef3c7; stroke: #f59e0b; stroke-width: 2; rx: 4; }
+      .ingress { fill: #fce7f3; stroke: #ec4899; stroke-width: 2; rx: 4; }
+      .text { font-size: 10px; fill: #1f2937; text-anchor: middle; }
+      .title { font-size: 14px; font-weight: bold; fill: #1f2937; }
+      @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      .kubernetes-logo {
+        animation: rotate 10s linear infinite;
+        transform-origin: center;
+      }
+    </style>
+  </defs>
+  
+  <!-- Kubernetes Cluster -->
+  <rect class="cluster" x="50" y="50" width="700" height="500"/>
+  <text class="title" x="70" y="80">Kubernetes Cluster</text>
+  
+  <!-- Master Node -->
+  <g id="master-node">
+    <rect class="node" x="80" y="100" width="200" height="120"/>
+    <text class="title" x="90" y="120">Master Node</text>
+    <rect class="service" x="90" y="130" width="80" height="30"/>
+    <text class="text" x="130" y="150">API Server</text>
+    <rect class="service" x="185" y="130" width="80" height="30"/>
+    <text class="text" x="225" y="150">Scheduler</text>
+    <rect class="service" x="90" y="170" width="80" height="30"/>
+    <text class="text" x="130" y="190">Controller</text>
+    <rect class="service" x="185" y="170" width="80" height="30"/>
+    <text class="text" x="225" y="190">etcd</text>
+  </g>
+  
+  <!-- Worker Node 1 -->
+  <g id="worker-node-1">
+    <rect class="node" x="320" y="100" width="200" height="200"/>
+    <text class="title" x="330" y="120">Worker Node 1</text>
+    
+    <!-- Pod 1 -->
+    <rect class="pod" x="330" y="130" width="80" height="60"/>
+    <text class="text" x="370" y="145">Pod</text>
+    <rect class="container" x="335" y="155" width="70" height="25"/>
+    <text class="text" x="370" y="172">Container</text>
+    
+    <!-- Pod 2 -->
+    <rect class="pod" x="420" y="130" width="80" height="60"/>
+    <text class="text" x="460" y="145">Pod</text>
+    <rect class="container" x="425" y="155" width="70" height="25"/>
+    <text class="text" x="460" y="172">Container</text>
+    
+    <!-- Kubelet & Proxy -->
+    <rect class="service" x="330" y="200" width="80" height="30"/>
+    <text class="text" x="370" y="220">Kubelet</text>
+    <rect class="service" x="420" y="200" width="80" height="30"/>
+    <text class="text" x="460" y="220">Kube-proxy</text>
+    
+    <!-- Docker -->
+    <rect class="service" x="375" y="240" width="80" height="30"/>
+    <text class="text" x="415" y="260">Docker</text>
+  </g>
+  
+  <!-- Worker Node 2 -->
+  <g id="worker-node-2">
+    <rect class="node" x="540" y="100" width="200" height="200"/>
+    <text class="title" x="550" y="120">Worker Node 2</text>
+    
+    <!-- Pod 3 -->
+    <rect class="pod" x="550" y="130" width="80" height="60"/>
+    <text class="text" x="590" y="145">Pod</text>
+    <rect class="container" x="555" y="155" width="70" height="25"/>
+    <text class="text" x="590" y="172">Container</text>
+    
+    <!-- Pod 4 -->
+    <rect class="pod" x="640" y="130" width="80" height="60"/>
+    <text class="text" x="680" y="145">Pod</text>
+    <rect class="container" x="645" y="155" width="70" height="25"/>
+    <text class="text" x="680" y="172">Container</text>
+    
+    <!-- Kubelet & Proxy -->
+    <rect class="service" x="550" y="200" width="80" height="30"/>
+    <text class="text" x="590" y="220">Kubelet</text>
+    <rect class="service" x="640" y="200" width="80" height="30"/>
+    <text class="text" x="680" y="220">Kube-proxy</text>
+    
+    <!-- Docker -->
+    <rect class="service" x="595" y="240" width="80" height="30"/>
+    <text class="text" x="635" y="260">Docker</text>
+  </g>
+  
+  <!-- Services Layer -->
+  <g id="services">
+    <rect class="ingress" x="80" y="330" width="150" height="50"/>
+    <text class="text" x="155" y="360">Ingress Controller</text>
+    
+    <rect class="service" x="250" y="330" width="150" height="50"/>
+    <text class="text" x="325" y="360">Load Balancer Service</text>
+    
+    <rect class="service" x="420" y="330" width="150" height="50"/>
+    <text class="text" x="495" y="360">ClusterIP Service</text>
+    
+    <rect class="service" x="590" y="330" width="150" height="50"/>
+    <text class="text" x="665" y="360">NodePort Service</text>
+  </g>
+  
+  <!-- Persistent Storage -->
+  <g id="storage">
+    <rect class="node" x="80" y="410" width="660" height="100"/>
+    <text class="title" x="90" y="430">Persistent Storage</text>
+    
+    <rect class="service" x="100" y="450" width="120" height="40"/>
+    <text class="text" x="160" y="475">PV (NFS)</text>
+    
+    <rect class="service" x="240" y="450" width="120" height="40"/>
+    <text class="text" x="300" y="475">PV (EBS)</text>
+    
+    <rect class="service" x="380" y="450" width="120" height="40"/>
+    <text class="text" x="440" y="475">ConfigMaps</text>
+    
+    <rect class="service" x="520" y="450" width="120" height="40"/>
+    <text class="text" x="580" y="475">Secrets</text>
+  </g>
+</svg>

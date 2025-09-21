@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <defs>
+    <style>
+      .editor-bg { fill: #0d1117; }
+      .sidebar { fill: #161b22; }
+      .line-numbers { fill: #6e7681; font-family: 'Monaco', monospace; font-size: 12px; }
+      .code-text { fill: #c9d1d9; font-family: 'Monaco', monospace; font-size: 12px; }
+      .dockerfile-keyword { fill: #79c0ff; font-weight: bold; }
+      .dockerfile-string { fill: #a5d6ff; }
+      .dockerfile-comment { fill: #8b949e; }
+      .dockerfile-variable { fill: #ffa657; }
+      .cursor { fill: #ffffff; }
+      
+      @keyframes buildProgress {
+        0% { width: 0%; background: #238636; }
+        100% { width: 100%; background: #238636; }
+      }
+      
+      .build-progress {
+        animation: buildProgress 4s ease-in-out;
+      }
+      
+      @keyframes typeCommand {
+        from { width: 0; }
+        to { width: 100%; }
+      }
+      
+      .command-typing {
+        overflow: hidden;
+        white-space: nowrap;
+        animation: typeCommand 2s steps(30, end);
+      }
+    </style>
+  </defs>
+  
+  <!-- Editor Background -->
+  <rect class="editor-bg" width="800" height="500"/>
+  
+  <!-- Sidebar -->
+  <rect class="sidebar" width="50" height="500"/>
+  
+  <!-- Docker Logo -->
+  <text x="15" y="25" fill="#0db7ed" font-size="16">🐳</text>
+  
+  <!-- Tab Bar -->
+  <rect x="50" y="0" width="750" height="30" fill="#21262d"/>
+  <text x="60" y="18" class="code-text">Dockerfile</text>
+  
+  <!-- Line Numbers -->
+  <g class="line-numbers">
+    <text x="35" y="60">1</text>
+    <text x="35" y="80">2</text>
+    <text x="35" y="100">3</text>
+    <text x="35" y="120">4</text>
+    <text x="35" y="140">5</text>
+    <text x="35" y="160">6</text>
+    <text x="35" y="180">7</text>
+    <text x="35" y="200">8</text>
+    <text x="35" y="220">9</text>
+    <text x="35" y="240">10</text>
+  </g>
+  
+  <!-- Dockerfile Content -->
+  <g class="dockerfile-content">
+    <!-- FROM node:18-alpine -->
+    <text x="60" y="60" class="dockerfile-keyword">FROM</text>
+    <text x="110" y="60" class="dockerfile-string">node:18-alpine</text>
+    
+    <!-- WORKDIR /app -->
+    <text x="60" y="80" class="dockerfile-keyword">WORKDIR</text>
+    <text x="130" y="80" class="dockerfile-string">/app</text>
+    
+    <!-- COPY package*.json ./ -->
+    <text x="60" y="100" class="dockerfile-keyword">COPY</text>
+    <text x="110" y="100" class="dockerfile-string">package*.json ./</text>
+    
+    <!-- RUN npm install -->
+    <text x="60" y="120" class="dockerfile-keyword">RUN</text>
+    <text x="95" y="120" class="dockerfile-string command-typing">npm install</text>
+    
+    <!-- COPY . . -->
+    <text x="60" y="140" class="dockerfile-keyword">COPY</text>
+    <text x="110" y="140" class="dockerfile-string">. .</text>
+    
+    <!-- EXPOSE 3000 -->
+    <text x="60" y="160" class="dockerfile-keyword">EXPOSE</text>
+    <text x="125" y="160" class="dockerfile-variable">3000</text>
+    
+    <!-- CMD ["npm", "start"] -->
+    <text x="60" y="180" class="dockerfile-keyword">CMD</text>
+    <text x="95" y="180" class="dockerfile-string">["npm", "start"]</text>
+    
+    <!-- Comment -->
+    <text x="60" y="220" class="dockerfile-comment"># Multi-stage build for production</text>
+  </g>
+  
+  <!-- Build Output Terminal -->
+  <rect x="60" y="280" width="720" height="180" fill="#000000" rx="5"/>
+  <text x="70" y="300" fill="#00ff00" font-family="Monaco" font-size="11">$ docker build -t myapp .</text>
+  <text x="70" y="320" fill="#ffffff" font-family="Monaco" font-size="10">Step 1/7 : FROM node:18-alpine</text>
+  <text x="70" y="335" fill="#ffffff" font-family="Monaco" font-size="10"> ---> Pulling from library/node</text>
+  <text x="70" y="350" fill="#ffffff" font-family="Monaco" font-size="10">Step 2/7 : WORKDIR /app</text>
+  <text x="70" y="365" fill="#00ff00" font-family="Monaco" font-size="10"> ---> Running in abc123def456</text>
+  <text x="70" y="380" fill="#ffffff" font-family="Monaco" font-size="10">Step 3/7 : COPY package*.json ./</text>
+  
+  <!-- Build Progress Bar -->
+  <rect x="70" y="400" width="680" height="20" fill="#1f2937" rx="10"/>
+  <rect x="70" y="400" width="400" height="20" fill="#10b981" rx="10" class="build-progress"/>
+  <text x="380" y="413" fill="#ffffff" font-size="10">Building... 60%</text>
+  
+  <!-- Status -->
+  <text x="70" y="440" fill="#10b981" font-family="Monaco" font-size="10">✅ Successfully built myapp</text>
+</svg>

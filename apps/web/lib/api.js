@@ -4,13 +4,20 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.api = void 0;
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4906';
 class ApiClient {
     token = null;
     constructor() {
+        // 생성자에서 자동으로 토큰 로드
         if (typeof window !== 'undefined') {
             this.token = localStorage.getItem('token');
         }
+    }
+    loadToken() {
+        if (typeof window !== 'undefined') {
+            this.token = localStorage.getItem('token');
+        }
+        return this.token;
     }
     setToken(token) {
         this.token = token;
@@ -23,6 +30,12 @@ class ApiClient {
         if (typeof window !== 'undefined') {
             localStorage.removeItem('token');
         }
+    }
+    getToken() {
+        if (!this.token && typeof window !== 'undefined') {
+            this.token = localStorage.getItem('token');
+        }
+        return this.token;
     }
     async request(endpoint, options = {}) {
         const url = `${API_URL}${endpoint}`;
@@ -44,10 +57,10 @@ class ApiClient {
         return response.json();
     }
     // Auth
-    async register(email, password, name) {
+    async register(data) {
         const response = await this.request('/api/auth/register', {
             method: 'POST',
-            body: JSON.stringify({ email, password, name }),
+            body: JSON.stringify(data),
         });
         this.setToken(response.token);
         return response;
@@ -122,6 +135,41 @@ class ApiClient {
     async getCostHistory(params) {
         const query = new URLSearchParams(params).toString();
         return this.request(`/api/costs/history${query ? `?${query}` : ''}`);
+    }
+    // Additional Video methods
+    async downloadVideo(id) {
+        return this.request(`/api/videos/${id}/download`);
+    }
+    async generateVideo(data) {
+        return this.request('/api/videos/generate', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    }
+    // Scenario methods
+    async createScenario(data) {
+        return this.request('/api/scenarios', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    }
+    async getScenarios(projectId) {
+        const url = projectId ? `/api/scenarios?projectId=${projectId}` : '/api/scenarios';
+        return this.request(url);
+    }
+    async getScenario(id) {
+        return this.request(`/api/scenarios/${id}`);
+    }
+    async updateScenario(id, data) {
+        return this.request(`/api/scenarios/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+        });
+    }
+    async deleteScenario(id) {
+        await this.request(`/api/scenarios/${id}`, {
+            method: 'DELETE',
+        });
     }
 }
 exports.api = new ApiClient();

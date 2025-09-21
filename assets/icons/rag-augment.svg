@@ -1,0 +1,35 @@
+<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="augmentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F59E0B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#D97706;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Base document -->
+  <rect x="30" y="30" width="24" height="32" fill="white" stroke="url(#augmentGrad)" stroke-width="3" rx="3"/>
+  
+  <!-- Plus sign (augmentation) -->
+  <circle cx="75" cy="45" r="18" fill="url(#augmentGrad)"/>
+  <line x1="65" y1="45" x2="85" y2="45" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  <line x1="75" y1="35" x2="75" y2="55" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Enhanced document -->
+  <rect x="45" y="70" width="30" height="40" fill="white" stroke="url(#augmentGrad)" stroke-width="3" rx="3"/>
+  
+  <!-- Content lines in enhanced document -->
+  <line x1="50" y1="78" x2="70" y2="78" stroke="url(#augmentGrad)" stroke-width="2"/>
+  <line x1="50" y1="85" x2="70" y2="85" stroke="url(#augmentGrad)" stroke-width="2"/>
+  <line x1="50" y1="92" x2="70" y2="92" stroke="url(#augmentGrad)" stroke-width="2"/>
+  <line x1="50" y1="99" x2="65" y2="99" stroke="url(#augmentGrad)" stroke-width="2"/>
+  
+  <!-- Connection arrows -->
+  <path d="M 54 46 Q 65 56 60 70" fill="none" stroke="url(#augmentGrad)" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+     refX="9" refY="3.5" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 10 3.5, 0 7" fill="url(#augmentGrad)" />
+    </marker>
+  </defs>
+</svg>

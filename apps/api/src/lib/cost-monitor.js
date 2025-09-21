@@ -1,22 +1,29 @@
 "use strict";
 /**
- * Cost Monitor Instance
+ * Cost Monitor Instance (Disabled)
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.costMonitor = void 0;
-const cost_monitor_1 = require("@infographai/cost-monitor");
-// Create a single instance of CostMonitor
-const globalForCostMonitor = globalThis;
-exports.costMonitor = globalForCostMonitor.costMonitor ?? new cost_monitor_1.CostMonitor();
-if (process.env.NODE_ENV !== 'production') {
-    globalForCostMonitor.costMonitor = exports.costMonitor;
-}
-// Initialize the cost monitor if not already initialized
-(async () => {
-    try {
-        await exports.costMonitor.initialize();
-    }
-    catch (error) {
-        console.error('Failed to initialize cost monitor:', error);
-    }
-})();
+// Placeholder cost monitor to avoid module errors
+exports.costMonitor = {
+    initialize: async () => {
+        console.log('Cost monitor disabled');
+        return Promise.resolve();
+    },
+    cleanup: async () => {
+        console.log('Cost monitor cleanup');
+        return Promise.resolve();
+    },
+    recordApiCall: () => { },
+    recordVideoGeneration: () => { },
+    getUsageStats: async () => ({
+        total: 0,
+        api: 0,
+        video: 0,
+        details: []
+    }),
+    getCosts: async () => ({
+        total: 0,
+        breakdown: {}
+    })
+};

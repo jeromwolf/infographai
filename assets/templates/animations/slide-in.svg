@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="100" viewBox="0 0 400 100">
+    <defs>
+      <style>
+        @keyframes slideIn {
+          from { transform: translateX(-100%); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+        .slide-rect {
+          animation: slideIn 1s ease-out forwards;
+        }
+      </style>
+    </defs>
+    <rect class="slide-rect" x="50" y="25" width="300" height="50" rx="5" fill="#8B5CF6" />
+    <text x="200" y="55" text-anchor="middle" fill="white" font-size="20" font-weight="bold">SLIDE IN TEXT</text>
+  </svg>

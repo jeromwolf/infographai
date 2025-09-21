@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#0c0c0c"/>
+
+  <!-- Terminal Header -->
+  <rect width="1920" height="40" fill="#1a1a1a"/>
+  <text x="960" y="28" font-family="'Cascadia Code', monospace" font-size="16" fill="#ff9900" text-anchor="middle">AWS CLI - Production Environment</text>
+
+  <!-- Command Lines -->
+  <g font-family="'Cascadia Code', monospace" font-size="16">
+    <text x="40" y="80" fill="#00ff00">$ aws s3 ls s3://my-bucket/</text>
+    <text x="40" y="110" fill="#ffffff" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="1s" fill="freeze"/>
+      2024-01-15 10:30:00    1024 config.json
+    </text>
+    <text x="40" y="140" fill="#ffffff" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="1.2s" fill="freeze"/>
+      2024-01-15 10:35:00    2048 data.csv
+    </text>
+
+    <text x="40" y="200" fill="#00ff00" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="2s" fill="freeze"/>
+      $ aws ec2 describe-instances --region us-west-2
+    </text>
+
+    <!-- JSON Output -->
+    <text x="40" y="240" fill="#ffff00" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="3s" fill="freeze"/>
+      {
+    </text>
+    <text x="60" y="270" fill="#00ffff" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="3.2s" fill="freeze"/>
+      "Instances": [
+    </text>
+    <text x="80" y="300" fill="#ffffff" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="3.4s" fill="freeze"/>
+      {
+    </text>
+    <text x="100" y="330" fill="#ff9900" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="3.6s" fill="freeze"/>
+      "InstanceId": "i-0123456789abcdef0",
+    </text>
+    <text x="100" y="360" fill="#ff9900" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="3.8s" fill="freeze"/>
+      "State": "running",
+    </text>
+    <text x="100" y="390" fill="#ff9900" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="4s" fill="freeze"/>
+      "InstanceType": "t3.medium"
+    </text>
+  </g>
+
+  <!-- Status Bar -->
+  <rect y="1040" width="1920" height="40" fill="#1a1a1a"/>
+  <text x="40" y="1065" font-family="'Cascadia Code', monospace" font-size="14" fill="#00ff00">AWS Region: us-west-2 | Profile: production</text>
+</svg>

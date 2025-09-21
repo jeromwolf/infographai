@@ -326,6 +326,23 @@ When implementing APIs:
 - Return consistent error responses
 - Include request validation middleware
 
+## Recent Development Updates
+
+### ModernSceneBuilder Component Improvements (2025-09-21)
+- **MP4 Export Feature**: Server-side FFmpeg video generation with canvas capture
+- **Mouse Wheel Zoom**: Implemented zoom in/out with Ctrl/Cmd + wheel
+- **Passive Event Listener Fix**: Resolved React DOM warnings by using native addEventListener
+- **Element Drag Issue**: Identified drag functionality problem - only line/arrow elements draggable
+  - Text, rect, circle, image elements not responding to mouse drag
+  - Added debug logging to trace drag state and mouse events
+  - Fixed updateElement to maintain correct selectedElement state
+  - Added missing 'group' type support in click detection
+
+### API Server Fixes
+- **Missing Dependencies**: Resolved joi validation module issues
+- **CORS Configuration**: Fixed port 4906 connection refused errors
+- **Authentication**: Removed auth requirement from scene-video routes for MP4 export
+
 ## Recent Test Results & Achievements
 
 ### Docker Video Test (Successful)

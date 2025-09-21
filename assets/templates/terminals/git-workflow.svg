@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <style>
+      .terminal-bg { fill: #0d1117; }
+      .terminal-header { fill: #21262d; }
+      .git-text { fill: #f85149; font-family: 'Monaco', 'Courier', monospace; font-size: 12px; }
+      .command-text { fill: #e6edf3; font-family: 'Monaco', 'Courier', monospace; font-size: 12px; }
+      .prompt { fill: #7c3aed; font-family: 'Monaco', 'Courier', monospace; font-size: 12px; }
+      .branch-text { fill: #3fb950; }
+      .added-text { fill: #3fb950; }
+      .modified-text { fill: #d29922; }
+      .deleted-text { fill: #f85149; }
+      .hash-text { fill: #a5a5a5; }
+      
+      @keyframes gitFlow {
+        0% { stroke-dashoffset: 100; }
+        100% { stroke-dashoffset: 0; }
+      }
+      
+      .git-branch-line {
+        stroke: #3fb950;
+        stroke-width: 2;
+        fill: none;
+        stroke-dasharray: 5,5;
+        animation: gitFlow 2s ease-in-out;
+      }
+      
+      .status-update {
+        animation: highlightChange 1s ease-in-out;
+      }
+      
+      @keyframes highlightChange {
+        0% { fill: #e6edf3; }
+        50% { fill: #3fb950; }
+        100% { fill: #e6edf3; }
+      }
+    </style>
+  </defs>
+  
+  <!-- Terminal Background -->
+  <rect class="terminal-bg" width="800" height="600" rx="8"/>
+  
+  <!-- Terminal Header -->
+  <rect class="terminal-header" width="800" height="30" rx="8 8 0 0"/>
+  <circle cx="20" cy="15" r="6" fill="#ff5f57"/>
+  <circle cx="40" cy="15" r="6" fill="#ffbd2e"/>
+  <circle cx="60" cy="15" r="6" fill="#28ca42"/>
+  <text x="400" y="20" class="command-text" text-anchor="middle" font-size="10">Git Workflow Terminal</text>
+  
+  <!-- Git Logo -->
+  <text x="720" y="20" fill="#f85149" font-size="12">📝</text>
+  
+  <!-- Terminal Content -->
+  <g transform="translate(15, 50)">
+    <!-- Command 1: git status -->
+    <text x="0" y="20" class="prompt">main $ </text>
+    <text x="60" y="20" class="command-text typing-effect">git status</text>
+    <text x="0" y="40" class="git-text">On branch </text>
+    <text x="80" y="40" class="branch-text">main</text>
+    <text x="0" y="55" class="command-text">Changes not staged for commit:</text>
+    <text x="20" y="75" class="modified-text">modified:   src/components/App.js</text>
+    <text x="20" y="90" class="added-text">new file:   src/utils/helper.js</text>
+    <text x="20" y="105" class="deleted-text">deleted:    old/legacy.js</text>
+    
+    <!-- Command 2: git add -->
+    <text x="0" y="135" class="prompt">main $ </text>
+    <text x="60" y="135" class="command-text typing-effect">git add .</text>
+    
+    <!-- Command 3: git status (after add) -->
+    <text x="0" y="165" class="prompt">main $ </text>
+    <text x="60" y="165" class="command-text typing-effect">git status</text>
+    <text x="0" y="185" class="git-text">On branch </text>
+    <text x="80" y="185" class="branch-text">main</text>
+    <text x="0" y="200" class="command-text">Changes to be committed:</text>
+    <text x="20" y="220" class="added-text status-update">modified:   src/components/App.js</text>
+    <text x="20" y="235" class="added-text status-update">new file:   src/utils/helper.js</text>
+    <text x="20" y="250" class="added-text status-update">deleted:    old/legacy.js</text>
+    
+    <!-- Command 4: git commit -->
+    <text x="0" y="280" class="prompt">main $ </text>
+    <text x="60" y="280" class="command-text typing-effect">git commit -m "feat: add helper utilities and refactor App component"</text>
+    <text x="0" y="300" class="branch-text">[main a7b3c9f]</text>
+    <text x="110" y="300" class="command-text">feat: add helper utilities and refactor App component</text>
+    <text x="0" y="315" class="command-text"> 3 files changed, 47 insertions(+), 12 deletions(-)</text>
+    <text x="0" y="330" class="added-text"> create mode 100644 src/utils/helper.js</text>
+    <text x="0" y="345" class="deleted-text"> delete mode 100644 old/legacy.js</text>
+    
+    <!-- Command 5: git push -->
+    <text x="0" y="375" class="prompt">main $ </text>
+    <text x="60" y="375" class="command-text typing-effect">git push origin main</text>
+    <text x="0" y="395" class="command-text">Enumerating objects: 8, done.</text>
+    <text x="0" y="410" class="command-text">Counting objects: 100% (8/8), done.</text>
+    <text x="0" y="425" class="command-text">Delta compression using up to 8 threads</text>
+    <text x="0" y="440" class="command-text">Compressing objects: 100% (5/5), done.</text>
+    <text x="0" y="455" class="command-text">Writing objects: 100% (5/5), 1.2 KiB | 1.2 MiB/s, done.</text>
+    <text x="0" y="470" class="command-text">Total 5 (delta 2), reused 0 (delta 0)</text>
+    <text x="0" y="485" class="command-text">To https://github.com/user/repo.git</text>
+    <text x="0" y="500" class="hash-text">   b4c2a1e..a7b3c9f  </text>
+    <text x="140" y="500" class="branch-text">main -> main</text>
+    
+    <!-- Command 6: git log (oneline) -->
+    <text x="0" y="530" class="prompt">main $ </text>
+    <text x="60" y="530" class="command-text typing-effect">git log --oneline -3</text>
+    <text x="0" y="550" class="hash-text">a7b3c9f </text>
+    <text x="65" y="550" class="command-text">feat: add helper utilities and refactor App component</text>
+  </g>
+  
+  <!-- Git Branch Visualization -->
+  <g transform="translate(600, 50)">
+    <circle cx="50" cy="100" r="8" fill="#3fb950"/>
+    <text x="65" y="105" class="branch-text" font-size="10">main</text>
+    <path class="git-branch-line" d="M 50 108 L 50 150 L 80 180 L 80 220"/>
+    <circle cx="80" cy="220" r="8" fill="#a5a5a5"/>
+    <text x="95" y="225" class="command-text" font-size="10">commit</text>
+  </g>
+</svg>

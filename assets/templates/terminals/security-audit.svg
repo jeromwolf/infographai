@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#0c0c0c"/>
+
+  <!-- Terminal Header -->
+  <rect width="1920" height="40" fill="#1a1a1a"/>
+  <text x="960" y="28" font-family="'Cascadia Code', monospace" font-size="16" fill="#ff0000" text-anchor="middle">Security Audit Scanner</text>
+
+  <!-- Security Scan -->
+  <g font-family="'Cascadia Code', monospace" font-size="16">
+    <text x="40" y="80" fill="#00ff00">$ security-scan --deep --verbose</text>
+
+    <text x="40" y="120" fill="#ffff00" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="0.5s" fill="freeze"/>
+      [*] Starting security audit...
+    </text>
+
+    <text x="40" y="160" fill="#00ffff" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="1s" fill="freeze"/>
+      [+] Checking SSL certificates...
+    </text>
+    <text x="60" y="190" fill="#00ff00" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="1.5s" fill="freeze"/>
+      ✓ All certificates valid
+    </text>
+
+    <text x="40" y="230" fill="#00ffff" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="2s" fill="freeze"/>
+      [+] Scanning for vulnerabilities...
+    </text>
+    <text x="60" y="260" fill="#ffff00" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="2.5s" fill="freeze"/>
+      ⚠ Found 2 medium severity issues
+    </text>
+
+    <text x="40" y="300" fill="#00ffff" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="3s" fill="freeze"/>
+      [+] Checking open ports...
+    </text>
+    <text x="60" y="330" fill="#00ff00" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="3.5s" fill="freeze"/>
+      ✓ Only expected ports open: 22, 80, 443
+    </text>
+
+    <text x="40" y="370" fill="#00ffff" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="4s" fill="freeze"/>
+      [+] Analyzing dependencies...
+    </text>
+    <text x="60" y="400" fill="#ff0000" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="4.5s" fill="freeze"/>
+      ✗ Found 1 critical vulnerability in lodash@4.17.11
+    </text>
+
+    <text x="40" y="460" fill="#ffffff" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="5s" fill="freeze"/>
+      Summary: 1 critical, 2 medium, 0 low
+    </text>
+
+    <text x="40" y="490" fill="#ffff00" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="5.5s" fill="freeze"/>
+      Recommended action: Update lodash to version 4.17.21
+    </text>
+  </g>
+
+  <!-- Severity Indicators -->
+  <g transform="translate(1400, 200)">
+    <rect width="400" height="200" fill="#1a1a1a" stroke="#ff0000" stroke-width="2" rx="5"/>
+    <text x="200" y="30" font-family="'Cascadia Code', monospace" font-size="18" fill="#ffffff" text-anchor="middle">Severity Levels</text>
+    <circle cx="50" cy="70" r="10" fill="#ff0000"/>
+    <text x="80" y="75" font-family="'Cascadia Code', monospace" font-size="14" fill="#ff0000">Critical: 1</text>
+    <circle cx="50" cy="110" r="10" fill="#ffff00"/>
+    <text x="80" y="115" font-family="'Cascadia Code', monospace" font-size="14" fill="#ffff00">Medium: 2</text>
+    <circle cx="50" cy="150" r="10" fill="#00ff00"/>
+    <text x="80" y="155" font-family="'Cascadia Code', monospace" font-size="14" fill="#00ff00">Low: 0</text>
+  </g>
+</svg>

@@ -50,10 +50,10 @@ router.get('/:id', (0, error_1.asyncHandler)(async (req, res) => {
 }));
 // Create project
 router.post('/', (0, validation_1.validateRequest)(validation_1.projectValidation.create), (0, error_1.asyncHandler)(async (req, res) => {
-    const { name, description, topic } = req.body;
+    const { title, description, topic } = req.body;
     const project = await database_1.prisma.project.create({
         data: {
-            title: name,
+            title,
             description,
             topic,
             userId: req.user.id

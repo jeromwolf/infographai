@@ -21,6 +21,7 @@ import videoRoutes from './routes/videos';
 import costRoutes from './routes/costs';
 import healthRoutes from './routes/health';
 import scenarioRoutes from './routes/scenarios';
+import sceneVideoRoutes from './routes/scene-video';
 
 // Middleware
 import { errorHandler } from './middleware/error';
@@ -71,6 +72,7 @@ app.use('/api/projects', authenticate, projectRoutes);
 app.use('/api/videos', authenticate, videoRoutes);
 app.use('/api/costs', authenticate, costRoutes);
 app.use('/api/scenarios', authenticate, scenarioRoutes);
+app.use('/api/scene-video', sceneVideoRoutes);  // No authentication for scene-video
 
 // Error handling
 app.use(errorHandler);

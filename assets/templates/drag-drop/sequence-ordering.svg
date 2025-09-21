@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <!-- Background -->
+  <rect width="1920" height="1080" fill="#1a1a2e"/>
+
+  <!-- Header -->
+  <rect x="200" y="50" width="1520" height="80" fill="url(#dragGradient)" rx="10"/>
+  <text x="960" y="100" font-family="'Inter', sans-serif" font-size="24" fill="white" text-anchor="middle" font-weight="bold">
+    Arrange CI/CD Pipeline Steps in Correct Order
+  </text>
+
+  <!-- Shuffled Steps -->
+  <text x="200" y="180" font-family="'Inter', sans-serif" font-size="18" fill="white" font-weight="bold">
+    Drag to Reorder:
+  </text>
+
+  <g id="shuffled-steps">
+    <!-- Step 4 (Deploy) - Out of order -->
+    <g transform="translate(200, 220)">
+      <rect width="400" height="60" fill="#2d2d4a" stroke="#f59e0b" stroke-width="2" rx="8"/>
+      <text x="20" y="25" font-family="'Inter', sans-serif" font-size="14" fill="#f59e0b" font-weight="bold">
+        4
+      </text>
+      <text x="50" y="25" font-family="'Inter', sans-serif" font-size="16" fill="white">
+        Deploy to Production
+      </text>
+      <text x="50" y="45" font-family="'Inter', sans-serif" font-size="12" fill="#cccccc">
+        Release the application to users
+      </text>
+    </g>
+
+    <!-- Step 1 (Code) - Correct position -->
+    <g transform="translate(200, 300)">
+      <rect width="400" height="60" fill="#2d2d4a" stroke="#10b981" stroke-width="2" rx="8"/>
+      <text x="20" y="25" font-family="'Inter', sans-serif" font-size="14" fill="#10b981" font-weight="bold">
+        1
+      </text>
+      <text x="50" y="25" font-family="'Inter', sans-serif" font-size="16" fill="white">
+        Code Commit
+      </text>
+      <text x="50" y="45" font-family="'Inter', sans-serif" font-size="12" fill="#cccccc">
+        Push changes to repository
+      </text>
+    </g>
+
+    <!-- Step 3 (Test) - Out of order -->
+    <g transform="translate(200, 380)">
+      <rect width="400" height="60" fill="#2d2d4a" stroke="#f59e0b" stroke-width="2" rx="8"/>
+      <text x="20" y="25" font-family="'Inter', sans-serif" font-size="14" fill="#f59e0b" font-weight="bold">
+        3
+      </text>
+      <text x="50" y="25" font-family="'Inter', sans-serif" font-size="16" fill="white">
+        Run Tests
+      </text>
+      <text x="50" y="45" font-family="'Inter', sans-serif" font-size="12" fill="#cccccc">
+        Execute automated test suite
+      </text>
+    </g>
+
+    <!-- Step 2 (Build) - Out of order -->
+    <g transform="translate(200, 460)">
+      <rect width="400" height="60" fill="#2d2d4a" stroke="#f59e0b" stroke-width="2" rx="8"/>
+      <text x="20" y="25" font-family="'Inter', sans-serif" font-size="14" fill="#f59e0b" font-weight="bold">
+        2
+      </text>
+      <text x="50" y="25" font-family="'Inter', sans-serif" font-size="16" fill="white">
+        Build Application
+      </text>
+      <text x="50" y="45" font-family="'Inter', sans-serif" font-size="12" fill="#cccccc">
+        Compile and package the code
+      </text>
+    </g>
+  </g>
+
+  <!-- Correct Order Zone -->
+  <text x="800" y="180" font-family="'Inter', sans-serif" font-size="18" fill="white" font-weight="bold">
+    Correct Order:
+  </text>
+
+  <!-- Drop zones for correct order -->
+  <g id="correct-order">
+    <g transform="translate(800, 220)">
+      <rect width="500" height="60" fill="transparent" stroke="#10b981" stroke-width="2" stroke-dasharray="5,5" rx="8"/>
+      <text x="20" y="35" font-family="'Inter', sans-serif" font-size="14" fill="#10b981" text-anchor="middle">
+        1st
+      </text>
+      <text x="250" y="35" font-family="'Inter', sans-serif" font-size="14" fill="#999" text-anchor="middle">
+        Code Commit ✓
+      </text>
+    </g>
+
+    <g transform="translate(800, 300)">
+      <rect width="500" height="60" fill="transparent" stroke="#666" stroke-width="2" stroke-dasharray="5,5" rx="8"/>
+      <text x="20" y="35" font-family="'Inter', sans-serif" font-size="14" fill="#666" text-anchor="middle">
+        2nd
+      </text>
+    </g>
+
+    <g transform="translate(800, 380)">
+      <rect width="500" height="60" fill="transparent" stroke="#666" stroke-width="2" stroke-dasharray="5,5" rx="8"/>
+      <text x="20" y="35" font-family="'Inter', sans-serif" font-size="14" fill="#666" text-anchor="middle">
+        3rd
+      </text>
+    </g>
+
+    <g transform="translate(800, 460)">
+      <rect width="500" height="60" fill="transparent" stroke="#666" stroke-width="2" stroke-dasharray="5,5" rx="8"/>
+      <text x="20" y="35" font-family="'Inter', sans-serif" font-size="14" fill="#666" text-anchor="middle">
+        4th
+      </text>
+    </g>
+  </g>
+
+  <!-- Animation showing correct reordering -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.5s" begin="3s" fill="freeze"/>
+
+    <!-- Step 2 moving to position -->
+    <g transform="translate(800, 300)">
+      <rect width="500" height="60" fill="#2d2d4a" stroke="#10b981" stroke-width="2" rx="8"/>
+      <text x="50" y="25" font-family="'Inter', sans-serif" font-size="16" fill="white">
+        Build Application
+      </text>
+      <text x="50" y="45" font-family="'Inter', sans-serif" font-size="12" fill="#cccccc">
+        Compile and package the code
+      </text>
+    </g>
+
+    <!-- Step 3 moving to position -->
+    <g transform="translate(800, 380)">
+      <rect width="500" height="60" fill="#2d2d4a" stroke="#10b981" stroke-width="2" rx="8"/>
+      <text x="50" y="25" font-family="'Inter', sans-serif" font-size="16" fill="white">
+        Run Tests
+      </text>
+      <text x="50" y="45" font-family="'Inter', sans-serif" font-size="12" fill="#cccccc">
+        Execute automated test suite
+      </text>
+    </g>
+
+    <!-- Step 4 moving to position -->
+    <g transform="translate(800, 460)">
+      <rect width="500" height="60" fill="#2d2d4a" stroke="#10b981" stroke-width="2" rx="8"/>
+      <text x="50" y="25" font-family="'Inter', sans-serif" font-size="16" fill="white">
+        Deploy to Production
+      </text>
+      <text x="50" y="45" font-family="'Inter', sans-serif" font-size="12" fill="#cccccc">
+        Release the application to users
+      </text>
+    </g>
+  </g>
+
+  <!-- Success Message -->
+  <g transform="translate(960, 600)" opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.5s" begin="4s" fill="freeze"/>
+    <rect x="-200" y="-50" width="400" height="100" fill="#10b981" rx="10"/>
+    <text x="0" y="-20" font-family="'Inter', sans-serif" font-size="20" fill="white" text-anchor="middle" font-weight="bold">
+      Perfect Order! 🎯
+    </text>
+    <text x="0" y="10" font-family="'Inter', sans-serif" font-size="14" fill="white" text-anchor="middle">
+      You've correctly arranged the CI/CD pipeline steps
+    </text>
+  </g>
+</svg>

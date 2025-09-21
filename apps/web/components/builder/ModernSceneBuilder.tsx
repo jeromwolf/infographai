@@ -101,6 +101,71 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
   const [selectionStart, setSelectionStart] = useState<{x: number; y: number} | null>(null);
   const [lockAspectRatio, setLockAspectRatio] = useState(false);
 
+  // Error handling and notifications
+  const [errors, setErrors] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
+
+  // Performance optimization flags
+  const [needsRender, setNeedsRender] = useState(true);
+  const renderTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastRenderTime = useRef<number>(0);
+
+  // Add error to notification queue
+  const addError = useCallback((message: string) => {
+    setErrors(prev => [...prev, `${Date.now()}: ${message}`]);
+    setTimeout(() => {
+      setErrors(prev => prev.slice(1));
+    }, 5000);
+  }, []);
+
+  // Show loading state
+  const showLoading = useCallback((message: string) => {
+    setIsLoading(true);
+    setLoadingMessage(message);
+  }, []);
+
+  // Hide loading state
+  const hideLoading = useCallback(() => {
+    setIsLoading(false);
+    setLoadingMessage('');
+  }, []);
+
+  // Memory management - clean up unused images
+  const cleanupImageCache = useCallback(() => {
+    const usedSources = new Set<string>();
+    elements.forEach(element => {
+      if (element.type === 'image' && element.props.src) {
+        usedSources.add(element.props.src);
+      }
+    });
+
+    // Remove unused images from cache
+    const currentCache = imageCache.current;
+    for (const [src] of currentCache.entries()) {
+      if (!usedSources.has(src)) {
+        currentCache.delete(src);
+      }
+    }
+  }, [elements]);
+
+  // Cleanup cache when elements change
+  useEffect(() => {
+    // Debounce cleanup to avoid too frequent calls
+    const timeout = setTimeout(cleanupImageCache, 2000);
+    return () => clearTimeout(timeout);
+  }, [cleanupImageCache]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (renderTimeoutRef.current) {
+        clearTimeout(renderTimeoutRef.current);
+      }
+      imageCache.current.clear();
+    };
+  }, []);
+
   // Canvas dimensions - true 16:9
   const CANVAS_WIDTH = 1920;
   const CANVAS_HEIGHT = 1080;
@@ -404,7 +469,11 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
     );
     setElements(newElements);
     if (selectedElement?.id === id) {
-      setSelectedElement({ ...selectedElement, ...updates });
+      // Find the updated element from newElements to ensure we have the latest data
+      const updatedElement = newElements.find(el => el.id === id);
+      if (updatedElement) {
+        setSelectedElement(updatedElement);
+      }
     }
     if (saveHistory) {
       saveToHistory(newElements);
@@ -521,7 +590,7 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
 
   // Get resize handle at position
   const getResizeHandle = (element: CanvasElement, x: number, y: number): ResizeHandle | null => {
-    const handleSize = 20; // Further increased for much easier clicking
+    const handleSize = 35; // Significantly increased to 35px for much easier clicking
 
 
     // Special handling for lines and arrows - only allow endpoint dragging
@@ -644,7 +713,14 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
           const imgHeight = el.props.height || 100;
           return x >= el.x - imgWidth/2 && x <= el.x + imgWidth/2 &&
                  y >= el.y - imgHeight/2 && y <= el.y + imgHeight/2;
+        case 'group':
+          // For groups, use bounding box (similar to rect)
+          const groupWidth = el.props.width || 100;
+          const groupHeight = el.props.height || 100;
+          return x >= el.x - groupWidth/2 && x <= el.x + groupWidth/2 &&
+                 y >= el.y - groupHeight/2 && y <= el.y + groupHeight/2;
         default:
+          console.warn('Unknown element type in click detection:', el.type);
           return false;
       }
     });
@@ -659,11 +735,14 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
 
         if (handle) {
           // Start resizing
+          console.log('🎯 Resize handle detected:', handle, 'for element:', clicked.type, clicked.id);
           setResizeMode(handle);
           setResizeStart({ x, y, element: { ...clicked } });
           setIsDragging(false);
           e.stopPropagation();
           return;
+        } else {
+          console.log('❌ No resize handle detected at position:', { x, y });
         }
       }
 
@@ -691,13 +770,16 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
           // If multiple selected and clicking on one of them, keep selection for group drag
           setIsDragging(true);
           setDragOffset({ x: x - clicked.x, y: y - clicked.y });
+          console.log('🔵 Starting group drag for element:', clicked.type, 'at position:', {x: clicked.x, y: clicked.y}, 'with offset:', {x: x - clicked.x, y: y - clicked.y});
         } else {
           // Single selection
           setSelectedElement(clicked);
           setSelectedElements(new Set([clicked.id]));
           setIsDragging(true);
           setResizeMode(null);
-          setDragOffset({ x: x - clicked.x, y: y - clicked.y });
+          const offset = { x: x - clicked.x, y: y - clicked.y };
+          setDragOffset(offset);
+          console.log('🔵 Starting single drag for element:', clicked.type, 'at position:', {x: clicked.x, y: clicked.y}, 'with offset:', offset, 'mouse at:', {x, y});
         }
       }
     } else if (e.ctrlKey || e.metaKey) {
@@ -768,6 +850,10 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
     // Update cursor based on hover position
     if (!resizeMode && !isDragging && selectedElement) {
       const handle = getResizeHandle(selectedElement, x, y);
+      // Debug: Show cursor position relative to element
+      if (Math.random() < 0.01) { // Log occasionally to avoid spam
+        console.log('🖱️ Mouse position:', { x, y }, 'Element:', { x: selectedElement.x, y: selectedElement.y });
+      }
       if (handle) {
         const cursors = {
           nw: 'nw-resize',
@@ -787,6 +873,7 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
 
     // Handle resizing (only when mouse button is pressed)
     if (resizeMode && resizeStart && selectedElement && e.buttons === 1) {
+      console.log('📐 Resizing:', resizeMode, 'Delta:', { x: x - resizeStart.x, y: y - resizeStart.y });
 
       const deltaX = x - resizeStart.x;
       const deltaY = y - resizeStart.y;
@@ -978,6 +1065,8 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
 
     // Handle dragging (only when not resizing)
     if (isDragging && !resizeMode && e.buttons === 1) {
+      // Log the dragging state for debugging
+      console.log('🟡 Drag check - isDragging:', isDragging, 'resizeMode:', resizeMode, 'buttons:', e.buttons);
       if (selectedElements.size > 1) {
         // Multi-element dragging
         const deltaX = x - dragOffset.x - (selectedElement?.x || 0);
@@ -1014,6 +1103,13 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
         // Single element dragging
         let newX = x - dragOffset.x;
         let newY = y - dragOffset.y;
+
+        // Log drag calculation for debugging
+        console.log('🟢 Dragging element:', selectedElement.type,
+                   'Mouse:', {x, y},
+                   'DragOffset:', dragOffset,
+                   'NewPos:', {newX, newY},
+                   'CurrentPos:', {x: selectedElement.x, y: selectedElement.y});
 
         // Snap to grid
         if (snapToGrid) {
@@ -1061,9 +1157,9 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
     }
   };
 
-  // Wheel handler for zooming
-  const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
-    e.preventDefault();
+  // Wheel handler for zooming - wrapped in useCallback to prevent re-creation
+  const handleWheel = useCallback((e: React.WheelEvent<HTMLCanvasElement>) => {
+    // Don't prevent default here to avoid passive event listener warning
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -1088,7 +1184,7 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
       setCanvasScale(newScale);
       setCanvasOffset({ x: newOffsetX, y: newOffsetY });
     }
-  };
+  }, [canvasScale, canvasOffset]);
 
   // Drag and Drop handlers for assets
   const handleCanvasDragOver = (e: React.DragEvent<HTMLCanvasElement>) => {
@@ -1156,23 +1252,59 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
   const handleFileDrop = (files: FileList, x: number, y: number) => {
     Array.from(files).forEach((file, index) => {
       if (file.type.startsWith('image/')) {
+        // Validate file size (max 10MB)
+        if (file.size > 10 * 1024 * 1024) {
+          addError(`파일이 너무 큽니다: ${file.name} (최대 10MB)`);
+          return;
+        }
+
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+          addError(`지원하지 않는 파일 형식: ${file.name}`);
+          return;
+        }
+
         const reader = new FileReader();
+
         reader.onload = (e) => {
-          const newElement: CanvasElement = {
-            id: `element-${Date.now()}-${index}`,
-            type: 'image',
-            x: (snapToGrid ? Math.round(x / 20) * 20 : x) + index * 20,
-            y: (snapToGrid ? Math.round(y / 20) * 20 : y) + index * 20,
-            props: {
-              src: e.target?.result,
-              width: 150,
-              height: 150,
-              name: file.name
+          try {
+            const result = e.target?.result;
+            if (!result) {
+              addError(`파일 읽기 실패: ${file.name}`);
+              return;
             }
-          };
-          setElements(prev => [...prev, newElement]);
+
+            const newElement: CanvasElement = {
+              id: `element-${Date.now()}-${index}`,
+              type: 'image',
+              x: (snapToGrid ? Math.round(x / 20) * 20 : x) + index * 20,
+              y: (snapToGrid ? Math.round(y / 20) * 20 : y) + index * 20,
+              props: {
+                src: result,
+                width: 150,
+                height: 150,
+                name: file.name
+              }
+            };
+            setElements(prev => {
+              const newElements = [...prev, newElement];
+              saveToHistory(newElements);
+              return newElements;
+            });
+          } catch (error) {
+            addError(`파일 처리 실패: ${file.name}`);
+            console.error('File processing error:', error);
+          }
         };
+
+        reader.onerror = () => {
+          addError(`파일 읽기 실패: ${file.name}`);
+        };
+
         reader.readAsDataURL(file);
+      } else {
+        addError(`이미지 파일만 지원됩니다: ${file.name}`);
       }
     });
   };
@@ -1201,13 +1333,32 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
     setSelectedElement(newElement);
   };
 
-  // Render canvas
+  // Request render with throttling
+  const requestRender = useCallback(() => {
+    setNeedsRender(true);
+  }, []);
+
+  // Optimized render canvas with throttling
   const renderCanvas = useCallback(() => {
+    if (!needsRender) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    // Throttle rendering to max 60 FPS
+    const now = Date.now();
+    if (now - lastRenderTime.current < 16) {
+      if (renderTimeoutRef.current) clearTimeout(renderTimeoutRef.current);
+      renderTimeoutRef.current = setTimeout(() => {
+        setNeedsRender(true);
+      }, 16);
+      return;
+    }
+
+    lastRenderTime.current = now;
 
     // Clear canvas
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -1463,10 +1614,13 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
 
               if (!img.complete) {
                 img.onload = () => {
-                  renderCanvas(); // Re-render only once when image first loads
+                  requestRender(); // Re-render only once when image first loads
                 };
                 img.onerror = () => {
                   console.error('Failed to load image:', src);
+                  addError(`이미지 로드 실패: ${src.split('/').pop() || src}`);
+                  // Remove failed image from cache to allow retry
+                  imageCache.current.delete(src);
                 };
               }
             }
@@ -1590,7 +1744,7 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
           ctx.fillStyle = '#3B82F6';
           ctx.strokeStyle = '#FFFFFF';
           ctx.lineWidth = 2;
-          const handleSize = 16; // Much larger for better visibility and easier clicking
+          const handleSize = 24; // Increased to 24px for better visibility and easier clicking
 
           // All 8 resize handles
           const handles = [
@@ -1613,8 +1767,8 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
             ctx.fillStyle = '#FFFFFF';
             ctx.fillRect(handle.x - handleSize/2, handle.y - handleSize/2, handleSize, handleSize);
 
-            // Blue fill with border
-            ctx.fillStyle = '#3B82F6';
+            // Blue fill with border - more vibrant color
+            ctx.fillStyle = index % 2 === 0 ? '#3B82F6' : '#10B981'; // Alternate blue and green for better visibility
             ctx.fillRect(handle.x - handleSize/2 + 2, handle.y - handleSize/2 + 2, handleSize - 4, handleSize - 4);
           });
 
@@ -1657,7 +1811,50 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
     ctx.strokeRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     ctx.setLineDash([]);
     ctx.globalAlpha = 1;
-  }, [elements, selectedElement, selectedElements, showGrid, isPlaying, animationFrame, isSelecting, selectionRect]);
+
+    // Mark render as complete
+    setNeedsRender(false);
+  }, [elements, selectedElement, selectedElements, showGrid, isPlaying, animationFrame, isSelecting, selectionRect, needsRender]);
+
+  // Add passive wheel event listener to avoid React warning
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const wheelHandler = (e: WheelEvent) => {
+      // Prevent default scrolling
+      e.preventDefault();
+
+      // Manually trigger our handleWheel function
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      // Calculate zoom factor based on wheel delta
+      const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+      const newScale = Math.max(0.1, Math.min(2.0, canvasScale * zoomFactor));
+
+      if (newScale !== canvasScale) {
+        // Calculate the mouse position in canvas coordinates before zoom
+        const canvasMouseX = (mouseX - canvasOffset.x) / canvasScale;
+        const canvasMouseY = (mouseY - canvasOffset.y) / canvasScale;
+
+        // Calculate new offset to keep mouse position stable
+        const newOffsetX = mouseX - canvasMouseX * newScale;
+        const newOffsetY = mouseY - canvasMouseY * newScale;
+
+        setCanvasScale(newScale);
+        setCanvasOffset({ x: newOffsetX, y: newOffsetY });
+      }
+    };
+
+    // Add event listener with { passive: false } to allow preventDefault
+    canvas.addEventListener('wheel', wheelHandler, { passive: false });
+
+    return () => {
+      canvas.removeEventListener('wheel', wheelHandler);
+    };
+  }, [canvasScale, canvasOffset]);
 
   // Animation loop
   useEffect(() => {
@@ -1678,8 +1875,15 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
 
   // Render canvas on changes
   useEffect(() => {
-    renderCanvas();
-  }, [renderCanvas]);
+    requestRender();
+  }, [elements, selectedElement, selectedElements, showGrid, isPlaying, animationFrame, isSelecting, selectionRect]);
+
+  // Render loop
+  useEffect(() => {
+    if (needsRender) {
+      renderCanvas();
+    }
+  }, [needsRender, renderCanvas]);
 
   // Export functions
   const exportPNG = () => {
@@ -1692,7 +1896,229 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
     link.click();
   };
 
-  // Export as video with better error handling
+  // Export as MP4 - fallback to WebM if server is not available
+  const exportMP4 = async () => {
+    const canvas = canvasRef.current;
+    if (!canvas || elements.length === 0) return;
+
+    const exportButton = document.querySelector('[data-export-mp4]') as HTMLButtonElement;
+    if (exportButton) {
+      exportButton.textContent = 'Generating MP4...';
+      exportButton.disabled = true;
+    }
+
+    showLoading('Generating MP4 video...');
+
+    try {
+      // Generate frames
+      const frames: string[] = [];
+      const totalFrames = 60; // 2 seconds at 30fps
+      const animationDuration = 3000; // 3 seconds
+
+      console.log('Generating frames for MP4...');
+
+      for (let frame = 0; frame < totalFrames; frame++) {
+        // Create buffer canvas with extra space for glow effects
+        const GLOW_BUFFER = 50;
+        const bufferWidth = CANVAS_WIDTH + (GLOW_BUFFER * 2);
+        const bufferHeight = CANVAS_HEIGHT + (GLOW_BUFFER * 2);
+
+        const bufferCanvas = document.createElement('canvas');
+        bufferCanvas.width = bufferWidth;
+        bufferCanvas.height = bufferHeight;
+        const bufferCtx = bufferCanvas.getContext('2d');
+        if (!bufferCtx) continue;
+
+        // Background
+        bufferCtx.fillStyle = '#0F172A';
+        bufferCtx.fillRect(0, 0, bufferWidth, bufferHeight);
+
+        // Translate context to center the content
+        bufferCtx.translate(GLOW_BUFFER, GLOW_BUFFER);
+
+        // Calculate current time
+        const currentTime = (frame / totalFrames) * animationDuration;
+
+        // Draw elements with animations
+        elements.forEach((element, index) => {
+          bufferCtx.save();
+
+          let shouldDraw = true;
+          let elementProgress = 1;
+
+          // Apply animations
+          if (element.animation?.type && element.animation.type !== 'none') {
+            const delay = (element.animation.delay || 0) + index * 100;
+            const duration = element.animation.duration || 1000;
+
+            elementProgress = 0;
+            if (currentTime >= delay) {
+              elementProgress = Math.min(1, (currentTime - delay) / duration);
+            }
+
+            switch (element.animation.type) {
+              case 'fadeIn':
+                bufferCtx.globalAlpha = elementProgress;
+                shouldDraw = elementProgress > 0;
+                break;
+              case 'slideIn':
+                if (elementProgress > 0) {
+                  const slideDistance = 200 * (1 - elementProgress);
+                  bufferCtx.translate(-slideDistance, 0);
+                } else {
+                  shouldDraw = false;
+                }
+                break;
+              case 'zoomIn':
+                if (elementProgress > 0) {
+                  const scale = elementProgress;
+                  bufferCtx.translate(element.x, element.y);
+                  bufferCtx.scale(scale, scale);
+                  bufferCtx.translate(-element.x, -element.y);
+                } else {
+                  shouldDraw = false;
+                }
+                break;
+            }
+          }
+
+          if (!shouldDraw) {
+            bufferCtx.restore();
+            return;
+          }
+
+          // Draw element
+          switch (element.type) {
+            case 'text':
+              bufferCtx.font = `${element.props.weight} ${element.props.size}px ${element.props.font}`;
+              bufferCtx.fillStyle = element.props.color;
+              bufferCtx.textAlign = 'center';
+              bufferCtx.textBaseline = 'middle';
+              bufferCtx.fillText(element.props.text, element.x, element.y);
+              break;
+            case 'image':
+              if (element.props.src) {
+                const img = imageCache.current?.get(element.props.src as string);
+                if (img && img.complete && img.naturalWidth > 0) {
+                  const width = element.props.width || 100;
+                  const height = element.props.height || 100;
+                  bufferCtx.drawImage(
+                    img,
+                    element.x - width / 2,
+                    element.y - height / 2,
+                    width,
+                    height
+                  );
+                }
+              }
+              break;
+            case 'rect':
+              if (element.props.filled) {
+                bufferCtx.fillStyle = element.props.color;
+                bufferCtx.fillRect(
+                  element.x - element.props.width/2,
+                  element.y - element.props.height/2,
+                  element.props.width,
+                  element.props.height
+                );
+              } else {
+                bufferCtx.strokeStyle = element.props.color;
+                bufferCtx.lineWidth = element.props.borderWidth || 2;
+                bufferCtx.strokeRect(
+                  element.x - element.props.width/2,
+                  element.y - element.props.height/2,
+                  element.props.width,
+                  element.props.height
+                );
+              }
+              break;
+            case 'circle':
+              bufferCtx.beginPath();
+              bufferCtx.arc(element.x, element.y, element.props.radius, 0, Math.PI * 2);
+              if (element.props.filled) {
+                bufferCtx.fillStyle = element.props.color;
+                bufferCtx.fill();
+              } else {
+                bufferCtx.strokeStyle = element.props.color;
+                bufferCtx.lineWidth = element.props.borderWidth || 2;
+                bufferCtx.stroke();
+              }
+              break;
+          }
+
+          bufferCtx.restore();
+        });
+
+        // Crop to final size
+        const frameCanvas = document.createElement('canvas');
+        frameCanvas.width = CANVAS_WIDTH;
+        frameCanvas.height = CANVAS_HEIGHT;
+        const frameCtx = frameCanvas.getContext('2d');
+        if (frameCtx) {
+          frameCtx.drawImage(
+            bufferCanvas,
+            GLOW_BUFFER, GLOW_BUFFER,
+            CANVAS_WIDTH, CANVAS_HEIGHT,
+            0, 0,
+            CANVAS_WIDTH, CANVAS_HEIGHT
+          );
+          frames.push(frameCanvas.toDataURL('image/png'));
+        }
+      }
+
+      console.log(`Generated ${frames.length} frames`);
+
+      // Send frames to server for FFmpeg processing
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:4906/api/scene-video/generate-mp4', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          frames,
+          fps: 30,
+          duration: 2
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to generate MP4');
+      }
+
+      const result = await response.json();
+      console.log('MP4 generated:', result);
+
+      // Download the video
+      const videoUrl = `http://localhost:4906${result.url}`;
+      const link = document.createElement('a');
+      link.href = videoUrl;
+      link.download = result.filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      hideLoading();
+      if (exportButton) {
+        exportButton.textContent = 'Export MP4';
+        exportButton.disabled = false;
+      }
+
+    } catch (error) {
+      console.error('MP4 generation error:', error);
+      hideLoading();
+      addError(`MP4 생성 실패: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
+
+      if (exportButton) {
+        exportButton.textContent = 'Export MP4';
+        exportButton.disabled = false;
+      }
+    }
+  };
+
+  // Export as video with better error handling (WebM)
   const exportVideo = async () => {
     const canvas = canvasRef.current;
     if (!canvas || elements.length === 0) return;
@@ -1868,27 +2294,6 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
         // Draw elements with animations
         elements.forEach((element, index) => {
           bufferCtx.save();
-
-          // Apply animation based on element type
-          if (element.type === 'circle') {
-            // Pulse effect for circles
-            const pulse = Math.sin(t * Math.PI * 4) * 0.15 + 1;
-            bufferCtx.translate(element.x, element.y);
-            bufferCtx.scale(pulse, pulse);
-            bufferCtx.translate(-element.x, -element.y);
-            bufferCtx.shadowBlur = 20;
-            bufferCtx.shadowColor = element.props.color || '#8b5cf6';
-          } else if (element.type === 'rect') {
-            // Rotation for rectangles
-            const rotation = t * Math.PI * 0.5;
-            bufferCtx.translate(element.x, element.y);
-            bufferCtx.rotate(rotation);
-            bufferCtx.translate(-element.x, -element.y);
-          } else if (element.type === 'text') {
-            // Wave effect for text
-            const wave = Math.sin(t * Math.PI * 2 + index) * 10;
-            bufferCtx.translate(0, wave);
-          }
 
           // Draw element based on type
           switch (element.type) {
@@ -2074,119 +2479,22 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
     }
   };
 
-  // Export as MP4 video using MediaRecorder API
-  const exportMP4 = async () => {
-    const canvas = canvasRef.current;
-    if (!canvas || elements.length === 0) return;
-
-    const exportButton = document.querySelector('[data-export-mp4]') as HTMLButtonElement;
-    if (exportButton) {
-      exportButton.textContent = 'Recording...';
-      exportButton.disabled = true;
-    }
-
-    try {
-      // Check if MediaRecorder is supported
-      if (!window.MediaRecorder) {
-        throw new Error('MediaRecorder API is not supported in this browser');
-      }
-
-      // Create a stream from canvas
-      const stream = (canvas as any).captureStream(30); // 30 fps
-
-      if (!stream) {
-        throw new Error('Canvas captureStream is not supported');
-      }
-
-      // Check for supported MIME types
-      const mimeTypes = [
-        'video/webm;codecs=vp8',
-        'video/webm',
-        'video/mp4'
-      ];
-
-      let selectedMimeType = '';
-      for (const mimeType of mimeTypes) {
-        if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(mimeType)) {
-          selectedMimeType = mimeType;
-          console.log('Using MIME type:', mimeType);
-          break;
-        }
-      }
-
-      // If no MIME type is supported, use default
-      if (!selectedMimeType) {
-        selectedMimeType = 'video/webm';
-        console.warn('No specific MIME type supported, using default:', selectedMimeType);
-      }
-
-      // Try creating MediaRecorder with or without options
-      let mediaRecorder;
-      try {
-        mediaRecorder = new MediaRecorder(stream, {
-          mimeType: selectedMimeType,
-          videoBitsPerSecond: 5000000 // 5 Mbps
-        });
-      } catch (e) {
-        console.warn('Failed with options, trying without options');
-        mediaRecorder = new MediaRecorder(stream);
-      }
-
-      const chunks: Blob[] = [];
-      mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
-
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'video/webm' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.download = 'animation.webm';
-        link.href = url;
-        link.click();
-
-        if (exportButton) {
-          exportButton.textContent = 'Export Video';
-          exportButton.disabled = false;
-        }
-
-        // Reset animation state
-        setIsPlaying(false);
-      };
-
-      // Start recording
-      mediaRecorder.start();
-
-      // Start animation playback
-      setIsPlaying(true);
-      currentTimeRef.current = 0;
-
-      // Stop recording after 3 seconds
-      setTimeout(() => {
-        mediaRecorder.stop();
-        setIsPlaying(false);
-        currentTimeRef.current = 0;
-      }, 3000);
-
-    } catch (error) {
-      console.error('Error recording video:', error);
-      alert('Video recording failed. Your browser may not support this feature.');
-
-      if (exportButton) {
-        exportButton.textContent = 'Export Video';
-        exportButton.disabled = false;
-      }
-    }
-  };
-
   const exportGIF = async () => {
     const canvas = canvasRef.current;
-    if (!canvas || elements.length === 0) return;
+    if (!canvas || elements.length === 0) {
+      addError('캔버스가 없거나 요소가 비어있습니다');
+      return;
+    }
 
     // Alert user that export is starting
     const exportButton = document.querySelector('[data-export-gif]') as HTMLButtonElement;
-    if (exportButton) {
-      exportButton.textContent = 'Loading images...';
-      exportButton.disabled = true;
-    }
+
+    try {
+      showLoading('이미지 로딩 중...');
+      if (exportButton) {
+        exportButton.textContent = 'Loading images...';
+        exportButton.disabled = true;
+      }
 
     // Pre-load all images before starting GIF generation
     const imageElements = elements.filter(el => el.type === 'image' && el.props.src);
@@ -2211,6 +2519,8 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
     // Wait for all images to load
     await Promise.all(imageLoadPromises);
 
+    showLoading('GIF 생성 중...');
+
     if (exportButton) {
       exportButton.textContent = 'Generating...';
     }
@@ -2226,13 +2536,17 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
       width: CANVAS_WIDTH,
       height: CANVAS_HEIGHT,
       workerScript: '/gif.worker.js',
+      transparent: null,  // Ensure no transparency issues
+      repeat: 0,  // Loop forever
       debug: true // Enable debug mode to see progress
     });
 
+    console.log('GIF initialized with dimensions:', CANVAS_WIDTH, 'x', CANVAS_HEIGHT);
+
     // Always create animated GIF even if no animations are set
     // This demonstrates the GIF is working
-    const totalFrames = 30; // 30 frames for 1.5 second animation
-    const animationDuration = 1500; // 1.5 seconds total
+    const totalFrames = 60; // 60 frames for 3 second animation
+    const animationDuration = 3000; // 3 seconds total (increased for better visibility)
     const hasAnimation = elements.some(el => el.animation?.type);
 
     console.log(`Creating GIF with ${totalFrames} frames, has animations: ${hasAnimation}`);
@@ -2262,6 +2576,9 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
       // Debug first, middle and last frame
       if (frame === 0 || frame === Math.floor(totalFrames/2) || frame === totalFrames - 1) {
         console.log(`Frame ${frame}/${totalFrames}, time: ${currentTime}ms`);
+        if (elements.length > 0) {
+          console.log('First element animation:', elements[0].animation);
+        }
       }
 
       elements.forEach((element, index) => {
@@ -2270,8 +2587,8 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
         let shouldDraw = true;
         let elementProgress = 1; // Default to fully visible
 
-        // Check if element has animation
-        if (element.animation?.type) {
+        // Check if element has animation (skip if type is 'none')
+        if (element.animation?.type && element.animation.type !== 'none') {
           const delay = (element.animation.delay || 0) + index * 100;
           const duration = element.animation.duration || 1000;
 
@@ -2320,51 +2637,164 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
               }
               break;
           }
-        } else {
-          // No animation set - add dynamic effects based on element type
-          const t = frame / totalFrames;
+        }
 
-          // Add different effects for different element types
-          if (element.type === 'circle') {
-            // Glowing pulse effect for circles
-            const pulse = Math.sin(t * Math.PI * 4) * 0.15 + 1;
-            bufferCtx.translate(element.x, element.y);
-            bufferCtx.scale(pulse, pulse);
-            bufferCtx.translate(-element.x, -element.y);
+        // We'll apply special animations AFTER drawing but need to set them up before
+        const t = frame / totalFrames;
+        let imageAnimationApplied = false;
 
-            // Add glow effect
-            bufferCtx.shadowBlur = 20 + Math.sin(t * Math.PI * 2) * 10;
-            bufferCtx.shadowColor = element.props.color || '#8b5cf6';
-          } else if (element.type === 'rect') {
-            // Rotation effect for rectangles
-            const rotation = t * Math.PI * 0.5;
-            bufferCtx.translate(element.x, element.y);
-            bufferCtx.rotate(rotation);
-            bufferCtx.translate(-element.x, -element.y);
-          } else if (element.type === 'text') {
-            // Wave effect for text
-            const wave = Math.sin(t * Math.PI * 2 + index) * 10;
-            bufferCtx.translate(0, wave);
-          } else if (element.type === 'arrow' || element.type === 'line') {
-            // Rainbow color shift for lines
-            const hue = (t * 360 + index * 30) % 360;
-            bufferCtx.filter = `hue-rotate(${hue}deg) brightness(1.2)`;
-          } else if (element.type === 'image' && element.props.name === 'Star') {
-            // Special sparkling animation for stars
-            const sparkle = Math.sin(t * Math.PI * 6) * 0.3 + 1;
-            const rotation = t * Math.PI * 2;
-            bufferCtx.translate(element.x, element.y);
-            bufferCtx.scale(sparkle, sparkle);
-            bufferCtx.rotate(rotation);
-            bufferCtx.translate(-element.x, -element.y);
-            // Add sparkle glow effect
-            bufferCtx.shadowBlur = 30 + Math.sin(t * Math.PI * 4) * 20;
-            bufferCtx.shadowColor = '#fbbf24';
+        // Store animation parameters for images to apply during drawing
+        let imageAnimationParams: any = null;
+        // Only apply image animations if animation.type is not 'none'
+        if (element.type === 'image' && shouldDraw && element.animation?.type !== 'none') {
+          // Debug: Log image element being processed
+          if (frame === 0 || frame === 30) {
+            console.log(`Frame ${frame} - Processing image:`, {
+              name: element.props.name,
+              src: element.props.src,
+              animationType: element.animation?.type,
+              hasStar: element.props.name === 'Star' || (element.props.src && typeof element.props.src === 'string' && element.props.src.includes('star'))
+            });
+          }
+
+          // Enhanced image animations based on name/type - determine parameters
+          if (element.props.name === 'Star' || (element.props.src && typeof element.props.src === 'string' && element.props.src.includes('star'))) {
+            // Enhanced star sparkling animation
+            const sparkle = Math.sin(t * Math.PI * 8) * 0.4 + 1;
+            const rotation = t * Math.PI * 3;
+            const orbit = Math.sin(t * Math.PI * 2) * 5;
+
+            imageAnimationParams = {
+              type: 'star',
+              sparkle,
+              rotation,
+              orbit,
+              shadowBlur: 35 + Math.sin(t * Math.PI * 6) * 25,
+              shadowColor: ['#fbbf24', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6'][Math.floor(t * 20) % 5]
+            };
+          } else if (element.props.name && element.props.name.toLowerCase().includes('heart')) {
+            // Heart beating animation
+            const heartbeat = Math.abs(Math.sin(t * Math.PI * 6)) * 0.3 + 1;
+            const pulse = Math.sin(t * Math.PI * 12) > 0.5 ? 1.1 : 1;
+
+            imageAnimationParams = {
+              type: 'heart',
+              scale: heartbeat * pulse,
+              shadowBlur: 20 + Math.sin(t * Math.PI * 8) * 15,
+              shadowColor: '#ec4899'
+            };
+          } else if (element.props.name && element.props.name.toLowerCase().includes('diamond')) {
+            // Diamond crystal rotation with prismatic effect
+            const rotation = t * Math.PI * 4;
+            const shine = Math.sin(t * Math.PI * 10) * 0.2 + 1;
+
+            imageAnimationParams = {
+              type: 'diamond',
+              rotation,
+              scale: shine,
+              shadowBlur: 30,
+              shadowColor: `hsl(${(t * 720) % 360}, 100%, 70%)`
+            };
           } else {
-            // Default subtle float effect
-            const floatY = Math.sin(t * Math.PI * 2 + index * 0.5) * 5;
-            const floatX = Math.cos(t * Math.PI * 2 + index * 0.5) * 3;
-            bufferCtx.translate(floatX, floatY);
+            // Default animation for all other assets - gentle pulse and glow
+            const pulse = Math.sin(t * Math.PI * 4) * 0.15 + 1;
+            const rotation = Math.sin(t * Math.PI * 2) * 0.1; // Subtle rotation
+
+            imageAnimationParams = {
+              type: 'default',
+              scale: pulse,
+              rotation,
+              shadowBlur: 15 + Math.sin(t * Math.PI * 3) * 10,
+              shadowColor: '#60a5fa'
+            };
+          }
+
+          // Apply transformations if we have animation params
+          if (imageAnimationParams) {
+            imageAnimationApplied = true;
+
+            if (imageAnimationParams.type === 'star') {
+              bufferCtx.translate(element.x + imageAnimationParams.orbit, element.y);
+              bufferCtx.scale(imageAnimationParams.sparkle, imageAnimationParams.sparkle);
+              bufferCtx.rotate(imageAnimationParams.rotation);
+              bufferCtx.translate(-element.x - imageAnimationParams.orbit, -element.y);
+            } else if (imageAnimationParams.type === 'heart') {
+              bufferCtx.translate(element.x, element.y);
+              bufferCtx.scale(imageAnimationParams.scale, imageAnimationParams.scale);
+              bufferCtx.translate(-element.x, -element.y);
+            } else if (imageAnimationParams.type === 'diamond') {
+              bufferCtx.translate(element.x, element.y);
+              bufferCtx.rotate(imageAnimationParams.rotation);
+              bufferCtx.scale(imageAnimationParams.scale, imageAnimationParams.scale);
+              bufferCtx.translate(-element.x, -element.y);
+            } else if (imageAnimationParams.type === 'default') {
+              // Default animation for regular assets
+              bufferCtx.translate(element.x, element.y);
+              bufferCtx.rotate(imageAnimationParams.rotation);
+              bufferCtx.scale(imageAnimationParams.scale, imageAnimationParams.scale);
+              bufferCtx.translate(-element.x, -element.y);
+            }
+
+            bufferCtx.shadowBlur = imageAnimationParams.shadowBlur;
+            bufferCtx.shadowColor = imageAnimationParams.shadowColor;
+          }
+        } else if (!element.animation?.type && !imageAnimationApplied) {
+          // For non-image elements, only apply animations if no animation type is set
+          if (element.type === 'circle') {
+            // Enhanced glowing pulse effect for circles
+            const pulse = Math.sin(t * Math.PI * 4) * 0.2 + 1;
+            const breathe = Math.sin(t * Math.PI * 2) * 0.1 + 1;
+            bufferCtx.translate(element.x, element.y);
+            bufferCtx.scale(pulse * breathe, pulse * breathe);
+            bufferCtx.translate(-element.x, -element.y);
+
+            // Dynamic color-shifting glow
+            const colorPhase = (t * Math.PI * 2) % (Math.PI * 2);
+            const r = Math.sin(colorPhase) * 127 + 128;
+            const g = Math.sin(colorPhase + Math.PI * 2/3) * 127 + 128;
+            const b = Math.sin(colorPhase + Math.PI * 4/3) * 127 + 128;
+            bufferCtx.shadowBlur = 25 + Math.sin(t * Math.PI * 3) * 15;
+            bufferCtx.shadowColor = `rgb(${Math.floor(r)}, ${Math.floor(g)}, ${Math.floor(b)})`;
+          } else if (element.type === 'rect') {
+            // Enhanced rectangle animation with morphing effect
+            const rotation = t * Math.PI * 0.3;
+            const skew = Math.sin(t * Math.PI * 4) * 0.1;
+            const scale = Math.sin(t * Math.PI * 2) * 0.1 + 1;
+
+            bufferCtx.translate(element.x, element.y);
+            bufferCtx.rotate(rotation);
+            bufferCtx.scale(scale, scale);
+            bufferCtx.transform(1, skew, skew, 1, 0, 0); // Skew transformation
+            bufferCtx.translate(-element.x, -element.y);
+
+            // Pulsing border glow
+            bufferCtx.shadowBlur = 15 + Math.sin(t * Math.PI * 4) * 10;
+            bufferCtx.shadowColor = element.props.color || '#3b82f6';
+          } else if (element.type === 'text') {
+            // Enhanced text animation with typewriter and wave effects
+            const wave = Math.sin(t * Math.PI * 2 + index) * 8;
+            const jitter = (Math.random() - 0.5) * 2; // Small random jitter
+            const scale = Math.sin(t * Math.PI * 3) * 0.05 + 1;
+
+            bufferCtx.translate(jitter, wave);
+            bufferCtx.scale(scale, scale);
+
+            // Text glow effect
+            bufferCtx.shadowBlur = 10 + Math.sin(t * Math.PI * 4) * 5;
+            bufferCtx.shadowColor = element.props.color || '#ffffff';
+          } else if (element.type === 'arrow' || element.type === 'line') {
+            // Enhanced line animation with flow effect
+            const flow = Math.sin(t * Math.PI * 6) * 3;
+            const thickness = Math.sin(t * Math.PI * 4) * 0.3 + 1;
+
+            bufferCtx.translate(flow, 0);
+            bufferCtx.scale(1, thickness);
+
+            // Dynamic color and glow
+            const hue = (t * 360 + index * 45) % 360;
+            bufferCtx.filter = `hue-rotate(${hue}deg) brightness(1.3) saturate(1.2)`;
+            bufferCtx.shadowBlur = 8 + Math.sin(t * Math.PI * 5) * 5;
+            bufferCtx.shadowColor = `hsl(${hue}, 70%, 60%)`;
           }
         }
 
@@ -2603,37 +3033,148 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
       }
 
       // Add frame with proper delay for smooth animation
-      // Using 50ms delay for 20fps (smoother for GIF)
-      gif.addFrame(frameCanvas, { copy: true, delay: 50 });
+      // 3000ms total / 60 frames = 50ms per frame
+
+      // Debug: Check if frameCanvas has content
+      if (frame === 0 || frame === 30) {
+        const testCtx = frameCanvas.getContext('2d');
+        if (testCtx) {
+          const imageData = testCtx.getImageData(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+          const hasContent = imageData.data.some((value, index) => {
+            // Check if any pixel is not black (skip alpha channel)
+            return index % 4 !== 3 && value > 0;
+          });
+          console.log(`Frame ${frame} has content:`, hasContent);
+          if (frame === 0 && elements.length > 0) {
+            console.log('Element animation check:', elements[0].animation);
+            const firstProgress = elements[0].animation?.type ?
+              Math.min(1, ((frame / totalFrames) * animationDuration) / (elements[0].animation.duration || 1000)) : 1;
+            console.log('First element progress would be:', firstProgress);
+          }
+        }
+      }
+
+      gif.addFrame(frameCanvas, { copy: true, delay: 50 }); // 50ms per frame for 20fps
     }
+
+    console.log(`All ${totalFrames} frames added to GIF`);
 
     gif.on('progress', (progress: number) => {
       console.log(`GIF generation progress: ${Math.round(progress * 100)}%`);
+      const exportButton = document.querySelector('[data-export-gif]') as HTMLButtonElement;
+      if (exportButton && progress > 0) {
+        exportButton.textContent = `Generating... ${Math.round(progress * 100)}%`;
+      }
     });
 
     gif.on('finished', (blob: Blob) => {
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.download = 'animation.gif';
-      link.href = url;
-      link.click();
+      try {
+        hideLoading();
 
-      // Restore export button
+        // Validate blob
+        if (!blob || blob.size === 0) {
+          throw new Error('GIF 생성 실패: 빈 파일');
+        }
+
+        console.log('GIF generated successfully, size:', blob.size);
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = `scene-${Date.now()}.gif`;
+        link.href = url;
+
+        // Add link to document before clicking (for better compatibility)
+        document.body.appendChild(link);
+        link.click();
+
+        // Clean up
+        setTimeout(() => {
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        }, 100);
+
+        // Restore export button
+        const exportButton = document.querySelector('[data-export-gif]') as HTMLButtonElement;
+        if (exportButton) {
+          exportButton.textContent = 'Export GIF';
+          exportButton.disabled = false;
+        }
+
+        console.log('GIF export completed successfully');
+      } catch (error) {
+        hideLoading();
+        addError('GIF 다운로드 실패');
+        console.error('GIF download error:', error);
+
+        // Restore button state
+        const exportButton = document.querySelector('[data-export-gif]') as HTMLButtonElement;
+        if (exportButton) {
+          exportButton.textContent = 'Export GIF';
+          exportButton.disabled = false;
+        }
+      }
+    });
+
+    // Add error handling for GIF generation
+    gif.on('abort', () => {
+      hideLoading();
+      addError('GIF 생성이 중단되었습니다');
       const exportButton = document.querySelector('[data-export-gif]') as HTMLButtonElement;
       if (exportButton) {
         exportButton.textContent = 'Export GIF';
         exportButton.disabled = false;
       }
-
-      console.log('GIF export completed successfully');
     });
 
     console.log(`Starting GIF render with ${totalFrames} frames...`);
     gif.render();
+
+    } catch (error) {
+      hideLoading();
+      addError('GIF 생성 중 오류 발생');
+      console.error('GIF generation error:', error);
+
+      // Restore button state
+      const exportButton = document.querySelector('[data-export-gif]') as HTMLButtonElement;
+      if (exportButton) {
+        exportButton.textContent = 'Export GIF';
+        exportButton.disabled = false;
+      }
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-950">
+      {/* Error Notifications */}
+      {errors.length > 0 && (
+        <div className="fixed top-4 right-4 z-50 space-y-2">
+          {errors.map((error, index) => (
+            <div
+              key={error}
+              className="bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-slide-in"
+            >
+              <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+              <span className="text-sm">{error.split(': ')[1]}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center">
+          <div className="bg-gray-800 text-white px-6 py-4 rounded-lg shadow-xl flex items-center gap-3">
+            <svg className="animate-spin h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>{loadingMessage}</span>
+          </div>
+        </div>
+      )}
+
       {/* Compact Professional Header - 2 Row Layout */}
       <div className="bg-gray-900 border-b border-gray-800 px-4 py-3">
         {/* First Row - Title, Info and Main Actions */}
@@ -2680,9 +3221,17 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
               onClick={exportVideo}
               data-export-video
               className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded text-xs"
-              title="Export as video"
+              title="Export as WebM video"
             >
-              Export Video
+              Export WebM
+            </button>
+            <button
+              onClick={exportMP4}
+              data-export-mp4
+              className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs"
+              title="Export as MP4 video (FFmpeg)"
+            >
+              Export MP4
             </button>
             {onSave && (
               <button
@@ -3418,7 +3967,7 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
-              onWheel={handleWheel}
+              // onWheel is handled by useEffect to avoid passive event listener warning
               onDragOver={handleCanvasDragOver}
               onDragLeave={handleCanvasDragLeave}
               onDrop={handleCanvasDrop}

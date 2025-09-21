@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <style>
+      .producer { fill: #dcfce7; stroke: #22c55e; stroke-width: 2; rx: 8; }
+      .event-bus { fill: #fef3c7; stroke: #f59e0b; stroke-width: 3; rx: 10; }
+      .consumer { fill: #ddd6fe; stroke: #9333ea; stroke-width: 2; rx: 8; }
+      .event-store { fill: #e0e7ff; stroke: #6366f1; stroke-width: 2; rx: 8; }
+      .text { font-size: 12px; fill: #1f2937; text-anchor: middle; }
+      .title { font-size: 14px; font-weight: bold; fill: #1f2937; }
+      .event-flow { stroke: #94a3b8; stroke-width: 2; fill: none; marker-end: url(#arrow); stroke-dasharray: 5,5; }
+      @keyframes eventFlow {
+        0% { stroke-dashoffset: 10; }
+        100% { stroke-dashoffset: 0; }
+      }
+      .event-flow { animation: eventFlow 1s linear infinite; }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#94a3b8" />
+    </marker>
+  </defs>
+  
+  <!-- Event Producers -->
+  <text class="title" x="100" y="40">Event Producers</text>
+  <rect class="producer" x="50" y="60" width="120" height="60"/>
+  <text class="text" x="110" y="95">Web API</text>
+  
+  <rect class="producer" x="50" y="140" width="120" height="60"/>
+  <text class="text" x="110" y="175">Mobile API</text>
+  
+  <rect class="producer" x="50" y="220" width="120" height="60"/>
+  <text class="text" x="110" y="255">IoT Devices</text>
+  
+  <rect class="producer" x="50" y="300" width="120" height="60"/>
+  <text class="text" x="110" y="335">Scheduled Jobs</text>
+  
+  <!-- Event Bus -->
+  <rect class="event-bus" x="250" y="150" width="300" height="120"/>
+  <text class="title" x="400" y="180">Event Bus / Message Broker</text>
+  <text class="text" x="400" y="210">Kafka / RabbitMQ / AWS EventBridge</text>
+  <text class="text" x="400" y="235">Topics: orders, users, inventory, payments</text>
+  
+  <!-- Event Store -->
+  <rect class="event-store" x="300" y="320" width="200" height="80"/>
+  <text class="title" x="400" y="350">Event Store</text>
+  <text class="text" x="400" y="375">Event Sourcing DB</text>
+  
+  <!-- Event Consumers -->
+  <text class="title" x="680" y="40">Event Consumers</text>
+  
+  <rect class="consumer" x="630" y="60" width="120" height="60"/>
+  <text class="text" x="690" y="95">Order Service</text>
+  
+  <rect class="consumer" x="630" y="140" width="120" height="60"/>
+  <text class="text" x="690" y="175">Inventory Service</text>
+  
+  <rect class="consumer" x="630" y="220" width="120" height="60"/>
+  <text class="text" x="690" y="255">Notification Service</text>
+  
+  <rect class="consumer" x="630" y="300" width="120" height="60"/>
+  <text class="text" x="690" y="335">Analytics Service</text>
+  
+  <rect class="consumer" x="630" y="380" width="120" height="60"/>
+  <text class="text" x="690" y="415">Audit Service</text>
+  
+  <!-- Event Flows -->
+  <path class="event-flow" d="M 170 90 L 250 180"/>
+  <path class="event-flow" d="M 170 170 L 250 190"/>
+  <path class="event-flow" d="M 170 250 L 250 210"/>
+  <path class="event-flow" d="M 170 330 L 250 230"/>
+  
+  <path class="event-flow" d="M 550 180 L 630 90"/>
+  <path class="event-flow" d="M 550 190 L 630 170"/>
+  <path class="event-flow" d="M 550 210 L 630 250"/>
+  <path class="event-flow" d="M 550 230 L 630 330"/>
+  <path class="event-flow" d="M 550 240 L 630 410"/>
+  
+  <path class="event-flow" d="M 400 270 L 400 320"/>
+  
+  <!-- Legend -->
+  <g id="legend" transform="translate(50, 450)">
+    <text class="title" x="0" y="0">Event Flow Pattern:</text>
+    <text class="text" x="0" y="20">1. Producers publish events</text>
+    <text class="text" x="0" y="40">2. Event Bus routes messages</text>
+    <text class="text" x="0" y="60">3. Consumers process events</text>
+    <text class="text" x="0" y="80">4. Events stored for replay</text>
+  </g>
+</svg>

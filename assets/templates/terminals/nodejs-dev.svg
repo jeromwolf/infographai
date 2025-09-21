@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <style>
+      .terminal-bg { fill: #1e1e1e; }
+      .terminal-header { fill: #333333; }
+      .node-text { fill: #68a063; font-family: 'Monaco', 'Courier', monospace; font-size: 12px; }
+      .command-text { fill: #d4d4d4; font-family: 'Monaco', 'Courier', monospace; font-size: 12px; }
+      .prompt { fill: #569cd6; font-family: 'Monaco', 'Courier', monospace; font-size: 12px; }
+      .success-text { fill: #4ec9b0; }
+      .error-text { fill: #f44747; }
+      .warning-text { fill: #ffcc02; }
+      .package-text { fill: #ce9178; }
+      .version-text { fill: #b5cea8; }
+      
+      @keyframes packageInstall {
+        0% { width: 0; }
+        100% { width: 250px; }
+      }
+      
+      .install-progress {
+        animation: packageInstall 2s ease-in-out;
+      }
+      
+      .dev-server {
+        animation: serverPulse 3s ease-in-out infinite;
+      }
+      
+      @keyframes serverPulse {
+        0%, 100% { fill: #4ec9b0; }
+        50% { fill: #68a063; }
+      }
+    </style>
+  </defs>
+  
+  <!-- Terminal Background -->
+  <rect class="terminal-bg" width="800" height="600" rx="8"/>
+  
+  <!-- Terminal Header -->
+  <rect class="terminal-header" width="800" height="30" rx="8 8 0 0"/>
+  <circle cx="20" cy="15" r="6" fill="#ff5f57"/>
+  <circle cx="40" cy="15" r="6" fill="#ffbd2e"/>
+  <circle cx="60" cy="15" r="6" fill="#28ca42"/>
+  <text x="400" y="20" class="command-text" text-anchor="middle" font-size="10">Node.js Development Terminal</text>
+  
+  <!-- Node.js Logo -->
+  <text x="720" y="20" fill="#68a063" font-size="12">⬢</text>
+  
+  <!-- Terminal Content -->
+  <g transform="translate(15, 50)">
+    <!-- Command 1: node --version -->
+    <text x="0" y="20" class="prompt">➜ </text>
+    <text x="20" y="20" class="command-text typing-effect">node --version</text>
+    <text x="0" y="40" class="version-text">v18.17.0</text>
+    
+    <!-- Command 2: npm init -->
+    <text x="0" y="70" class="prompt">➜ </text>
+    <text x="20" y="70" class="command-text typing-effect">npm init -y</text>
+    <text x="0" y="90" class="success-text">Wrote to /Users/dev/myapp/package.json:</text>
+    <text x="0" y="110" class="command-text">{</text>
+    <text x="10" y="125" class="package-text">  "name": "myapp",</text>
+    <text x="10" y="140" class="package-text">  "version": "1.0.0",</text>
+    <text x="10" y="155" class="package-text">  "description": "",</text>
+    <text x="10" y="170" class="package-text">  "main": "index.js",</text>
+    <text x="10" y="185" class="package-text">  "scripts": {</text>
+    <text x="20" y="200" class="package-text">    "start": "node index.js",</text>
+    <text x="20" y="215" class="package-text">    "dev": "nodemon index.js"</text>
+    <text x="10" y="230" class="package-text">  }</text>
+    <text x="0" y="245" class="command-text">}</text>
+    
+    <!-- Command 3: npm install packages -->
+    <text x="0" y="275" class="prompt">➜ </text>
+    <text x="20" y="275" class="command-text typing-effect">npm install express cors dotenv</text>
+    
+    <!-- Installation Progress -->
+    <text x="0" y="295" class="node-text">⠋ Installing packages...</text>
+    <rect x="0" y="305" width="250" height="4" fill="#333333" rx="2"/>
+    <rect x="0" y="305" width="180" height="4" fill="#68a063" rx="2" class="install-progress"/>
+    
+    <text x="0" y="325" class="success-text">+ express@4.18.2</text>
+    <text x="0" y="340" class="success-text">+ cors@2.8.5</text>
+    <text x="0" y="355" class="success-text">+ dotenv@16.0.3</text>
+    <text x="0" y="370" class="command-text">added 57 packages from 41 contributors</text>
+    
+    <!-- Command 4: npm run dev -->
+    <text x="0" y="400" class="prompt">➜ </text>
+    <text x="20" y="400" class="command-text typing-effect">npm run dev</text>
+    <text x="0" y="420" class="command-text">> myapp@1.0.0 dev</text>
+    <text x="0" y="435" class="command-text">> nodemon index.js</text>
+    <text x="0" y="455" class="node-text">[nodemon] 2.0.22</text>
+    <text x="0" y="470" class="node-text">[nodemon] to restart at any time, enter rs</text>
+    <text x="0" y="485" class="node-text">[nodemon] watching path(s): *.*</text>
+    <text x="0" y="500" class="node-text">[nodemon] watching extensions: js,mjs,json</text>
+    <text x="0" y="515" class="node-text">[nodemon] starting node index.js</text>
+    
+    <!-- Server Status -->
+    <text x="0" y="535" class="success-text dev-server">🚀 Server is running on http://localhost:3000</text>
+    <text x="0" y="550" class="success-text">📦 Express server started successfully</text>
+    <text x="0" y="565" class="warning-text">[nodemon] clean exit - waiting for changes before restart</text>
+  </g>
+  
+  <!-- Package.json Visualization -->
+  <g transform="translate(500, 50)">
+    <rect x="0" y="0" width="250" height="200" fill="#252526" stroke="#3c3c3c" stroke-width="1" rx="5"/>
+    <text x="125" y="20" class="node-text" text-anchor="middle" font-size="11">package.json</text>
+    
+    <text x="10" y="40" class="command-text" font-size="10">"dependencies": {</text>
+    <text x="20" y="55" class="package-text" font-size="9">  "express": "^4.18.2",</text>
+    <text x="20" y="70" class="package-text" font-size="9">  "cors": "^2.8.5",</text>
+    <text x="20" y="85" class="package-text" font-size="9">  "dotenv": "^16.0.3"</text>
+    <text x="10" y="100" class="command-text" font-size="10">},</text>
+    
+    <text x="10" y="120" class="command-text" font-size="10">"devDependencies": {</text>
+    <text x="20" y="135" class="package-text" font-size="9">  "nodemon": "^2.0.22"</text>
+    <text x="10" y="150" class="command-text" font-size="10">},</text>
+    
+    <text x="10" y="170" class="command-text" font-size="10">"scripts": {</text>
+    <text x="20" y="185" class="success-text" font-size="9">  "dev": "nodemon index.js"</text>
+    <text x="10" y="200" class="command-text" font-size="10">}</text>
+    
+    <!-- Server Status Indicator -->
+    <circle cx="220" cy="30" r="5" fill="#68a063" class="dev-server"/>
+    <text x="205" y="45" class="success-text" font-size="8">RUNNING</text>
+  </g>
+</svg>

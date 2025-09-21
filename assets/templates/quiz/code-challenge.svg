@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="codeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e1e1e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2d2d30;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1920" height="1080" fill="url(#codeGradient)"/>
+
+  <!-- Header -->
+  <rect x="0" y="0" width="1920" height="80" fill="#252526"/>
+  <text x="960" y="50" font-family="'Cascadia Code', monospace" font-size="24" fill="white" text-anchor="middle">
+    Code Challenge: Fix the Bug
+  </text>
+
+  <!-- Problem Description -->
+  <rect x="50" y="100" width="800" height="200" fill="#1e1e1e" stroke="#007acc" stroke-width="2" rx="8"/>
+  <text x="70" y="130" font-family="'Inter', sans-serif" font-size="16" fill="#cccccc" font-weight="bold">
+    Problem:
+  </text>
+  <text x="70" y="160" font-family="'Inter', sans-serif" font-size="14" fill="#cccccc">
+    The following React component has a bug that causes
+  </text>
+  <text x="70" y="180" font-family="'Inter', sans-serif" font-size="14" fill="#cccccc">
+    infinite re-renders. Identify and fix the issue.
+  </text>
+
+  <!-- Timer -->
+  <rect x="70" y="220" width="200" height="60" fill="#2d2d30" stroke="#f59e0b" stroke-width="2" rx="5"/>
+  <text x="170" y="245" font-family="'Inter', sans-serif" font-size="14" fill="#f59e0b" text-anchor="middle">
+    Time Remaining
+  </text>
+  <text x="170" y="265" font-family="'Cascadia Code', monospace" font-size="18" fill="#f59e0b" text-anchor="middle">
+    <animate attributeName="fill" values="#f59e0b;#ef4444;#f59e0b" dur="1s" repeatCount="indefinite"/>
+    02:30
+  </text>
+
+  <!-- Code Editor -->
+  <rect x="50" y="320" width="800" height="600" fill="#1e1e1e" stroke="#333" stroke-width="1" rx="5"/>
+
+  <!-- Line Numbers -->
+  <rect x="50" y="320" width="40" height="600" fill="#252526"/>
+  <g font-family="'Cascadia Code', monospace" font-size="14" fill="#858585">
+    <text x="70" y="345" text-anchor="middle">1</text>
+    <text x="70" y="365" text-anchor="middle">2</text>
+    <text x="70" y="385" text-anchor="middle">3</text>
+    <text x="70" y="405" text-anchor="middle">4</text>
+    <text x="70" y="425" text-anchor="middle">5</text>
+    <text x="70" y="445" text-anchor="middle">6</text>
+    <text x="70" y="465" text-anchor="middle">7</text>
+    <text x="70" y="485" text-anchor="middle">8</text>
+    <text x="70" y="505" text-anchor="middle">9</text>
+    <text x="70" y="525" text-anchor="middle">10</text>
+  </g>
+
+  <!-- Code Content -->
+  <g font-family="'Cascadia Code', monospace" font-size="14">
+    <text x="100" y="345" fill="#c586c0">function</text>
+    <text x="180" y="345" fill="#dcdcaa">Counter</text>
+    <text x="240" y="345" fill="#d4d4d4">() {</text>
+
+    <text x="120" y="365" fill="#c586c0">const</text>
+    <text x="170" y="365" fill="#9cdcfe">[count, setCount]</text>
+    <text x="300" y="365" fill="#d4d4d4">=</text>
+    <text x="320" y="365" fill="#dcdcaa">useState</text>
+    <text x="390" y="365" fill="#d4d4d4">(0);</text>
+
+    <!-- Problematic line highlighted -->
+    <rect x="90" y="375" width="650" height="20" fill="#ff4444" opacity="0.3">
+      <animate attributeName="opacity" values="0.3;0.6;0.3" dur="1s" repeatCount="indefinite"/>
+    </rect>
+    <text x="120" y="385" fill="#dcdcaa">setCount</text>
+    <text x="190" y="385" fill="#d4d4d4">(count + 1); // Bug is here!</text>
+
+    <text x="120" y="425" fill="#c586c0">return</text>
+    <text x="180" y="425" fill="#d4d4d4">(</text>
+    <text x="140" y="445" fill="#d4d4d4">&lt;</text>
+    <text x="160" y="445" fill="#4ec9b0">div</text>
+    <text x="190" y="445" fill="#d4d4d4">&gt;</text>
+    <text x="160" y="465" fill="#d4d4d4">&lt;</text>
+    <text x="180" y="465" fill="#4ec9b0">p</text>
+    <text x="195" y="465" fill="#d4d4d4">&gt;Count: {count}&lt;/</text>
+    <text x="350" y="465" fill="#4ec9b0">p</text>
+    <text x="365" y="465" fill="#d4d4d4">&gt;</text>
+    <text x="160" y="485" fill="#d4d4d4">&lt;</text>
+    <text x="180" y="485" fill="#4ec9b0">button</text>
+    <text x="240" y="485" fill="#92c5f7">onClick</text>
+    <text x="295" y="485" fill="#d4d4d4">={() =&gt;</text>
+    <text x="360" y="485" fill="#dcdcaa">setCount</text>
+    <text x="430" y="485" fill="#d4d4d4">(count + 1)}&gt;</text>
+    <text x="180" y="505" fill="#d4d4d4">Increment</text>
+    <text x="160" y="525" fill="#d4d4d4">&lt;/</text>
+    <text x="185" y="525" fill="#4ec9b0">button</text>
+    <text x="235" y="525" fill="#d4d4d4">&gt;</text>
+    <text x="140" y="545" fill="#d4d4d4">&lt;/</text>
+    <text x="165" y="545" fill="#4ec9b0">div</text>
+    <text x="190" y="545" fill="#d4d4d4">&gt;</text>
+    <text x="120" y="565" fill="#d4d4d4">);</text>
+    <text x="100" y="585" fill="#d4d4d4">}</text>
+  </g>
+
+  <!-- Solution Panel -->
+  <rect x="900" y="100" width="900" height="820" fill="#1e1e1e" stroke="#10b981" stroke-width="2" rx="8" opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.5s" begin="3s" fill="freeze"/>
+  </rect>
+  <text x="1350" y="140" font-family="'Inter', sans-serif" font-size="18" fill="#10b981" text-anchor="middle" font-weight="bold" opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.5s" begin="3s" fill="freeze"/>
+    Solution Explanation
+  </text>
+
+  <g transform="translate(920, 170)" opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.5s" begin="3.5s" fill="freeze"/>
+    <text x="0" y="0" font-family="'Inter', sans-serif" font-size="14" fill="#cccccc">
+      The issue is on line 3: setCount(count + 1) is called
+    </text>
+    <text x="0" y="25" font-family="'Inter', sans-serif" font-size="14" fill="#cccccc">
+      during render, causing infinite re-renders.
+    </text>
+
+    <text x="0" y="70" font-family="'Inter', sans-serif" font-size="14" fill="#10b981" font-weight="bold">
+      Correct Solution:
+    </text>
+    <text x="0" y="95" font-family="'Cascadia Code', monospace" font-size="13" fill="#dcdcaa">
+      // Remove the line causing infinite render
+    </text>
+    <text x="0" y="115" font-family="'Cascadia Code', monospace" font-size="13" fill="#c586c0">
+      function
+    </text>
+    <text x="70" y="115" font-family="'Cascadia Code', monospace" font-size="13" fill="#dcdcaa">
+      Counter
+    </text>
+    <text x="130" y="115" font-family="'Cascadia Code', monospace" font-size="13" fill="#d4d4d4">
+      () {
+    </text>
+
+    <text x="20" y="135" font-family="'Cascadia Code', monospace" font-size="13" fill="#c586c0">
+      const
+    </text>
+    <text x="70" y="135" font-family="'Cascadia Code', monospace" font-size="13" fill="#9cdcfe">
+      [count, setCount]
+    </text>
+    <text x="200" y="135" font-family="'Cascadia Code', monospace" font-size="13" fill="#d4d4d4">
+      = useState(0);
+    </text>
+
+    <text x="20" y="175" font-family="'Cascadia Code', monospace" font-size="13" fill="#c586c0">
+      return
+    </text>
+    <text x="70" y="175" font-family="'Cascadia Code', monospace" font-size="13" fill="#d4d4d4">
+      (/* JSX content */);
+    </text>
+    <text x="0" y="195" font-family="'Cascadia Code', monospace" font-size="13" fill="#d4d4d4">
+      }
+    </text>
+  </g>
+
+  <!-- Success Badge -->
+  <g transform="translate(1350, 800)" opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.5s" begin="4s" fill="freeze"/>
+    <circle cx="0" cy="0" r="40" fill="#10b981"/>
+    <path d="M -15 0 L -5 10 L 15 -10" stroke="white" stroke-width="3" fill="none"/>
+    <text x="0" y="70" font-family="'Inter', sans-serif" font-size="16" fill="#10b981" text-anchor="middle" font-weight="bold">
+      Challenge Complete!
+    </text>
+  </g>
+</svg>

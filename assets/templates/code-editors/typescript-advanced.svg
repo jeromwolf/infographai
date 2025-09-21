@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="tsGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3178c6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#235a9f;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Editor Background -->
+  <rect width="1920" height="1080" fill="#1e1e1e"/>
+
+  <!-- Title Bar -->
+  <rect width="1920" height="60" fill="#2d2d30"/>
+  <text x="960" y="40" font-family="'Cascadia Code', monospace" font-size="24" fill="#ffffff" text-anchor="middle">TypeScript Advanced Features</text>
+
+  <!-- Line Numbers -->
+  <rect x="0" y="60" width="80" height="1020" fill="#252526"/>
+  <g id="lineNumbers" font-family="'Cascadia Code', monospace" font-size="16" fill="#858585">
+    <text x="50" y="90" text-anchor="end">1</text>
+    <text x="50" y="120" text-anchor="end">2</text>
+    <text x="50" y="150" text-anchor="end">3</text>
+    <text x="50" y="180" text-anchor="end">4</text>
+    <text x="50" y="210" text-anchor="end">5</text>
+    <text x="50" y="240" text-anchor="end">6</text>
+    <text x="50" y="270" text-anchor="end">7</text>
+    <text x="50" y="300" text-anchor="end">8</text>
+    <text x="50" y="330" text-anchor="end">9</text>
+    <text x="50" y="360" text-anchor="end">10</text>
+  </g>
+
+  <!-- Code Content with Syntax Highlighting -->
+  <g font-family="'Cascadia Code', monospace" font-size="18">
+    <!-- Interface Definition -->
+    <text x="100" y="90" fill="#3178c6">interface</text>
+    <text x="220" y="90" fill="#4ec9b0">User</text>
+    <text x="280" y="90" fill="#d4d4d4">&lt;</text>
+    <text x="300" y="90" fill="#4ec9b0">T</text>
+    <text x="320" y="90" fill="#3178c6">extends</text>
+    <text x="420" y="90" fill="#4ec9b0">BaseEntity</text>
+    <text x="540" y="90" fill="#d4d4d4">&gt; {</text>
+
+    <!-- Property with Type -->
+    <text x="130" y="120" fill="#9cdcfe">id</text>
+    <text x="170" y="120" fill="#d4d4d4">:</text>
+    <text x="190" y="120" fill="#4ec9b0">string</text>
+    <text x="260" y="120" fill="#d4d4d4">;</text>
+
+    <!-- Generic Property -->
+    <text x="130" y="150" fill="#9cdcfe">data</text>
+    <text x="190" y="150" fill="#d4d4d4">:</text>
+    <text x="210" y="150" fill="#4ec9b0">T</text>
+    <text x="230" y="150" fill="#d4d4d4">;</text>
+
+    <!-- Method with Decorators -->
+    <text x="130" y="180" fill="#c586c0">@cached</text>
+    <text x="130" y="210" fill="#dcdcaa">async getUserData</text>
+    <text x="320" y="210" fill="#d4d4d4">()</text>
+    <text x="360" y="210" fill="#d4d4d4">:</text>
+    <text x="380" y="210" fill="#4ec9b0">Promise</text>
+    <text x="460" y="210" fill="#d4d4d4">&lt;</text>
+    <text x="480" y="210" fill="#4ec9b0">UserData</text>
+    <text x="580" y="210" fill="#d4d4d4">&gt; {</text>
+
+    <!-- Async/Await -->
+    <text x="160" y="240" fill="#c586c0">const</text>
+    <text x="230" y="240" fill="#9cdcfe">result</text>
+    <text x="310" y="240" fill="#d4d4d4">=</text>
+    <text x="340" y="240" fill="#c586c0">await</text>
+    <text x="410" y="240" fill="#dcdcaa">fetchUser</text>
+    <text x="520" y="240" fill="#d4d4d4">(</text>
+    <text x="540" y="240" fill="#c586c0">this</text>
+    <text x="590" y="240" fill="#d4d4d4">.</text>
+    <text x="610" y="240" fill="#9cdcfe">id</text>
+    <text x="640" y="240" fill="#d4d4d4">);</text>
+
+    <!-- Return Statement -->
+    <text x="160" y="270" fill="#c586c0">return</text>
+    <text x="240" y="270" fill="#9cdcfe">result</text>
+    <text x="310" y="270" fill="#d4d4d4">;</text>
+
+    <text x="130" y="300" fill="#d4d4d4">}</text>
+    <text x="100" y="330" fill="#d4d4d4">}</text>
+  </g>
+
+  <!-- Type Hints Popup -->
+  <g opacity="0">
+    <rect x="400" y="200" width="400" height="120" fill="#252526" stroke="#007acc" stroke-width="2" rx="5">
+      <animate attributeName="opacity" values="0;1;1;0" dur="4s" repeatCount="indefinite"/>
+    </rect>
+    <text x="420" y="230" font-family="'Cascadia Code', monospace" font-size="14" fill="#d4d4d4">
+      <animate attributeName="opacity" values="0;1;1;0" dur="4s" repeatCount="indefinite"/>
+      getUserData(): Promise&lt;UserData&gt;
+    </text>
+    <text x="420" y="250" font-family="'Cascadia Code', monospace" font-size="12" fill="#858585">
+      <animate attributeName="opacity" values="0;1;1;0" dur="4s" repeatCount="indefinite"/>
+      Fetches user data with caching
+    </text>
+  </g>
+
+  <!-- IntelliSense Suggestion -->
+  <g opacity="0">
+    <rect x="650" y="230" width="300" height="200" fill="#252526" stroke="#007acc" stroke-width="1" rx="3">
+      <animate attributeName="opacity" values="0;0;0;1;1;0" dur="6s" repeatCount="indefinite"/>
+    </rect>
+    <g font-family="'Cascadia Code', monospace" font-size="14">
+      <text x="670" y="260" fill="#dcdcaa">
+        <animate attributeName="opacity" values="0;0;0;1;1;0" dur="6s" repeatCount="indefinite"/>
+        getUserData
+      </text>
+      <text x="670" y="290" fill="#dcdcaa">
+        <animate attributeName="opacity" values="0;0;0;1;1;0" dur="6s" repeatCount="indefinite"/>
+        getUserProfile
+      </text>
+      <text x="670" y="320" fill="#dcdcaa">
+        <animate attributeName="opacity" values="0;0;0;1;1;0" dur="6s" repeatCount="indefinite"/>
+        getUserSettings
+      </text>
+    </g>
+  </g>
+
+  <!-- Error Highlighting -->
+  <line x1="100" y1="365" x2="300" y2="365" stroke="#f44747" stroke-width="2" stroke-dasharray="5,5" opacity="0">
+    <animate attributeName="opacity" values="0;0;1;1;0;0" dur="8s" repeatCount="indefinite"/>
+  </line>
+</svg>

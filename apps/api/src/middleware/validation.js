@@ -121,7 +121,7 @@ exports.authValidation = {
 };
 exports.projectValidation = {
     create: [
-        { field: 'name', type: 'string', required: true, minLength: 1, maxLength: 200 },
+        { field: 'title', type: 'string', required: true, minLength: 1, maxLength: 200 },
         { field: 'description', type: 'string', maxLength: 1000 },
         { field: 'topic', type: 'string', required: true }
     ]

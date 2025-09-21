@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#0c0c0c"/>
+
+  <!-- Terminal Header -->
+  <rect width="1920" height="40" fill="#1a1a1a"/>
+  <text x="960" y="28" font-family="'Cascadia Code', monospace" font-size="16" fill="#326ce5" text-anchor="middle">Kubernetes Control - Production Cluster</text>
+
+  <!-- Commands -->
+  <g font-family="'Cascadia Code', monospace" font-size="16">
+    <text x="40" y="80" fill="#00ff00">$ kubectl get pods -n production</text>
+    <text x="40" y="110" fill="#ffffff" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="0.5s" fill="freeze"/>
+      NAME                          READY   STATUS    RESTARTS   AGE
+    </text>
+    <text x="40" y="140" fill="#00ff00" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="1s" fill="freeze"/>
+      api-server-7d9c476c7c-2kxmt  1/1     Running   0          2d
+    </text>
+    <text x="40" y="170" fill="#00ff00" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="1.2s" fill="freeze"/>
+      api-server-7d9c476c7c-5jnqw  1/1     Running   0          2d
+    </text>
+    <text x="40" y="200" fill="#00ff00" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="1.4s" fill="freeze"/>
+      api-server-7d9c476c7c-8wmfx  1/1     Running   0          2d
+    </text>
+
+    <text x="40" y="260" fill="#00ff00" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="2s" fill="freeze"/>
+      $ kubectl scale deployment api-server --replicas=5
+    </text>
+    <text x="40" y="290" fill="#ffff00" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="3s" fill="freeze"/>
+      deployment.apps/api-server scaled
+    </text>
+
+    <text x="40" y="350" fill="#00ff00" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="3.5s" fill="freeze"/>
+      $ kubectl rollout status deployment/api-server
+    </text>
+    <text x="40" y="380" fill="#00ffff" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="4s" fill="freeze"/>
+      Waiting for deployment "api-server" rollout to finish...
+    </text>
+    <text x="40" y="410" fill="#00ff00" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="5s" fill="freeze"/>
+      deployment "api-server" successfully rolled out
+    </text>
+  </g>
+
+  <!-- Cluster Info -->
+  <rect y="1040" width="1920" height="40" fill="#1a1a1a"/>
+  <text x="40" y="1065" font-family="'Cascadia Code', monospace" font-size="14" fill="#326ce5">Context: production | Namespace: default | Cluster: eks-prod</text>
+</svg>

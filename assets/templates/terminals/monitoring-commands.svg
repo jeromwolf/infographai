@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#0c0c0c"/>
+
+  <!-- Terminal Header -->
+  <rect width="1920" height="40" fill="#1a1a1a"/>
+  <text x="960" y="28" font-family="'Cascadia Code', monospace" font-size="16" fill="#00ff00" text-anchor="middle">System Monitoring Dashboard</text>
+
+  <!-- htop-style display -->
+  <g font-family="'Cascadia Code', monospace" font-size="14">
+    <text x="40" y="80" fill="#00ffff">CPU [||||||||||||||||        76%]</text>
+    <text x="40" y="110" fill="#00ffff">MEM [||||||||||||||          62%]</text>
+    <text x="40" y="140" fill="#00ffff">SWP [|||                     12%]</text>
+
+    <text x="40" y="200" fill="#ffffff">  PID USER      PRI  NI  VIRT   RES   SHR S CPU% MEM%   TIME+  Command</text>
+    <text x="40" y="230" fill="#00ff00"> 2514 root       20   0  162M  24.1M  8.5M S 45.2  3.2  2:15.23 nginx</text>
+    <text x="40" y="260" fill="#00ff00"> 3421 postgres   20   0  384M  128M  12.3M S 32.1 16.4  5:42.15 postgres</text>
+    <text x="40" y="290" fill="#00ff00"> 4532 node       20   0  512M  96.5M  6.2M S 28.4 12.3  3:21.42 node app.js</text>
+
+    <!-- Docker Stats -->
+    <text x="40" y="380" fill="#00ff00">$ docker stats --no-stream</text>
+    <text x="40" y="410" fill="#ffffff" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="1s" fill="freeze"/>
+      CONTAINER ID   NAME         CPU %   MEM USAGE / LIMIT   MEM %   NET I/O
+    </text>
+    <text x="40" y="440" fill="#00ffff" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="1.5s" fill="freeze"/>
+      a3f4c3d2e1f0   api-server   23.5%   512MiB / 2GiB       25%     1.2GB / 890MB
+    </text>
+    <text x="40" y="470" fill="#00ffff" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="1.7s" fill="freeze"/>
+      b5e6d7c8f9a1   database     45.2%   1.2GiB / 4GiB       30%     5.6GB / 3.2GB
+    </text>
+  </g>
+
+  <!-- Real-time Graph -->
+  <g transform="translate(1200, 200)">
+    <rect width="600" height="300" fill="#1a1a1a" stroke="#00ff00" stroke-width="2"/>
+    <polyline points="0,250 50,240 100,220 150,230 200,210 250,190 300,200 350,180 400,170 450,160 500,150 550,140"
+              fill="none" stroke="#00ff00" stroke-width="2">
+      <animate attributeName="points"
+               values="0,250 50,240 100,220 150,230 200,210 250,190 300,200 350,180 400,170 450,160 500,150 550,140;
+                       50,240 100,220 150,230 200,210 250,190 300,200 350,180 400,170 450,160 500,150 550,140 600,130"
+               dur="2s" repeatCount="indefinite"/>
+    </polyline>
+  </g>
+</svg>

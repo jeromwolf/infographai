@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <style>
+      .terminal-bg { fill: #1a1a1a; }
+      .terminal-header { fill: #2d2d2d; }
+      .terminal-text { fill: #00ff00; font-family: 'Monaco', 'Courier', monospace; font-size: 12px; }
+      .command-text { fill: #ffffff; font-family: 'Monaco', 'Courier', monospace; font-size: 12px; }
+      .prompt { fill: #0099ff; font-family: 'Monaco', 'Courier', monospace; font-size: 12px; }
+      .success-text { fill: #00ff00; }
+      .error-text { fill: #ff4444; }
+      .warning-text { fill: #ffaa00; }
+      .cursor { fill: #00ff00; }
+      
+      @keyframes typing {
+        from { width: 0; }
+        to { width: 100%; }
+      }
+      
+      @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0; }
+      }
+      
+      @keyframes progressBar {
+        0% { width: 0; }
+        100% { width: 300px; }
+      }
+      
+      .typing-effect {
+        overflow: hidden;
+        white-space: nowrap;
+        animation: typing 2s steps(40, end);
+      }
+      
+      .cursor {
+        animation: blink 1s infinite;
+      }
+      
+      .progress-fill {
+        animation: progressBar 3s ease-in-out;
+      }
+      
+      .output-stream {
+        animation: fadeInUp 0.5s ease-out;
+      }
+      
+      @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    </style>
+  </defs>
+  
+  <!-- Terminal Background -->
+  <rect class="terminal-bg" width="800" height="600" rx="8"/>
+  
+  <!-- Terminal Header -->
+  <rect class="terminal-header" width="800" height="30" rx="8 8 0 0"/>
+  <circle cx="20" cy="15" r="6" fill="#ff5f57"/>
+  <circle cx="40" cy="15" r="6" fill="#ffbd2e"/>
+  <circle cx="60" cy="15" r="6" fill="#28ca42"/>
+  <text x="400" y="20" class="command-text" text-anchor="middle" font-size="10">Docker Terminal</text>
+  
+  <!-- Terminal Content -->
+  <g transform="translate(15, 50)">
+    <!-- Command 1: docker --version -->
+    <text x="0" y="20" class="prompt">$ </text>
+    <text x="20" y="20" class="command-text typing-effect">docker --version</text>
+    <text x="0" y="40" class="terminal-text output-stream">Docker version 24.0.5, build ced0996</text>
+    
+    <!-- Command 2: docker pull node -->
+    <text x="0" y="70" class="prompt">$ </text>
+    <text x="20" y="70" class="command-text typing-effect">docker pull node:18-alpine</text>
+    <text x="0" y="90" class="terminal-text output-stream">18-alpine: Pulling from library/node</text>
+    <text x="0" y="105" class="terminal-text output-stream">c9b1b39a6b09: Pull complete</text>
+    <text x="0" y="120" class="terminal-text output-stream">7f5b7fb4cfb5: Pull complete</text>
+    
+    <!-- Progress Bar for Download -->
+    <rect x="0" y="130" width="300" height="8" fill="#333333" rx="4"/>
+    <rect x="0" y="130" width="180" height="8" fill="#00ff00" rx="4" class="progress-fill"/>
+    <text x="310" y="137" class="terminal-text">60%</text>
+    
+    <!-- Command 3: docker build -->
+    <text x="0" y="170" class="prompt">$ </text>
+    <text x="20" y="170" class="command-text typing-effect">docker build -t myapp .</text>
+    <text x="0" y="190" class="success-text output-stream">[+] Building 45.2s (12/12) FINISHED</text>
+    <text x="0" y="205" class="terminal-text output-stream"> => [internal] load .dockerignore</text>
+    <text x="0" y="220" class="terminal-text output-stream"> => [internal] load build definition</text>
+    <text x="0" y="235" class="terminal-text output-stream"> => [1/6] FROM docker.io/library/node:18</text>
+    <text x="0" y="250" class="terminal-text output-stream"> => [2/6] WORKDIR /app</text>
+    <text x="0" y="265" class="terminal-text output-stream"> => [3/6] COPY package*.json ./</text>
+    <text x="0" y="280" class="terminal-text output-stream"> => [4/6] RUN npm install</text>
+    <text x="0" y="295" class="terminal-text output-stream"> => [5/6] COPY . .</text>
+    <text x="0" y="310" class="terminal-text output-stream"> => [6/6] CMD ["npm", "start"]</text>
+    <text x="0" y="325" class="success-text output-stream"> => exporting to image</text>
+    <text x="0" y="340" class="success-text output-stream"> => naming to docker.io/library/myapp</text>
+    
+    <!-- Command 4: docker run -->
+    <text x="0" y="370" class="prompt">$ </text>
+    <text x="20" y="370" class="command-text typing-effect">docker run -d -p 3000:3000 myapp</text>
+    <text x="0" y="390" class="terminal-text output-stream">4f8d6a7b8c9e1f2a3b4c5d6e7f8g9h0i</text>
+    
+    <!-- Command 5: docker ps -->
+    <text x="0" y="420" class="prompt">$ </text>
+    <text x="20" y="420" class="command-text typing-effect">docker ps</text>
+    <text x="0" y="440" class="terminal-text output-stream">CONTAINER ID   IMAGE    COMMAND      CREATED     STATUS      PORTS                    NAMES</text>
+    <text x="0" y="455" class="terminal-text output-stream">4f8d6a7b8c9e   myapp    "npm start"  2s ago      Up 1s       0.0.0.0:3000->3000/tcp   peaceful_darwin</text>
+    
+    <!-- Status -->
+    <text x="0" y="485" class="success-text">✅ Container is running successfully at http://localhost:3000</text>
+    
+    <!-- Current Prompt with Cursor -->
+    <text x="0" y="520" class="prompt">$ </text>
+    <rect x="18" y="508" width="2" height="15" class="cursor"/>
+  </g>
+</svg>

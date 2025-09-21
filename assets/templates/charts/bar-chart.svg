@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+    <defs>
+      <style>
+        @keyframes growBar {
+          from { height: 0; }
+          to { height: var(--bar-height); }
+        }
+        .bar { animation: growBar 1s ease-out forwards; }
+      </style>
+    </defs>
+    <!-- Grid Lines -->
+    <line x1="50" y1="250" x2="350" y2="250" stroke="#F3F4F6" stroke-width="2"/>
+    <line x1="50" y1="50" x2="50" y2="250" stroke="#F3F4F6" stroke-width="2"/>
+    
+    <!-- Bars -->
+    <rect class="bar" x="80" y="150" width="40" height="100" fill="#3B82F6" style="--bar-height: 100px"/>
+    <rect class="bar" x="140" y="100" width="40" height="150" fill="#8B5CF6" style="--bar-height: 150px"/>
+    <rect class="bar" x="200" y="120" width="40" height="130" fill="#10B981" style="--bar-height: 130px"/>
+    <rect class="bar" x="260" y="90" width="40" height="160" fill="#F59E0B" style="--bar-height: 160px"/>
+    
+    <!-- Labels -->
+    <text x="100" y="270" text-anchor="middle" font-size="12">Q1</text>
+    <text x="160" y="270" text-anchor="middle" font-size="12">Q2</text>
+    <text x="220" y="270" text-anchor="middle" font-size="12">Q3</text>
+    <text x="280" y="270" text-anchor="middle" font-size="12">Q4</text>
+  </svg>

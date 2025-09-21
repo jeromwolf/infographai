@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import EnhancedSceneBuilder from '@/components/builder/EnhancedSceneBuilder';
+import ModernSceneBuilder from '@/components/builder/ModernSceneBuilder';
 import type { DrawCommand } from '@/components/animation/DrawingEngine';
 import { presetTemplates, getCategories, getTemplatesByCategory, PresetTemplate } from '@/lib/preset-templates';
 
@@ -186,7 +186,7 @@ export default function BuilderPage() {
 
         {/* Main Builder */}
         <div className="bg-gray-900">
-          <EnhancedSceneBuilder
+          <ModernSceneBuilder
             initialCommands={currentTemplateCommands}
             onSave={handleSaveScene}
           />

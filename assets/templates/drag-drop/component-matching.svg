@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="dragGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="3" dy="3" stdDeviation="3" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1920" height="1080" fill="#1a1a2e"/>
+
+  <!-- Header -->
+  <rect x="200" y="50" width="1520" height="80" fill="url(#dragGradient)" rx="10"/>
+  <text x="960" y="100" font-family="'Inter', sans-serif" font-size="24" fill="white" text-anchor="middle" font-weight="bold">
+    Match Components to Their Functions
+  </text>
+
+  <!-- Left Side - Components -->
+  <text x="300" y="180" font-family="'Inter', sans-serif" font-size="18" fill="white" font-weight="bold">
+    Docker Components
+  </text>
+
+  <g id="draggable-components">
+    <!-- Dockerfile Component -->
+    <g transform="translate(150, 220)">
+      <rect width="300" height="80" fill="#2d2d4a" stroke="#667eea" stroke-width="2" rx="8" filter="url(#shadow)"/>
+      <rect x="10" y="10" width="60" height="60" fill="#667eea" rx="5"/>
+      <text x="40" y="50" font-family="'Cascadia Code', monospace" font-size="24" fill="white" text-anchor="middle">
+        📄
+      </text>
+      <text x="90" y="35" font-family="'Inter', sans-serif" font-size="16" fill="white" font-weight="bold">
+        Dockerfile
+      </text>
+      <text x="90" y="55" font-family="'Inter', sans-serif" font-size="12" fill="#cccccc">
+        Configuration file
+      </text>
+
+      <!-- Drag animation -->
+      <animateTransform attributeName="transform"
+                        values="translate(150, 220); translate(170, 200); translate(150, 220)"
+                        dur="3s" begin="2s" repeatCount="1"/>
+    </g>
+
+    <!-- Image Component -->
+    <g transform="translate(150, 320)">
+      <rect width="300" height="80" fill="#2d2d4a" stroke="#06b6d4" stroke-width="2" rx="8" filter="url(#shadow)"/>
+      <rect x="10" y="10" width="60" height="60" fill="#06b6d4" rx="5"/>
+      <text x="40" y="50" font-family="'Cascadia Code', monospace" font-size="24" fill="white" text-anchor="middle">
+        📦
+      </text>
+      <text x="90" y="35" font-family="'Inter', sans-serif" font-size="16" fill="white" font-weight="bold">
+        Image
+      </text>
+      <text x="90" y="55" font-family="'Inter', sans-serif" font-size="12" fill="#cccccc">
+        Template snapshot
+      </text>
+    </g>
+
+    <!-- Container Component -->
+    <g transform="translate(150, 420)">
+      <rect width="300" height="80" fill="#2d2d4a" stroke="#10b981" stroke-width="2" rx="8" filter="url(#shadow)"/>
+      <rect x="10" y="10" width="60" height="60" fill="#10b981" rx="5"/>
+      <text x="40" y="50" font-family="'Cascadia Code', monospace" font-size="24" fill="white" text-anchor="middle">
+        🏃
+      </text>
+      <text x="90" y="35" font-family="'Inter', sans-serif" font-size="16" fill="white" font-weight="bold">
+        Container
+      </text>
+      <text x="90" y="55" font-family="'Inter', sans-serif" font-size="12" fill="#cccccc">
+        Running instance
+      </text>
+
+      <!-- Successful drop animation -->
+      <animateTransform attributeName="transform"
+                        values="translate(150, 420); translate(1200, 420); translate(1200, 420)"
+                        dur="2s" begin="4s" repeatCount="1"/>
+    </g>
+  </g>
+
+  <!-- Right Side - Drop Zones -->
+  <text x="1300" y="180" font-family="'Inter', sans-serif" font-size="18" fill="white" font-weight="bold">
+    Functions
+  </text>
+
+  <g id="drop-zones">
+    <!-- Build Instructions Drop Zone -->
+    <g transform="translate(1100, 220)">
+      <rect width="400" height="80" fill="transparent" stroke="#666" stroke-width="2" stroke-dasharray="5,5" rx="8"/>
+      <text x="200" y="30" font-family="'Inter', sans-serif" font-size="14" fill="#999" text-anchor="middle">
+        Contains build instructions and
+      </text>
+      <text x="200" y="50" font-family="'Inter', sans-serif" font-size="14" fill="#999" text-anchor="middle">
+        configuration for creating images
+      </text>
+
+      <!-- Drop success -->
+      <rect width="400" height="80" fill="#667eea" opacity="0" rx="8">
+        <animate attributeName="opacity" values="0;0.2;0" dur="1s" begin="2.5s" repeatCount="1"/>
+      </rect>
+    </g>
+
+    <!-- Template Drop Zone -->
+    <g transform="translate(1100, 320)">
+      <rect width="400" height="80" fill="transparent" stroke="#666" stroke-width="2" stroke-dasharray="5,5" rx="8"/>
+      <text x="200" y="30" font-family="'Inter', sans-serif" font-size="14" fill="#999" text-anchor="middle">
+        Read-only template used to create
+      </text>
+      <text x="200" y="50" font-family="'Inter', sans-serif" font-size="14" fill="#999" text-anchor="middle">
+        containers with specific software
+      </text>
+    </g>
+
+    <!-- Running Instance Drop Zone -->
+    <g transform="translate(1100, 420)">
+      <rect width="400" height="80" fill="transparent" stroke="#10b981" stroke-width="3" stroke-dasharray="5,5" rx="8">
+        <animate attributeName="stroke" values="#10b981;#666;#10b981" dur="1s" begin="4s" repeatCount="3"/>
+      </rect>
+      <text x="200" y="30" font-family="'Inter', sans-serif" font-size="14" fill="#999" text-anchor="middle">
+        Executable instance of an image
+      </text>
+      <text x="200" y="50" font-family="'Inter', sans-serif" font-size="14" fill="#999" text-anchor="middle">
+        that runs applications
+      </text>
+
+      <!-- Drop success animation -->
+      <rect width="400" height="80" fill="#10b981" opacity="0" rx="8">
+        <animate attributeName="opacity" values="0;0.3;0" dur="1s" begin="6s" repeatCount="1"/>
+      </rect>
+
+      <!-- Success checkmark -->
+      <g opacity="0">
+        <animate attributeName="opacity" values="0;1" dur="0.5s" begin="6.5s" fill="freeze"/>
+        <circle cx="360" cy="20" r="15" fill="#10b981"/>
+        <path d="M 352 20 L 358 26 L 368 16" stroke="white" stroke-width="2" fill="none"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Connection Lines -->
+  <g opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.5s" begin="7s" fill="freeze"/>
+    <!-- Correct connections -->
+    <line x1="450" y1="260" x2="1100" y2="260" stroke="#10b981" stroke-width="3" stroke-dasharray="5,5"/>
+    <line x1="450" y1="460" x2="1100" y2="460" stroke="#10b981" stroke-width="3" stroke-dasharray="5,5"/>
+
+    <!-- Incorrect connection -->
+    <line x1="450" y1="360" x2="1100" y2="360" stroke="#ef4444" stroke-width="3" stroke-dasharray="5,5" opacity="0.5"/>
+    <text x="775" y="350" font-family="'Inter', sans-serif" font-size="12" fill="#ef4444" text-anchor="middle">
+      Try again!
+    </text>
+  </g>
+
+  <!-- Score Display -->
+  <g transform="translate(960, 600)" opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.5s" begin="8s" fill="freeze"/>
+    <rect x="-150" y="-40" width="300" height="80" fill="#10b981" rx="10"/>
+    <text x="0" y="-10" font-family="'Inter', sans-serif" font-size="18" fill="white" text-anchor="middle" font-weight="bold">
+      Great Job! 🎉
+    </text>
+    <text x="0" y="15" font-family="'Inter', sans-serif" font-size="14" fill="white" text-anchor="middle">
+      2/3 Correct Matches
+    </text>
+  </g>
+</svg>

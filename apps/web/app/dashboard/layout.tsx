@@ -3,16 +3,18 @@
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { 
-  Home, 
-  Video, 
-  FolderOpen, 
-  CreditCard, 
-  Settings, 
+import {
+  Home,
+  Video,
+  FolderOpen,
+  CreditCard,
+  Settings,
   LogOut,
   Menu,
   X,
-  Plus
+  Plus,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { api } from '@/lib/api';
 
@@ -31,9 +33,20 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [desktopSidebarOpen, setDesktopSidebarOpen] = useState(true);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // 테스트 모드 체크 (URL에 ?test=true가 있으면 로그인 스킵)
+    const urlParams = new URLSearchParams(window.location.search);
+    const isTestMode = urlParams.get('test') === 'true';
+
+    if (isTestMode) {
+      // 테스트 모드: 로그인 없이 바로 사용
+      setLoading(false);
+      return;
+    }
+
     // 로그인 상태 확인
     const checkAuth = async () => {
       const token = localStorage.getItem('token');
@@ -41,7 +54,7 @@ export default function DashboardLayout({
         router.push('/login');
         return;
       }
-      
+
       try {
         // 토큰 유효성 검증
         await api.getCurrentUser();
@@ -128,12 +141,18 @@ export default function DashboardLayout({
         </div>
       </div>
 
-      {/* Static sidebar for desktop */}
-      <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+      {/* Static sidebar for desktop with toggle */}
+      <div className={`hidden md:flex md:flex-col md:fixed md:inset-y-0 transition-all duration-300 ${
+        desktopSidebarOpen ? 'md:w-64' : 'md:w-16'
+      }`}>
         <div className="flex-1 flex flex-col min-h-0 bg-white border-r border-gray-200">
           <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
             <div className="flex items-center flex-shrink-0 px-4">
-              <h1 className="text-2xl font-bold text-primary-600">InfoGraphAI</h1>
+              {desktopSidebarOpen ? (
+                <h1 className="text-2xl font-bold text-primary-600">InfoGraphAI</h1>
+              ) : (
+                <h1 className="text-xl font-bold text-primary-600">IG</h1>
+              )}
             </div>
             <nav className="mt-5 flex-1 px-2 space-y-1">
               {navigation.map((item) => (
@@ -141,9 +160,10 @@ export default function DashboardLayout({
                   key={item.name}
                   href={item.href}
                   className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  title={!desktopSidebarOpen ? item.name : undefined}
                 >
-                  <item.icon className="mr-3 h-5 w-5" />
-                  {item.name}
+                  <item.icon className={desktopSidebarOpen ? "mr-3 h-5 w-5" : "mx-auto h-5 w-5"} />
+                  {desktopSidebarOpen && item.name}
                 </Link>
               ))}
             </nav>
@@ -153,22 +173,39 @@ export default function DashboardLayout({
             <button
               onClick={handleLogout}
               className="flex-shrink-0 w-full group block"
+              title={!desktopSidebarOpen ? "로그아웃" : undefined}
             >
               <div className="flex items-center">
-                <LogOut className="inline-block h-5 w-5 text-gray-400 group-hover:text-gray-500" />
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
-                    로그아웃
-                  </p>
-                </div>
+                <LogOut className={`inline-block h-5 w-5 text-gray-400 group-hover:text-gray-500 ${
+                  !desktopSidebarOpen ? 'mx-auto' : ''
+                }`} />
+                {desktopSidebarOpen && (
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
+                      로그아웃
+                    </p>
+                  </div>
+                )}
               </div>
             </button>
           </div>
         </div>
+
+        {/* Toggle button */}
+        <button
+          onClick={() => setDesktopSidebarOpen(!desktopSidebarOpen)}
+          className="absolute -right-3 top-8 z-40 bg-white border border-gray-200 rounded-full p-1 hover:bg-gray-50 shadow-md"
+        >
+          {desktopSidebarOpen ? (
+            <ChevronLeft className="h-4 w-4 text-gray-600" />
+          ) : (
+            <ChevronRight className="h-4 w-4 text-gray-600" />
+          )}
+        </button>
       </div>
 
       {/* Main content */}
-      <div className="md:pl-64 flex flex-col flex-1">
+      <div className={`${desktopSidebarOpen ? 'md:pl-64' : 'md:pl-16'} flex flex-col flex-1 transition-all duration-300`}>
         <div className="sticky top-0 z-10 md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-gray-50">
           <button
             className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"

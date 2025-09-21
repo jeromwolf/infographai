@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <defs>
+    <style>
+      .editor-bg { fill: #f8f9fa; }
+      .sidebar { fill: #e9ecef; }
+      .line-numbers { fill: #6c757d; font-family: 'Monaco', monospace; font-size: 12px; }
+      .code-text { fill: #212529; font-family: 'Monaco', monospace; font-size: 12px; }
+      .sql-keyword { fill: #0d6efd; font-weight: bold; text-transform: uppercase; }
+      .sql-string { fill: #198754; }
+      .sql-comment { fill: #6c757d; }
+      .sql-function { fill: #dc3545; }
+      .sql-number { fill: #fd7e14; }
+      .cursor { fill: #0d6efd; }
+      
+      @keyframes queryExecute {
+        0% { fill: #ffc107; }
+        50% { fill: #198754; }
+        100% { fill: #0d6efd; }
+      }
+      
+      .executing-query {
+        animation: queryExecute 3s ease-in-out;
+      }
+      
+      @keyframes resultAppear {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      .result-row {
+        animation: resultAppear 0.8s ease-out;
+      }
+    </style>
+  </defs>
+  
+  <!-- Editor Background -->
+  <rect class="editor-bg" width="800" height="500"/>
+  
+  <!-- Sidebar -->
+  <rect class="sidebar" width="50" height="500"/>
+  
+  <!-- Database Icon -->
+  <text x="15" y="25" fill="#0d6efd" font-size="16">🗃️</text>
+  
+  <!-- Tab Bar -->
+  <rect x="50" y="0" width="750" height="30" fill="#dee2e6"/>
+  <text x="60" y="18" class="code-text">sales_analysis.sql</text>
+  
+  <!-- Line Numbers -->
+  <g class="line-numbers">
+    <text x="35" y="60">1</text>
+    <text x="35" y="80">2</text>
+    <text x="35" y="100">3</text>
+    <text x="35" y="120">4</text>
+    <text x="35" y="140">5</text>
+    <text x="35" y="160">6</text>
+    <text x="35" y="180">7</text>
+  </g>
+  
+  <!-- SQL Query Content -->
+  <g class="sql-content">
+    <!-- SELECT customer_id, SUM(amount) as total_sales -->
+    <text x="60" y="60" class="sql-keyword executing-query">SELECT</text>
+    <text x="110" y="60" class="code-text">customer_id,</text>
+    <text x="190" y="60" class="sql-function">SUM</text>
+    <text x="220" y="60" class="code-text">(amount)</text>
+    <text x="280" y="60" class="sql-keyword">AS</text>
+    <text x="305" y="60" class="code-text">total_sales</text>
+    
+    <!-- FROM orders -->
+    <text x="60" y="80" class="sql-keyword">FROM</text>
+    <text x="105" y="80" class="code-text">orders</text>
+    
+    <!-- WHERE order_date >= '2023-01-01' -->
+    <text x="60" y="100" class="sql-keyword">WHERE</text>
+    <text x="110" y="100" class="code-text">order_date</text>
+    <text x="190" y="100" class="code-text">&gt;=</text>
+    <text x="210" y="100" class="sql-string">'2023-01-01'</text>
+    
+    <!-- GROUP BY customer_id -->
+    <text x="60" y="120" class="sql-keyword">GROUP BY</text>
+    <text x="130" y="120" class="code-text">customer_id</text>
+    
+    <!-- HAVING SUM(amount) > 1000 -->
+    <text x="60" y="140" class="sql-keyword">HAVING</text>
+    <text x="115" y="140" class="sql-function">SUM</text>
+    <text x="145" y="140" class="code-text">(amount)</text>
+    <text x="200" y="140" class="code-text">&gt;</text>
+    <text x="215" y="140" class="sql-number">1000</text>
+    
+    <!-- ORDER BY total_sales DESC -->
+    <text x="60" y="160" class="sql-keyword">ORDER BY</text>
+    <text x="130" y="160" class="code-text">total_sales</text>
+    <text x="210" y="160" class="sql-keyword">DESC</text>
+    
+    <!-- LIMIT 10; -->
+    <text x="60" y="180" class="sql-keyword">LIMIT</text>
+    <text x="105" y="180" class="sql-number">10</text>
+    <text x="125" y="180" class="code-text">;</text>
+  </g>
+  
+  <!-- Query Results -->
+  <rect x="60" y="220" width="720" height="240" fill="#ffffff" stroke="#dee2e6" stroke-width="1"/>
+  
+  <!-- Results Header -->
+  <rect x="60" y="220" width="720" height="30" fill="#e9ecef"/>
+  <text x="80" y="240" class="code-text" font-weight="bold">customer_id</text>
+  <text x="300" y="240" class="code-text" font-weight="bold">total_sales</text>
+  <text x="500" y="240" class="code-text" font-weight="bold">order_count</text>
+  
+  <!-- Result Rows -->
+  <g class="query-results">
+    <text x="80" y="270" class="code-text result-row">CUST_001</text>
+    <text x="300" y="270" class="sql-number result-row">$15,420.50</text>
+    <text x="500" y="270" class="sql-number result-row">47</text>
+    
+    <text x="80" y="290" class="code-text result-row">CUST_045</text>
+    <text x="300" y="290" class="sql-number result-row">$12,890.25</text>
+    <text x="500" y="290" class="sql-number result-row">38</text>
+    
+    <text x="80" y="310" class="code-text result-row">CUST_123</text>
+    <text x="300" y="310" class="sql-number result-row">$11,567.80</text>
+    <text x="500" y="310" class="sql-number result-row">29</text>
+    
+    <text x="80" y="330" class="code-text result-row">CUST_089</text>
+    <text x="300" y="330" class="sql-number result-row">$9,845.60</text>
+    <text x="500" y="330" class="sql-number result-row">34</text>
+  </g>
+  
+  <!-- Status Bar -->
+  <rect x="60" y="430" width="720" height="25" fill="#198754"/>
+  <text x="80" y="447" fill="white" font-size="11">✅ Query executed successfully. 4 rows returned in 0.023s</text>
+  
+  <!-- Execute Button -->
+  <rect x="650" y="185" width="80" height="25" fill="#0d6efd" rx="4"/>
+  <text x="685" y="202" fill="white" font-size="12">Execute</text>
+</svg>

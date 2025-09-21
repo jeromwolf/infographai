@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <style>
+      .terminal-bg { fill: #2e3440; }
+      .terminal-header { fill: #3b4252; }
+      .linux-text { fill: #88c0d0; font-family: 'Monaco', 'Courier', monospace; font-size: 12px; }
+      .command-text { fill: #eceff4; font-family: 'Monaco', 'Courier', monospace; font-size: 12px; }
+      .prompt { fill: #a3be8c; font-family: 'Monaco', 'Courier', monospace; font-size: 12px; font-weight: bold; }
+      .directory-text { fill: #5e81ac; }
+      .file-text { fill: #eceff4; }
+      .executable-text { fill: #a3be8c; }
+      .link-text { fill: #88c0d0; }
+      .size-text { fill: #d08770; }
+      .process-text { fill: #b48ead; }
+      
+      .system-monitor {
+        animation: systemPulse 2s ease-in-out infinite;
+      }
+      
+      @keyframes systemPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+      }
+    </style>
+  </defs>
+  
+  <!-- Terminal Background -->
+  <rect class="terminal-bg" width="800" height="600" rx="8"/>
+  
+  <!-- Terminal Header -->
+  <rect class="terminal-header" width="800" height="30" rx="8 8 0 0"/>
+  <circle cx="20" cy="15" r="6" fill="#bf616a"/>
+  <circle cx="40" cy="15" r="6" fill="#ebcb8b"/>
+  <circle cx="60" cy="15" r="6" fill="#a3be8c"/>
+  <text x="400" y="20" class="command-text" text-anchor="middle" font-size="10">Linux System Terminal</text>
+  
+  <!-- Linux Logo -->
+  <text x="720" y="20" fill="#88c0d0" font-size="12">🐧</text>
+  
+  <!-- Terminal Content -->
+  <g transform="translate(15, 50)">
+    <!-- Command 1: pwd & ls -->
+    <text x="0" y="20" class="prompt">user@server:~/project$ </text>
+    <text x="160" y="20" class="command-text typing-effect">pwd</text>
+    <text x="0" y="40" class="directory-text">/home/user/project</text>
+    
+    <text x="0" y="70" class="prompt">user@server:~/project$ </text>
+    <text x="160" y="70" class="command-text typing-effect">ls -la</text>
+    <text x="0" y="90" class="command-text">total 48</text>
+    <text x="0" y="105" class="directory-text">drwxr-xr-x 3 user user 4096 Dec 14 10:30 .</text>
+    <text x="0" y="120" class="directory-text">drwxr-xr-x 5 user user 4096 Dec 14 09:15 ..</text>
+    <text x="0" y="135" class="file-text">-rw-r--r-- 1 user user  2048 Dec 14 10:25 config.yaml</text>
+    <text x="0" y="150" class="directory-text">drwxr-xr-x 2 user user 4096 Dec 14 10:20 data/</text>
+    <text x="0" y="165" class="executable-text">-rwxr-xr-x 1 user user  8192 Dec 14 10:30 deploy.sh</text>
+    <text x="0" y="180" class="file-text">-rw-r--r-- 1 user user  1024 Dec 14 10:15 README.md</text>
+    <text x="0" y="195" class="link-text">lrwxrwxrwx 1 user user    12 Dec 14 10:10 logs -> /var/log/app</text>
+    
+    <!-- Command 2: System monitoring -->
+    <text x="0" y="225" class="prompt">user@server:~/project$ </text>
+    <text x="160" y="225" class="command-text typing-effect">top -n 1</text>
+    <text x="0" y="245" class="linux-text">Tasks: 142 total,   2 running, 140 sleeping</text>
+    <text x="0" y="260" class="linux-text">%Cpu(s):  12.5 us,  3.2 sy,  0.0 ni, 84.1 id</text>
+    <text x="0" y="275" class="linux-text">MiB Mem :  8192.0 total,  3456.2 free,  2847.8 used</text>
+    
+    <!-- Process Table Header -->
+    <text x="0" y="300" class="command-text">  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND</text>
+    <text x="0" y="315" class="process-text system-monitor"> 1234 user      20   0  123456  45678  12345 R  25.0  0.6   0:12.34 node</text>
+    <text x="0" y="330" class="process-text"> 5678 user      20   0   98765  23456   8901 S   8.3  0.3   0:05.67 docker</text>
+    <text x="0" y="345" class="process-text"> 9012 user      20   0   67890  12345   4567 S   2.1  0.2   0:01.23 nginx</text>
+    
+    <!-- Command 3: Disk usage -->
+    <text x="0" y="375" class="prompt">user@server:~/project$ </text>
+    <text x="160" y="375" class="command-text typing-effect">df -h</text>
+    <text x="0" y="395" class="command-text">Filesystem      Size  Used Avail Use% Mounted on</text>
+    <text x="0" y="410" class="command-text">/dev/sda1        20G   12G  7.1G  63% /</text>
+    <text x="0" y="425" class="command-text">/dev/sda2       100G   45G   51G  47% /home</text>
+    <text x="0" y="440" class="command-text">tmpfs           4.0G     0  4.0G   0% /tmp</text>
+    
+    <!-- Command 4: Network status -->
+    <text x="0" y="470" class="prompt">user@server:~/project$ </text>
+    <text x="160" y="470" class="command-text typing-effect">netstat -tuln | grep :80</text>
+    <text x="0" y="490" class="linux-text">tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN</text>
+    <text x="0" y="505" class="linux-text">tcp6       0      0 :::80                   :::*                    LISTEN</text>
+    
+    <!-- Command 5: Service status -->
+    <text x="0" y="535" class="prompt">user@server:~/project$ </text>
+    <text x="160" y="535" class="command-text typing-effect">systemctl status nginx</text>
+    <text x="0" y="555" class="linux-text">● nginx.service - A high performance web server</text>
+    <text x="0" y="570" class="linux-text">   Active: </text>
+    <text x="70" y="570" class="executable-text">active (running)</text>
+    <text x="170" y="570" class="linux-text">since Wed 2023-12-14 10:00:00 UTC</text>
+  </g>
+  
+  <!-- System Status Indicators -->
+  <g transform="translate(600, 50)">
+    <rect x="0" y="0" width="150" height="100" fill="#3b4252" rx="5"/>
+    <text x="75" y="15" class="linux-text" text-anchor="middle" font-size="10">System Status</text>
+    <text x="10" y="35" class="command-text" font-size="10">CPU: </text>
+    <rect x="40" y="28" width="80" height="8" fill="#4c566a" rx="4"/>
+    <rect x="40" y="28" width="30" height="8" fill="#a3be8c" rx="4"/>
+    <text x="130" y="35" class="size-text" font-size="9">37%</text>
+    
+    <text x="10" y="55" class="command-text" font-size="10">MEM: </text>
+    <rect x="40" y="48" width="80" height="8" fill="#4c566a" rx="4"/>
+    <rect x="40" y="48" width="45" height="8" fill="#ebcb8b" rx="4"/>
+    <text x="130" y="55" class="size-text" font-size="9">56%</text>
+    
+    <text x="10" y="75" class="command-text" font-size="10">DISK: </text>
+    <rect x="40" y="68" width="80" height="8" fill="#4c566a" rx="4"/>
+    <rect x="40" y="68" width="50" height="8" fill="#d08770" rx="4"/>
+    <text x="130" y="75" class="size-text" font-size="9">63%</text>
+    
+    <circle cx="75" cy="90" r="4" fill="#a3be8c" class="system-monitor"/>
+    <text x="85" y="94" class="executable-text" font-size="9">Online</text>
+  </g>
+</svg>

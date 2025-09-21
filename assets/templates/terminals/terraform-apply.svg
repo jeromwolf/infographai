@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#0c0c0c"/>
+
+  <!-- Terminal Header -->
+  <rect width="1920" height="40" fill="#1a1a1a"/>
+  <text x="960" y="28" font-family="'Cascadia Code', monospace" font-size="16" fill="#7e3ff2" text-anchor="middle">Terraform Infrastructure Deployment</text>
+
+  <!-- Commands and Output -->
+  <g font-family="'Cascadia Code', monospace" font-size="16">
+    <text x="40" y="80" fill="#00ff00">$ terraform plan</text>
+    <text x="40" y="110" fill="#ffffff" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="0.5s" fill="freeze"/>
+      Refreshing Terraform state in-memory prior to plan...
+    </text>
+
+    <text x="40" y="170" fill="#00ffff" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="1.5s" fill="freeze"/>
+      Terraform will perform the following actions:
+    </text>
+
+    <text x="40" y="210" fill="#00ff00" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="2s" fill="freeze"/>
+      + aws_instance.web_server
+    </text>
+    <text x="60" y="240" fill="#ffffff" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="2.2s" fill="freeze"/>
+      ami:           "ami-0c55b159cbfafe1f0"
+    </text>
+    <text x="60" y="270" fill="#ffffff" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="2.4s" fill="freeze"/>
+      instance_type: "t3.micro"
+    </text>
+
+    <text x="40" y="330" fill="#ffff00" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="3s" fill="freeze"/>
+      Plan: 1 to add, 0 to change, 0 to destroy.
+    </text>
+
+    <text x="40" y="390" fill="#00ff00" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="3.5s" fill="freeze"/>
+      $ terraform apply -auto-approve
+    </text>
+
+    <text x="40" y="420" fill="#00ffff" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="4s" fill="freeze"/>
+      aws_instance.web_server: Creating...
+    </text>
+
+    <!-- Progress Bar -->
+    <rect x="40" y="450" width="500" height="20" fill="#1a1a1a" stroke="#7e3ff2" stroke-width="2" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="4.5s" fill="freeze"/>
+    </rect>
+    <rect x="42" y="452" width="0" height="16" fill="#7e3ff2">
+      <animate attributeName="width" values="0;496" dur="3s" begin="4.5s" fill="freeze"/>
+    </rect>
+
+    <text x="40" y="510" fill="#00ff00" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="7.5s" fill="freeze"/>
+      aws_instance.web_server: Creation complete after 42s
+    </text>
+
+    <text x="40" y="570" fill="#00ff00" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.5s" begin="8s" fill="freeze"/>
+      Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+    </text>
+  </g>
+</svg>

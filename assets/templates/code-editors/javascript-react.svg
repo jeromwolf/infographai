@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <defs>
+    <style>
+      .editor-bg { fill: #1e1e1e; }
+      .sidebar { fill: #252526; }
+      .line-numbers { fill: #858585; font-family: 'Monaco', monospace; font-size: 12px; }
+      .code-text { fill: #d4d4d4; font-family: 'Monaco', monospace; font-size: 12px; }
+      .keyword { fill: #569cd6; }
+      .string { fill: #ce9178; }
+      .comment { fill: #6a9955; }
+      .function { fill: #dcdcaa; }
+      .variable { fill: #9cdcfe; }
+      .cursor { fill: #ffffff; }
+      
+      @keyframes typing {
+        from { width: 0; }
+        to { width: 100%; }
+      }
+      
+      @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0; }
+      }
+      
+      .typing-animation {
+        overflow: hidden;
+        white-space: nowrap;
+        animation: typing 3s steps(40, end);
+      }
+      
+      .cursor {
+        animation: blink 1s infinite;
+      }
+      
+      .syntax-highlight {
+        animation: fadeIn 0.5s ease-in;
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+    </style>
+  </defs>
+  
+  <!-- Editor Background -->
+  <rect class="editor-bg" width="800" height="500"/>
+  
+  <!-- Sidebar -->
+  <rect class="sidebar" width="60" height="500"/>
+  
+  <!-- File Explorer Icons -->
+  <circle cx="20" cy="30" r="3" fill="#f44747"/>
+  <circle cx="30" cy="30" r="3" fill="#ffcc02"/>  
+  <circle cx="40" cy="30" r="3" fill="#00ff00"/>
+  
+  <!-- Tab Bar -->
+  <rect x="60" y="0" width="740" height="35" fill="#2d2d30"/>
+  <rect x="70" y="5" width="120" height="25" fill="#1e1e1e" rx="3"/>
+  <text x="130" y="20" class="code-text">App.js ×</text>
+  
+  <!-- Line Numbers -->
+  <g class="line-numbers">
+    <text x="45" y="70">1</text>
+    <text x="45" y="90">2</text>  
+    <text x="45" y="110">3</text>
+    <text x="45" y="130">4</text>
+    <text x="45" y="150">5</text>
+    <text x="45" y="170">6</text>
+    <text x="45" y="190">7</text>
+    <text x="45" y="210">8</text>
+    <text x="45" y="230">9</text>
+    <text x="45" y="250">10</text>
+  </g>
+  
+  <!-- Code Content -->
+  <g class="code-content">
+    <!-- Line 1: import React -->
+    <text x="80" y="70" class="keyword syntax-highlight">import</text>
+    <text x="125" y="70" class="variable syntax-highlight">React</text>
+    <text x="165" y="70" class="keyword syntax-highlight">from</text>
+    <text x="205" y="70" class="string syntax-highlight">'react'</text>
+    
+    <!-- Line 2: empty -->
+    
+    <!-- Line 3: function App() { -->
+    <text x="80" y="110" class="keyword syntax-highlight">function</text>
+    <text x="140" y="110" class="function syntax-highlight">App</text>
+    <text x="165" y="110" class="code-text syntax-highlight">() {</text>
+    
+    <!-- Line 4: const [count, setCount] = useState(0) -->
+    <text x="100" y="130" class="keyword syntax-highlight">const</text>
+    <text x="140" y="130" class="code-text syntax-highlight">[</text>
+    <text x="150" y="130" class="variable syntax-highlight">count</text>
+    <text x="185" y="130" class="code-text syntax-highlight">,</text>
+    <text x="195" y="130" class="variable syntax-highlight">setCount</text>
+    <text x="265" y="130" class="code-text syntax-highlight">] =</text>
+    <text x="285" y="130" class="function syntax-highlight">useState</text>
+    <text x="340" y="130" class="code-text syntax-highlight">(</text>
+    <text x="350" y="130" class="string syntax-highlight">0</text>
+    <text x="360" y="130" class="code-text syntax-highlight">)</text>
+    
+    <!-- Line 5: empty -->
+    
+    <!-- Line 6: return ( -->
+    <text x="100" y="170" class="keyword syntax-highlight">return</text>
+    <text x="145" y="170" class="code-text syntax-highlight">(</text>
+    
+    <!-- Line 7: <div> -->
+    <text x="120" y="190" class="code-text syntax-highlight">&lt;</text>
+    <text x="130" y="190" class="keyword syntax-highlight">div</text>
+    <text x="155" y="190" class="code-text syntax-highlight">&gt;</text>
+    
+    <!-- Line 8: <h1>Count: {count}</h1> -->
+    <text x="140" y="210" class="code-text syntax-highlight">&lt;</text>
+    <text x="150" y="210" class="keyword syntax-highlight">h1</text>
+    <text x="170" y="210" class="code-text syntax-highlight">&gt;</text>
+    <text x="180" y="210" class="string typing-animation">Count: {count}</text>
+    <text x="280" y="210" class="code-text syntax-highlight">&lt;/</text>
+    <text x="295" y="210" class="keyword syntax-highlight">h1</text>
+    <text x="315" y="210" class="code-text syntax-highlight">&gt;</text>
+    
+    <!-- Line 9: <button onClick={...}> -->
+    <text x="140" y="230" class="code-text syntax-highlight">&lt;</text>
+    <text x="150" y="230" class="keyword syntax-highlight">button</text>
+    <text x="200" y="230" class="variable syntax-highlight">onClick</text>
+    <text x="250" y="230" class="code-text syntax-highlight">={</text>
+    <text x="265" y="230" class="function syntax-highlight">() =&gt; setCount(count + 1)</text>
+    <text x="420" y="230" class="code-text syntax-highlight">}&gt;</text>
+    
+    <!-- Line 10: Increment -->
+    <text x="160" y="250" class="string typing-animation">Increment</text>
+  </g>
+  
+  <!-- Cursor -->
+  <rect x="220" y="240" width="2" height="15" class="cursor"/>
+  
+  <!-- Status Bar -->
+  <rect x="0" y="480" width="800" height="20" fill="#007acc"/>
+  <text x="10" y="495" class="code-text" fill="white" font-size="10">React.js • Line 10, Column 12 • UTF-8 • JavaScript</text>
+</svg>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+    <defs>
+      <style>
+        @keyframes drawPie {
+          from { stroke-dashoffset: 440; }
+          to { stroke-dashoffset: 0; }
+        }
+        .pie-segment {
+          animation: drawPie 2s ease-out forwards;
+          stroke-dasharray: 440;
+        }
+      </style>
+    </defs>
+    <circle cx="150" cy="150" r="70" fill="none" stroke="#3B82F6" stroke-width="60" 
+            stroke-dasharray="110 330" stroke-dashoffset="-55" class="pie-segment"/>
+    <circle cx="150" cy="150" r="70" fill="none" stroke="#8B5CF6" stroke-width="60" 
+            stroke-dasharray="88 352" stroke-dashoffset="-165" class="pie-segment"/>
+    <circle cx="150" cy="150" r="70" fill="none" stroke="#10B981" stroke-width="60" 
+            stroke-dasharray="66 374" stroke-dashoffset="-253" class="pie-segment"/>
+    <circle cx="150" cy="150" r="70" fill="none" stroke="#F59E0B" stroke-width="60" 
+            stroke-dasharray="176 264" stroke-dashoffset="-319" class="pie-segment"/>
+  </svg>

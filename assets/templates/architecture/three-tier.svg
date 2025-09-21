@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <style>
+      .tier-box { fill: #f0f4f8; stroke: #4a5568; stroke-width: 2; rx: 8; }
+      .tier-title { font-size: 18px; font-weight: bold; fill: #2d3748; }
+      .component { fill: #ffffff; stroke: #3182ce; stroke-width: 2; rx: 4; }
+      .component-text { font-size: 14px; fill: #2d3748; text-anchor: middle; }
+      .arrow { stroke: #3182ce; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      @keyframes flowDown {
+        0% { stroke-dashoffset: 10; }
+        100% { stroke-dashoffset: 0; }
+      }
+      .animated-arrow {
+        stroke-dasharray: 5, 5;
+        animation: flowDown 1s linear infinite;
+      }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#3182ce" />
+    </marker>
+  </defs>
+  
+  <!-- Presentation Tier -->
+  <g id="presentation-tier">
+    <rect class="tier-box" x="50" y="50" width="700" height="150"/>
+    <text class="tier-title" x="400" y="80">Presentation Tier</text>
+    <rect class="component" x="100" y="100" width="120" height="60"/>
+    <text class="component-text" x="160" y="135">Web UI</text>
+    <rect class="component" x="340" y="100" width="120" height="60"/>
+    <text class="component-text" x="400" y="135">Mobile App</text>
+    <rect class="component" x="580" y="100" width="120" height="60"/>
+    <text class="component-text" x="640" y="135">Admin Panel</text>
+  </g>
+  
+  <!-- Business Logic Tier -->
+  <g id="business-tier">
+    <rect class="tier-box" x="50" y="250" width="700" height="150"/>
+    <text class="tier-title" x="400" y="280">Business Logic Tier</text>
+    <rect class="component" x="150" y="300" width="120" height="60"/>
+    <text class="component-text" x="210" y="335">API Gateway</text>
+    <rect class="component" x="340" y="300" width="120" height="60"/>
+    <text class="component-text" x="400" y="335">Services</text>
+    <rect class="component" x="530" y="300" width="120" height="60"/>
+    <text class="component-text" x="590" y="335">Auth Service</text>
+  </g>
+  
+  <!-- Data Tier -->
+  <g id="data-tier">
+    <rect class="tier-box" x="50" y="450" width="700" height="150"/>
+    <text class="tier-title" x="400" y="480">Data Tier</text>
+    <rect class="component" x="150" y="500" width="120" height="60"/>
+    <text class="component-text" x="210" y="535">PostgreSQL</text>
+    <rect class="component" x="340" y="500" width="120" height="60"/>
+    <text class="component-text" x="400" y="535">Redis Cache</text>
+    <rect class="component" x="530" y="500" width="120" height="60"/>
+    <text class="component-text" x="590" y="535">S3 Storage</text>
+  </g>
+  
+  <!-- Arrows -->
+  <path class="arrow animated-arrow" d="M 400 200 L 400 250"/>
+  <path class="arrow animated-arrow" d="M 400 400 L 400 450"/>
+</svg>

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="150" viewBox="0 0 600 150">
+    <defs>
+      <style>
+        @keyframes stepIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .step1 { animation: stepIn 0.5s ease-out forwards; }
+        .step2 { animation: stepIn 0.5s ease-out 0.3s forwards; opacity: 0; }
+        .step3 { animation: stepIn 0.5s ease-out 0.6s forwards; opacity: 0; }
+        .step4 { animation: stepIn 0.5s ease-out 0.9s forwards; opacity: 0; }
+      </style>
+    </defs>
+    
+    <!-- Step 1 -->
+    <g class="step1">
+      <circle cx="75" cy="75" r="40" fill="#3B82F6"/>
+      <text x="75" y="80" text-anchor="middle" fill="white" font-size="20" font-weight="bold">1</text>
+      <text x="75" y="130" text-anchor="middle" font-size="12">Start</text>
+    </g>
+    
+    <!-- Arrow 1 -->
+    <line x1="115" y1="75" x2="185" y2="75" stroke="#1F2937" stroke-width="2" marker-end="url(#arrow)"/>
+    
+    <!-- Step 2 -->
+    <g class="step2">
+      <circle cx="225" cy="75" r="40" fill="#8B5CF6"/>
+      <text x="225" y="80" text-anchor="middle" fill="white" font-size="20" font-weight="bold">2</text>
+      <text x="225" y="130" text-anchor="middle" font-size="12">Process</text>
+    </g>
+    
+    <!-- Arrow 2 -->
+    <line x1="265" y1="75" x2="335" y2="75" stroke="#1F2937" stroke-width="2" marker-end="url(#arrow)"/>
+    
+    <!-- Step 3 -->
+    <g class="step3">
+      <circle cx="375" cy="75" r="40" fill="#F59E0B"/>
+      <text x="375" y="80" text-anchor="middle" fill="white" font-size="20" font-weight="bold">3</text>
+      <text x="375" y="130" text-anchor="middle" font-size="12">Review</text>
+    </g>
+    
+    <!-- Arrow 3 -->
+    <line x1="415" y1="75" x2="485" y2="75" stroke="#1F2937" stroke-width="2" marker-end="url(#arrow)"/>
+    
+    <!-- Step 4 -->
+    <g class="step4">
+      <circle cx="525" cy="75" r="40" fill="#10B981"/>
+      <text x="525" y="80" text-anchor="middle" fill="white" font-size="20" font-weight="bold">✓</text>
+      <text x="525" y="130" text-anchor="middle" font-size="12">Complete</text>
+    </g>
+    
+    <defs>
+      <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#1F2937"/>
+      </marker>
+    </defs>
+  </svg>

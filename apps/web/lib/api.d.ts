@@ -14,7 +14,8 @@ export interface AuthResponse {
 }
 export interface Project {
     id: string;
-    name: string;
+    name?: string;
+    title?: string;
     description?: string;
     topic: string;
     createdAt: string;
@@ -32,10 +33,16 @@ export interface Video {
 declare class ApiClient {
     private token;
     constructor();
+    loadToken(): string;
     setToken(token: string): void;
     clearToken(): void;
+    getToken(): string;
     private request;
-    register(email: string, password: string, name: string): Promise<AuthResponse>;
+    register(data: {
+        email: string;
+        password: string;
+        name: string;
+    }): Promise<AuthResponse>;
     login(email: string, password: string): Promise<AuthResponse>;
     logout(): Promise<void>;
     getCurrentUser(): Promise<User>;
@@ -43,7 +50,7 @@ declare class ApiClient {
     getProjects(): Promise<Project[]>;
     getProject(id: string): Promise<Project>;
     createProject(data: {
-        name: string;
+        title: string;
         description?: string;
         topic: string;
     }): Promise<Project>;
@@ -63,6 +70,13 @@ declare class ApiClient {
         limit?: number;
         offset?: number;
     }): Promise<any>;
+    downloadVideo(id: string): Promise<any>;
+    generateVideo(data: any): Promise<any>;
+    createScenario(data: any): Promise<any>;
+    getScenarios(projectId?: string): Promise<any[]>;
+    getScenario(id: string): Promise<any>;
+    updateScenario(id: string, data: any): Promise<any>;
+    deleteScenario(id: string): Promise<void>;
 }
 export declare const api: ApiClient;
 export {};

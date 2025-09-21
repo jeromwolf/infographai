@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+    <defs>
+      <style>
+        @keyframes pulse {
+          0% { r: 40; opacity: 1; }
+          50% { r: 50; opacity: 0.7; }
+          100% { r: 40; opacity: 1; }
+        }
+        .pulse-circle {
+          animation: pulse 2s ease-in-out infinite;
+        }
+      </style>
+    </defs>
+    <circle class="pulse-circle" cx="100" cy="100" r="40" fill="#3B82F6" />
+    <circle cx="100" cy="100" r="30" fill="#F3F4F6" />
+  </svg>

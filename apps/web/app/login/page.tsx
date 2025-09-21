@@ -144,6 +144,34 @@ export default function LoginPage() {
             </button>
           </div>
         </form>
+
+        {/* 테스트 모드 버튼 추가 */}
+        <div className="mt-6">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-gray-50 text-gray-500">또는</span>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <button
+              onClick={() => {
+                localStorage.setItem("isLoggedIn", "true");
+                localStorage.setItem("userEmail", "test@test.com");
+                router.push("/dashboard/builder");
+              }}
+              className="w-full flex justify-center py-2 px-4 border-2 border-green-500 text-sm font-medium rounded-md text-green-600 bg-white hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            >
+              🚀 테스트 모드로 시작하기 (로그인 없이)
+            </button>
+            <p className="mt-2 text-center text-xs text-gray-500">
+              데이터베이스 연결 없이 빌더를 즉시 사용할 수 있습니다
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

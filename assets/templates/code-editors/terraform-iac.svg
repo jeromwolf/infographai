@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="tfGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7e3ff2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#5c2fb7;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Editor Background -->
+  <rect width="1920" height="1080" fill="#1e1e1e"/>
+
+  <!-- Title Bar -->
+  <rect width="1920" height="60" fill="#2d2d30"/>
+  <text x="960" y="40" font-family="'Cascadia Code', monospace" font-size="24" fill="#7e3ff2" text-anchor="middle">Terraform AWS Infrastructure</text>
+
+  <!-- Code Area -->
+  <g font-family="'Cascadia Code', monospace" font-size="18">
+    <!-- Provider Block -->
+    <text x="100" y="90" fill="#c586c0">provider</text>
+    <text x="210" y="90" fill="#ce9178">"aws"</text>
+    <text x="280" y="90" fill="#d4d4d4">{</text>
+    <text x="130" y="120" fill="#9cdcfe">region</text>
+    <text x="210" y="120" fill="#d4d4d4">=</text>
+    <text x="240" y="120" fill="#ce9178">"us-west-2"</text>
+    <text x="130" y="150" fill="#9cdcfe">profile</text>
+    <text x="220" y="150" fill="#d4d4d4">=</text>
+    <text x="250" y="150" fill="#ce9178">"production"</text>
+    <text x="100" y="180" fill="#d4d4d4">}</text>
+
+    <!-- Resource Block -->
+    <text x="100" y="240" fill="#c586c0">resource</text>
+    <text x="210" y="240" fill="#ce9178">"aws_instance"</text>
+    <text x="380" y="240" fill="#ce9178">"web_server"</text>
+    <text x="520" y="240" fill="#d4d4d4">{</text>
+    <text x="130" y="270" fill="#9cdcfe">ami</text>
+    <text x="210" y="270" fill="#d4d4d4">=</text>
+    <text x="240" y="270" fill="#ce9178">"ami-0c55b159cbfafe1f0"</text>
+    <text x="130" y="300" fill="#9cdcfe">instance_type</text>
+    <text x="280" y="300" fill="#d4d4d4">=</text>
+    <text x="310" y="300" fill="#ce9178">"t3.micro"</text>
+
+    <!-- Tags -->
+    <text x="130" y="360" fill="#9cdcfe">tags</text>
+    <text x="190" y="360" fill="#d4d4d4">=</text>
+    <text x="220" y="360" fill="#d4d4d4">{</text>
+    <text x="160" y="390" fill="#9cdcfe">Name</text>
+    <text x="240" y="390" fill="#d4d4d4">=</text>
+    <text x="270" y="390" fill="#ce9178">"WebServer"</text>
+    <text x="160" y="420" fill="#9cdcfe">Environment</text>
+    <text x="310" y="420" fill="#d4d4d4">=</text>
+    <text x="340" y="420" fill="#ce9178">"Production"</text>
+    <text x="130" y="450" fill="#d4d4d4">}</text>
+    <text x="100" y="480" fill="#d4d4d4">}</text>
+
+    <!-- Output Block -->
+    <text x="100" y="540" fill="#c586c0">output</text>
+    <text x="190" y="540" fill="#ce9178">"instance_ip"</text>
+    <text x="340" y="540" fill="#d4d4d4">{</text>
+    <text x="130" y="570" fill="#9cdcfe">value</text>
+    <text x="210" y="570" fill="#d4d4d4">=</text>
+    <text x="240" y="570" fill="#9cdcfe">aws_instance</text>
+    <text x="390" y="570" fill="#d4d4d4">.</text>
+    <text x="410" y="570" fill="#9cdcfe">web_server</text>
+    <text x="530" y="570" fill="#d4d4d4">.</text>
+    <text x="550" y="570" fill="#9cdcfe">public_ip</text>
+    <text x="100" y="600" fill="#d4d4d4">}</text>
+  </g>
+
+  <!-- Plan Preview Animation -->
+  <g opacity="0">
+    <rect x="1000" y="200" width="800" height="400" fill="#252526" stroke="#7e3ff2" stroke-width="2" rx="5">
+      <animate attributeName="opacity" values="0;1;1;0" dur="6s" repeatCount="indefinite"/>
+    </rect>
+    <text x="1020" y="230" font-family="'Cascadia Code', monospace" font-size="16" fill="#10b981">
+      <animate attributeName="opacity" values="0;1;1;0" dur="6s" repeatCount="indefinite"/>
+      + aws_instance.web_server will be created
+    </text>
+    <text x="1040" y="260" font-family="'Cascadia Code', monospace" font-size="14" fill="#d4d4d4">
+      <animate attributeName="opacity" values="0;1;1;0" dur="6s" repeatCount="indefinite"/>
+      + ami: "ami-0c55b159cbfafe1f0"
+    </text>
+    <text x="1040" y="290" font-family="'Cascadia Code', monospace" font-size="14" fill="#d4d4d4">
+      <animate attributeName="opacity" values="0;1;1;0" dur="6s" repeatCount="indefinite"/>
+      + instance_type: "t3.micro"
+    </text>
+  </g>
+</svg>

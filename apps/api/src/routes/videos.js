@@ -8,6 +8,9 @@ const database_1 = require("../lib/database");
 const cost_monitor_1 = require("../lib/cost-monitor");
 const error_1 = require("../middleware/error");
 const validation_1 = require("../middleware/validation");
+const simple_video_generator_1 = require("../services/simple-video-generator");
+const remotion_video_generator_1 = require("../services/remotion-video-generator");
+const canvas_video_generator_1 = require("../services/canvas-video-generator");
 const router = (0, express_1.Router)();
 // Get all videos for user
 router.get('/', (0, error_1.asyncHandler)(async (req, res) => {
@@ -21,7 +24,7 @@ router.get('/', (0, error_1.asyncHandler)(async (req, res) => {
             project: {
                 select: {
                     id: true,
-                    name: true
+                    title: true
                 }
             }
         },
@@ -157,5 +160,81 @@ router.get('/:id/subtitles', (0, error_1.asyncHandler)(async (req, res) => {
         orderBy: { startTime: 'asc' }
     });
     res.json(subtitles);
+}));
+// Generate video endpoint
+router.post('/generate', (0, error_1.asyncHandler)(async (req, res) => {
+    const { scenarioId, projectId } = req.body;
+    if (!scenarioId || !projectId) {
+        throw new error_1.AppError('scenarioId and projectId are required', 400);
+    }
+    // Verify project ownership
+    const project = await database_1.prisma.project.findFirst({
+        where: {
+            id: projectId,
+            userId: req.user.id
+        }
+    });
+    if (!project) {
+        throw new error_1.AppError('Project not found', 404);
+    }
+    // Verify scenario exists
+    const scenario = await database_1.prisma.scenario.findFirst({
+        where: {
+            id: scenarioId,
+            projectId
+        }
+    });
+    if (!scenario) {
+        throw new error_1.AppError('Scenario not found', 404);
+    }
+    // Check cost limits before creating
+    const estimatedCost = 0.05; // Estimate based on subtitle-only approach
+    const canProceed = await cost_monitor_1.costMonitor.addCost({
+        service: 'compute',
+        amount: estimatedCost,
+        timestamp: new Date(),
+        userId: req.user.id
+    });
+    if (!canProceed) {
+        throw new error_1.AppError('Cost limit exceeded. Please try again later.', 429);
+    }
+    // Create video record
+    const video = await database_1.prisma.video.create({
+        data: {
+            projectId,
+            title: scenario.title || 'Generated Video',
+            description: scenario.description,
+            topic: project.topic,
+            duration: scenario.totalDuration || 120,
+            status: 'QUEUED'
+        }
+    });
+    // Record cost
+    await database_1.prisma.cost.create({
+        data: {
+            user: { connect: { id: req.user.id } },
+            project: { connect: { id: projectId } },
+            service: 'OTHER',
+            action: `video_generation:${video.id}`,
+            amount: estimatedCost
+        }
+    });
+    // Trigger video generation process
+    // Use Canvas for infographic videos, Remotion if enabled, otherwise simple generator
+    const useCanvas = process.env.USE_CANVAS === 'true' || true; // Default to Canvas
+    const useRemotion = process.env.USE_REMOTION === 'true';
+    if (useCanvas) {
+        await (0, canvas_video_generator_1.startCanvasVideoGeneration)(video.id, projectId, scenarioId);
+    }
+    else if (useRemotion) {
+        await (0, remotion_video_generator_1.startRemotionVideoGeneration)(video.id, projectId, scenarioId);
+    }
+    else {
+        await (0, simple_video_generator_1.startSimpleVideoGeneration)(video.id, projectId, scenarioId);
+    }
+    res.status(201).json({
+        message: 'Video generation started',
+        video
+    });
 }));
 exports.default = router;

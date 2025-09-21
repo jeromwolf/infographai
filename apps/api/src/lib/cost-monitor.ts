@@ -1,25 +1,27 @@
 /**
- * Cost Monitor Instance
+ * Cost Monitor Instance (Disabled)
  */
 
-import { CostMonitor } from '@infographai/cost-monitor';
-
-// Create a single instance of CostMonitor
-const globalForCostMonitor = globalThis as unknown as {
-  costMonitor: CostMonitor | undefined;
+// Placeholder cost monitor to avoid module errors
+export const costMonitor = {
+  initialize: async () => {
+    console.log('Cost monitor disabled');
+    return Promise.resolve();
+  },
+  cleanup: async () => {
+    console.log('Cost monitor cleanup');
+    return Promise.resolve();
+  },
+  recordApiCall: () => {},
+  recordVideoGeneration: () => {},
+  getUsageStats: async () => ({
+    total: 0,
+    api: 0,
+    video: 0,
+    details: []
+  }),
+  getCosts: async () => ({
+    total: 0,
+    breakdown: {}
+  })
 };
-
-export const costMonitor = globalForCostMonitor.costMonitor ?? new CostMonitor();
-
-if (process.env.NODE_ENV !== 'production') {
-  globalForCostMonitor.costMonitor = costMonitor;
-}
-
-// Initialize the cost monitor if not already initialized
-(async () => {
-  try {
-    await costMonitor.initialize();
-  } catch (error) {
-    console.error('Failed to initialize cost monitor:', error);
-  }
-})();

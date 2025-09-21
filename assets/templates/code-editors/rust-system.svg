@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="rustGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ce422b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a62c1c;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Editor Background -->
+  <rect width="1920" height="1080" fill="#1e1e1e"/>
+
+  <!-- Title Bar -->
+  <rect width="1920" height="60" fill="#2d2d30"/>
+  <text x="960" y="40" font-family="'Cascadia Code', monospace" font-size="24" fill="#ce422b" text-anchor="middle">Rust System Programming</text>
+
+  <!-- Code Content -->
+  <g font-family="'Cascadia Code', monospace" font-size="18">
+    <!-- Use Statements -->
+    <text x="100" y="90" fill="#c586c0">use</text>
+    <text x="150" y="90" fill="#4ec9b0">std</text>
+    <text x="190" y="90" fill="#d4d4d4">::</text>
+    <text x="220" y="90" fill="#4ec9b0">io</text>
+    <text x="250" y="90" fill="#d4d4d4">::{</text>
+    <text x="290" y="90" fill="#4ec9b0">self</text>
+    <text x="340" y="90" fill="#d4d4d4">,</text>
+    <text x="360" y="90" fill="#4ec9b0">Write</text>
+    <text x="430" y="90" fill="#d4d4d4">};</text>
+
+    <!-- Struct Definition -->
+    <text x="100" y="150" fill="#c586c0">pub struct</text>
+    <text x="230" y="150" fill="#4ec9b0">Buffer</text>
+    <text x="310" y="150" fill="#d4d4d4">&lt;</text>
+    <text x="330" y="150" fill="#4ec9b0">T</text>
+    <text x="350" y="150" fill="#d4d4d4">&gt; {</text>
+    <text x="130" y="180" fill="#9cdcfe">data</text>
+    <text x="190" y="180" fill="#d4d4d4">:</text>
+    <text x="210" y="180" fill="#4ec9b0">Vec</text>
+    <text x="250" y="180" fill="#d4d4d4">&lt;</text>
+    <text x="270" y="180" fill="#4ec9b0">T</text>
+    <text x="290" y="180" fill="#d4d4d4">&gt;,</text>
+    <text x="130" y="210" fill="#9cdcfe">capacity</text>
+    <text x="240" y="210" fill="#d4d4d4">:</text>
+    <text x="260" y="210" fill="#4ec9b0">usize</text>
+    <text x="330" y="210" fill="#d4d4d4">,</text>
+    <text x="100" y="240" fill="#d4d4d4">}</text>
+
+    <!-- Implementation Block -->
+    <text x="100" y="300" fill="#c586c0">impl</text>
+    <text x="160" y="300" fill="#d4d4d4">&lt;</text>
+    <text x="180" y="300" fill="#4ec9b0">T</text>
+    <text x="200" y="300" fill="#d4d4d4">:</text>
+    <text x="220" y="300" fill="#4ec9b0">Clone</text>
+    <text x="290" y="300" fill="#d4d4d4">&gt;</text>
+    <text x="320" y="300" fill="#4ec9b0">Buffer</text>
+    <text x="400" y="300" fill="#d4d4d4">&lt;</text>
+    <text x="420" y="300" fill="#4ec9b0">T</text>
+    <text x="440" y="300" fill="#d4d4d4">&gt; {</text>
+
+    <!-- Method -->
+    <text x="130" y="330" fill="#c586c0">pub fn</text>
+    <text x="220" y="330" fill="#dcdcaa">new</text>
+    <text x="270" y="330" fill="#d4d4d4">(</text>
+    <text x="290" y="330" fill="#9cdcfe">capacity</text>
+    <text x="390" y="330" fill="#d4d4d4">:</text>
+    <text x="410" y="330" fill="#4ec9b0">usize</text>
+    <text x="480" y="330" fill="#d4d4d4">) -&gt;</text>
+    <text x="550" y="330" fill="#4ec9b0">Self</text>
+    <text x="610" y="330" fill="#d4d4d4">{</text>
+    <text x="160" y="360" fill="#4ec9b0">Self</text>
+    <text x="220" y="360" fill="#d4d4d4">{</text>
+    <text x="190" y="390" fill="#9cdcfe">data</text>
+    <text x="250" y="390" fill="#d4d4d4">:</text>
+    <text x="270" y="390" fill="#4ec9b0">Vec</text>
+    <text x="310" y="390" fill="#d4d4d4">::</text>
+    <text x="340" y="390" fill="#dcdcaa">with_capacity</text>
+    <text x="500" y="390" fill="#d4d4d4">(</text>
+    <text x="520" y="390" fill="#9cdcfe">capacity</text>
+    <text x="620" y="390" fill="#d4d4d4">),</text>
+    <text x="190" y="420" fill="#9cdcfe">capacity</text>
+    <text x="290" y="420" fill="#d4d4d4">,</text>
+    <text x="160" y="450" fill="#d4d4d4">}</text>
+    <text x="130" y="480" fill="#d4d4d4">}</text>
+
+    <!-- Unsafe Block -->
+    <text x="130" y="540" fill="#c586c0">pub fn</text>
+    <text x="220" y="540" fill="#dcdcaa">raw_ptr</text>
+    <text x="320" y="540" fill="#d4d4d4">(&amp;</text>
+    <text x="360" y="540" fill="#c586c0">mut</text>
+    <text x="410" y="540" fill="#c586c0">self</text>
+    <text x="470" y="540" fill="#d4d4d4">) -&gt; *</text>
+    <text x="540" y="540" fill="#c586c0">mut</text>
+    <text x="590" y="540" fill="#4ec9b0">T</text>
+    <text x="620" y="540" fill="#d4d4d4">{</text>
+    <text x="160" y="570" fill="#f44747">unsafe</text>
+    <text x="250" y="570" fill="#d4d4d4">{</text>
+    <text x="190" y="600" fill="#c586c0">self</text>
+    <text x="250" y="600" fill="#d4d4d4">.</text>
+    <text x="270" y="600" fill="#9cdcfe">data</text>
+    <text x="330" y="600" fill="#d4d4d4">.</text>
+    <text x="350" y="600" fill="#dcdcaa">as_mut_ptr</text>
+    <text x="490" y="600" fill="#d4d4d4">()</text>
+    <text x="160" y="630" fill="#d4d4d4">}</text>
+    <text x="130" y="660" fill="#d4d4d4">}</text>
+    <text x="100" y="690" fill="#d4d4d4">}</text>
+  </g>
+
+  <!-- Memory Safety Indicator -->
+  <g transform="translate(1600, 100)">
+    <rect x="0" y="0" width="250" height="80" fill="#252526" stroke="#ce422b" stroke-width="2" rx="5"/>
+    <text x="125" y="30" font-family="'Cascadia Code', monospace" font-size="14" fill="#10b981" text-anchor="middle">Memory Safe ✓</text>
+    <text x="125" y="55" font-family="'Cascadia Code', monospace" font-size="12" fill="#858585" text-anchor="middle">Zero-cost abstractions</text>
+  </g>
+</svg>

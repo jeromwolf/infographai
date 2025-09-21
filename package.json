@@ -1,16 +1,16 @@
 {
-  "name": "infographai",
+  "name": "scenecraft",
   "version": "1.0.0",
   "private": true,
-  "description": "AI-powered IT education video generator with subtitle focus",
-  "author": "InfoGraphAI Team",
+  "description": "High-quality educational animation builder",
+  "author": "SceneCraft Team",
   "license": "MIT",
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --concurrency=15",
     "build": "turbo run build",
     "test": "turbo run test",
     "lint": "turbo run lint",
@@ -33,5 +33,8 @@
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=10.0.0"
+  },
+  "dependencies": {
+    "gif.js": "^0.2.0"
   }
 }

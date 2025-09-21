@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+    <defs>
+      <style>
+        @keyframes zoomIn {
+          from { transform: scale(0); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+        .option1 { animation: zoomIn 0.5s ease-out forwards; }
+        .option2 { animation: zoomIn 0.5s ease-out 0.3s forwards; opacity: 0; }
+        .vs-text { animation: zoomIn 0.5s ease-out 0.6s forwards; opacity: 0; }
+      </style>
+    </defs>
+    
+    <!-- Option 1 -->
+    <g class="option1">
+      <circle cx="100" cy="150" r="80" fill="#3B82F6"/>
+      <text x="100" y="155" text-anchor="middle" fill="white" font-size="18" font-weight="bold">Option A</text>
+    </g>
+    
+    <!-- VS -->
+    <g class="vs-text">
+      <text x="200" y="155" text-anchor="middle" font-size="30" font-weight="bold" fill="#1F2937">VS</text>
+    </g>
+    
+    <!-- Option 2 -->
+    <g class="option2">
+      <circle cx="300" cy="150" r="80" fill="#8B5CF6"/>
+      <text x="300" y="155" text-anchor="middle" fill="white" font-size="18" font-weight="bold">Option B</text>
+    </g>
+  </svg>

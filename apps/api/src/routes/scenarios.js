@@ -8,21 +8,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const client_1 = require("@prisma/client");
-const scenario_manager_1 = __importDefault(require("@infographai/scenario-manager"));
+const auto_scenario_generator_1 = require("../services/auto-scenario-generator");
 const auth_1 = require("../middleware/auth");
 const validation_1 = require("../middleware/validation");
 const joi_1 = __importDefault(require("joi"));
 const router = (0, express_1.Router)();
 const prisma = new client_1.PrismaClient();
-const scenarioManager = new scenario_manager_1.default();
+const autoScenarioGenerator = new auto_scenario_generator_1.AutoScenarioGenerator();
 // 시나리오 생성 검증 스키마
 const createScenarioSchema = joi_1.default.object({
     projectId: joi_1.default.string().required(),
     type: joi_1.default.string().valid('auto', 'user', 'hybrid').required(),
     generationOptions: joi_1.default.object({
         topic: joi_1.default.string().required(),
-        duration: joi_1.default.number().min(30).max(600).required(),
-        targetAudience: joi_1.default.string().required(),
+        duration: joi_1.default.number().min(30).max(600).optional(),
+        targetAudience: joi_1.default.string().optional(),
         language: joi_1.default.string().default('ko'),
         style: joi_1.default.string().default('educational'),
         keywords: joi_1.default.array().items(joi_1.default.string()).optional()
@@ -64,9 +64,9 @@ const updateScenarioSchema = joi_1.default.object({
     metadata: joi_1.default.object().optional()
 });
 // 시나리오 목록 조회
-router.get('/scenarios', auth_1.authenticate, async (req, res, next) => {
+router.get('/', auth_1.authenticate, async (req, res, next) => {
     try {
-        const userId = req.userId;
+        const userId = req.user?.id;
         const { projectId, page = 1, limit = 10, status } = req.query;
         const where = {};
         // 프로젝트별 필터링
@@ -98,9 +98,6 @@ router.get('/scenarios', auth_1.authenticate, async (req, res, next) => {
             include: {
                 project: {
                     select: { title: true }
-                },
-                _count: {
-                    select: { versions: true }
                 }
             },
             orderBy: { createdAt: 'desc' },
@@ -123,9 +120,9 @@ router.get('/scenarios', auth_1.authenticate, async (req, res, next) => {
     }
 });
 // 특정 시나리오 조회
-router.get('/scenarios/:id', auth_1.authenticate, async (req, res, next) => {
+router.get('/:id', auth_1.authenticate, async (req, res, next) => {
     try {
-        const userId = req.userId;
+        const userId = req.user?.id;
         const { id } = req.params;
         const scenario = await prisma.scenario.findFirst({
             where: {
@@ -137,10 +134,6 @@ router.get('/scenarios/:id', auth_1.authenticate, async (req, res, next) => {
             include: {
                 project: {
                     select: { title: true }
-                },
-                versions: {
-                    orderBy: { createdAt: 'desc' },
-                    take: 5
                 }
             }
         });
@@ -154,9 +147,9 @@ router.get('/scenarios/:id', auth_1.authenticate, async (req, res, next) => {
     }
 });
 // 시나리오 생성
-router.post('/scenarios', auth_1.authenticate, (0, validation_1.validateRequest)(createScenarioSchema), async (req, res, next) => {
+router.post('/', auth_1.authenticate, async (req, res, next) => {
     try {
-        const userId = req.userId;
+        const userId = req.user?.id;
         const { projectId, type, generationOptions, userContent } = req.body;
         // 프로젝트 소유권 확인
         const project = await prisma.project.findFirst({
@@ -169,33 +162,83 @@ router.post('/scenarios', auth_1.authenticate, (0, validation_1.validateRequest)
             return res.status(404).json({ error: '프로젝트를 찾을 수 없습니다' });
         }
         let scenario;
+        // type 매핑
+        const typeMap = {
+            'auto': 'AUTO_GENERATED',
+            'user': 'USER_INPUT',
+            'hybrid': 'HYBRID'
+        };
         switch (type) {
             case 'auto':
-                // AI 자동 생성
-                scenario = await scenarioManager.generateScenario(generationOptions, userId);
+                // AI 자동 생성 - AutoScenarioGenerator 사용
+                const generatedScenario = await autoScenarioGenerator.generateFromTopic(generationOptions.topic, userId);
+                scenario = generatedScenario;
                 break;
             case 'user':
-                // 사용자 제공 시나리오
-                scenario = await scenarioManager.createUserScenario(userContent, userId);
+                // 사용자 제공 시나리오 - 직접 시나리오 구조 생성
+                const now = new Date();
+                scenario = {
+                    id: `scenario_${Date.now()}`,
+                    title: userContent.title,
+                    description: userContent.description || '',
+                    scenes: userContent.scenes || [],
+                    metadata: {
+                        createdAt: now.toISOString(),
+                        updatedAt: now.toISOString(),
+                        createdBy: userId
+                    }
+                };
                 break;
             case 'hybrid':
                 // AI 생성 후 사용자 수정
-                scenario = await scenarioManager.generateScenario(generationOptions, userId);
+                const hybridScenario = await autoScenarioGenerator.generateFromTopic(generationOptions.topic, userId);
+                // 사용자 수정 적용
                 if (userContent) {
-                    scenario = await scenarioManager.updateScenario(scenario.id, userContent, userId);
+                    hybridScenario.title = userContent.title || hybridScenario.title;
+                    hybridScenario.description = userContent.description || hybridScenario.description;
+                    if (userContent.scenes) {
+                        hybridScenario.scenes = userContent.scenes;
+                    }
+                }
+                scenario = hybridScenario;
+                break;
+            default:
+                // Default case - use provided content or generate
+                if (req.body.scenes) {
+                    // Direct scene data provided
+                    scenario = {
+                        id: `scenario_${Date.now()}`,
+                        title: req.body.title || 'New Scenario',
+                        description: req.body.description || '',
+                        scenes: req.body.scenes || [],
+                        metadata: {}
+                    };
+                }
+                else if (generationOptions?.topic) {
+                    // Generate if topic provided
+                    const defaultScenario = await autoScenarioGenerator.generateFromTopic(generationOptions.topic, userId);
+                    scenario = defaultScenario;
+                }
+                else {
+                    // Error: no scenes or topic provided
+                    return res.status(400).json({ error: '시나리오 생성을 위한 정보가 부족합니다' });
                 }
                 break;
         }
         // DB에 시나리오 저장
+        const scenes = scenario.scenes || [];
+        const totalDuration = scenes.reduce((acc, scene) => acc + (scene.duration || 0), 0) || 0;
+        const sceneCount = scenes.length;
         const savedScenario = await prisma.scenario.create({
             data: {
                 projectId,
                 title: scenario.title,
                 description: scenario.description,
-                content: scenario,
-                type,
-                status: 'draft',
-                metadata: scenario.metadata
+                scenes: scenes,
+                type: typeMap[type] || 'HYBRID',
+                isDraft: true,
+                totalDuration,
+                sceneCount
             }
         });
         res.status(201).json(savedScenario);
@@ -205,9 +248,9 @@ router.post('/scenarios', auth_1.authenticate, (0, validation_1.validateRequest)
     }
 });
 // 시나리오 수정
-router.put('/scenarios/:id', auth_1.authenticate, (0, validation_1.validateRequest)(updateScenarioSchema), async (req, res, next) => {
+router.put('/:id', auth_1.authenticate, (0, validation_1.validateRequest)(updateScenarioSchema), async (req, res, next) => {
     try {
-        const userId = req.userId;
+        const userId = req.user?.id;
         const { id } = req.params;
         const updates = req.body;
         // 시나리오 소유권 확인
@@ -242,9 +285,9 @@ router.put('/scenarios/:id', auth_1.authenticate, (0, validation_1.validateReque
     }
 });
 // 시나리오 삭제
-router.delete('/scenarios/:id', auth_1.authenticate, async (req, res, next) => {
+router.delete('/:id', auth_1.authenticate, async (req, res, next) => {
     try {
-        const userId = req.userId;
+        const userId = req.user?.id;
         const { id } = req.params;
         // 시나리오 소유권 확인
         const scenario = await prisma.scenario.findFirst({
@@ -270,9 +313,9 @@ router.delete('/scenarios/:id', auth_1.authenticate, async (req, res, next) => {
     }
 });
 // 시나리오 복제
-router.post('/scenarios/:id/clone', auth_1.authenticate, async (req, res, next) => {
+router.post('/:id/clone', auth_1.authenticate, async (req, res, next) => {
     try {
-        const userId = req.userId;
+        const userId = req.user?.id;
         const { id } = req.params;
         const { title } = req.body;
         // 시나리오 소유권 확인
@@ -308,9 +351,9 @@ router.post('/scenarios/:id/clone', auth_1.authenticate, async (req, res, next) 
     }
 });
 // 시나리오 버전 목록
-router.get('/scenarios/:id/versions', auth_1.authenticate, async (req, res, next) => {
+router.get('/:id/versions', auth_1.authenticate, async (req, res, next) => {
     try {
-        const userId = req.userId;
+        const userId = req.user?.id;
         const { id } = req.params;
         // 시나리오 소유권 확인
         const scenario = await prisma.scenario.findFirst({
@@ -332,9 +375,9 @@ router.get('/scenarios/:id/versions', auth_1.authenticate, async (req, res, next
     }
 });
 // 시나리오 버전 복원
-router.post('/scenarios/:id/versions/:versionId/restore', auth_1.authenticate, async (req, res, next) => {
+router.post('/:id/versions/:versionId/restore', auth_1.authenticate, async (req, res, next) => {
     try {
-        const userId = req.userId;
+        const userId = req.user?.id;
         const { id, versionId } = req.params;
         // 시나리오 소유권 확인
         const scenario = await prisma.scenario.findFirst({
@@ -365,9 +408,9 @@ router.post('/scenarios/:id/versions/:versionId/restore', auth_1.authenticate, a
     }
 });
 // 시나리오 내보내기
-router.get('/scenarios/:id/export', auth_1.authenticate, async (req, res, next) => {
+router.get('/:id/export', auth_1.authenticate, async (req, res, next) => {
     try {
-        const userId = req.userId;
+        const userId = req.user?.id;
         const { id } = req.params;
         const { format = 'json' } = req.query;
         // 시나리오 소유권 확인
@@ -394,9 +437,9 @@ router.get('/scenarios/:id/export', auth_1.authenticate, async (req, res, next) 
     }
 });
 // 시나리오 가져오기
-router.post('/scenarios/import', auth_1.authenticate, async (req, res, next) => {
+router.post('/import', auth_1.authenticate, async (req, res, next) => {
     try {
-        const userId = req.userId;
+        const userId = req.user?.id;
         const { projectId, data, format = 'json' } = req.body;
         // 프로젝트 소유권 확인
         const project = await prisma.project.findFirst({
@@ -429,14 +472,14 @@ router.post('/scenarios/import', auth_1.authenticate, async (req, res, next) => 
     }
 });
 // 시나리오 템플릿 목록
-router.get('/scenarios/templates', auth_1.authenticate, async (req, res) => {
+router.get('/templates', auth_1.authenticate, async (req, res) => {
     const templates = await scenarioManager.getTemplates();
     res.json(templates);
 });
 // 템플릿에서 시나리오 생성
-router.post('/scenarios/from-template', auth_1.authenticate, async (req, res, next) => {
+router.post('/from-template', auth_1.authenticate, async (req, res, next) => {
     try {
-        const userId = req.userId;
+        const userId = req.user?.id;
         const { projectId, templateName, variables } = req.body;
         // 프로젝트 소유권 확인
         const project = await prisma.project.findFirst({

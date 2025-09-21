@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="300" viewBox="0 0 500 300">
+    <defs>
+      <style>
+        @keyframes slideLeft { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+        @keyframes slideRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        .before { animation: slideLeft 1s ease-out forwards; }
+        .after { animation: slideRight 1s ease-out forwards; }
+      </style>
+    </defs>
+    
+    <!-- Before -->
+    <g class="before">
+      <rect x="20" y="50" width="200" height="200" rx="10" fill="#EF4444" opacity="0.8"/>
+      <text x="120" y="40" text-anchor="middle" font-size="20" font-weight="bold">BEFORE</text>
+      <text x="120" y="150" text-anchor="middle" fill="white" font-size="16">Old Method</text>
+    </g>
+    
+    <!-- Arrow -->
+    <path d="M 230 150 L 270 150" stroke="#1F2937" stroke-width="3" marker-end="url(#arrowhead)"/>
+    <defs>
+      <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#1F2937"/>
+      </marker>
+    </defs>
+    
+    <!-- After -->
+    <g class="after">
+      <rect x="280" y="50" width="200" height="200" rx="10" fill="#10B981" opacity="0.8"/>
+      <text x="380" y="40" text-anchor="middle" font-size="20" font-weight="bold">AFTER</text>
+      <text x="380" y="150" text-anchor="middle" fill="white" font-size="16">New Method</text>
+    </g>
+  </svg>
