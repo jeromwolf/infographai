@@ -82,6 +82,8 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
   };
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const isDraggingRef = useRef(false);
+  const dragOffsetRef = useRef({ x: 0, y: 0 });
   const [resizeMode, setResizeMode] = useState<ResizeHandle | null>(null);
   const [resizeStart, setResizeStart] = useState<{x: number; y: number; element: CanvasElement} | null>(null);
   const [canvasScale, setCanvasScale] = useState(1);
@@ -292,6 +294,8 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
           size: 72,
           color: '#FFFFFF',
           font: 'Inter, sans-serif',
+          fontFamily: 'sans-serif',
+          fontWeight: 'bold',
           weight: 'bold',
           align: 'center'
         };
@@ -769,17 +773,20 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
         if (selectedElements.size > 1 && selectedElements.has(clicked.id)) {
           // If multiple selected and clicking on one of them, keep selection for group drag
           setIsDragging(true);
-          setDragOffset({ x: x - clicked.x, y: y - clicked.y });
-          console.log('🔵 Starting group drag for element:', clicked.type, 'at position:', {x: clicked.x, y: clicked.y}, 'with offset:', {x: x - clicked.x, y: y - clicked.y});
+          isDraggingRef.current = true;
+          const offset = { x: x - clicked.x, y: y - clicked.y };
+          setDragOffset(offset);
+          dragOffsetRef.current = offset;
         } else {
           // Single selection
           setSelectedElement(clicked);
           setSelectedElements(new Set([clicked.id]));
           setIsDragging(true);
+          isDraggingRef.current = true;
           setResizeMode(null);
           const offset = { x: x - clicked.x, y: y - clicked.y };
           setDragOffset(offset);
-          console.log('🔵 Starting single drag for element:', clicked.type, 'at position:', {x: clicked.x, y: clicked.y}, 'with offset:', offset, 'mouse at:', {x, y});
+          dragOffsetRef.current = offset;
         }
       }
     } else if (e.ctrlKey || e.metaKey) {
@@ -1064,9 +1071,7 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
     }
 
     // Handle dragging (only when not resizing)
-    if (isDragging && !resizeMode && e.buttons === 1) {
-      // Log the dragging state for debugging
-      console.log('🟡 Drag check - isDragging:', isDragging, 'resizeMode:', resizeMode, 'buttons:', e.buttons);
+    if (isDraggingRef.current && !resizeMode && e.buttons === 1) {
       if (selectedElements.size > 1) {
         // Multi-element dragging
         const deltaX = x - dragOffset.x - (selectedElement?.x || 0);
@@ -1101,15 +1106,8 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
         });
       } else if (selectedElement) {
         // Single element dragging
-        let newX = x - dragOffset.x;
-        let newY = y - dragOffset.y;
-
-        // Log drag calculation for debugging
-        console.log('🟢 Dragging element:', selectedElement.type,
-                   'Mouse:', {x, y},
-                   'DragOffset:', dragOffset,
-                   'NewPos:', {newX, newY},
-                   'CurrentPos:', {x: selectedElement.x, y: selectedElement.y});
+        let newX = x - dragOffsetRef.current.x;
+        let newY = y - dragOffsetRef.current.y;
 
         // Snap to grid
         if (snapToGrid) {
@@ -1130,9 +1128,9 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
               endX: (selectedElement.props.endX || selectedElement.x + 200) + deltaX,
               endY: (selectedElement.props.endY || selectedElement.y) + deltaY
             }
-          });
+          }, false); // Don't save history during drag
         } else {
-          updateElement(selectedElement.id, { x: newX, y: newY });
+          updateElement(selectedElement.id, { x: newX, y: newY }, false); // Don't save history during drag
         }
       }
     }
@@ -1145,6 +1143,7 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
     }
 
     setIsDragging(false);
+    isDraggingRef.current = false;
     setResizeMode(null);
     setResizeStart(null);
     setIsSelecting(false);
@@ -1440,7 +1439,9 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
       // Draw based on type
       switch (element.type) {
         case 'text':
-          ctx.font = `${element.props.weight} ${element.props.size}px ${element.props.font}`;
+          const fontWeight = element.props.fontWeight || element.props.weight || 'normal';
+          const fontFamily = element.props.fontFamily || element.props.font || 'sans-serif';
+          ctx.font = `${fontWeight} ${element.props.size}px ${fontFamily}`;
           ctx.fillStyle = element.props.color;
           ctx.textAlign = element.props.align as CanvasTextAlign;
           ctx.textBaseline = 'middle';
@@ -1520,11 +1521,22 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
           ctx.fillStyle = element.props.color || '#3B82F6';
           ctx.lineWidth = element.props.strokeWidth || 3;
 
+          // Apply dash pattern if enabled
+          if (element.props.dashed && element.props.dashPattern) {
+            const pattern = element.props.dashPattern.split(',').map(Number);
+            ctx.setLineDash(pattern);
+          } else if (element.props.dashed) {
+            ctx.setLineDash([5, 5]);
+          } else {
+            ctx.setLineDash([]);
+          }
+
           // Draw line
           ctx.beginPath();
           ctx.moveTo(element.x, element.y);
           ctx.lineTo(drawEndX, drawEndY);
           ctx.stroke();
+          ctx.setLineDash([]);
 
           // Draw arrowhead (only if animation is complete or not animating)
           if (drawEndX === endX && drawEndY === endY) {
@@ -1579,8 +1591,14 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
           ctx.strokeStyle = element.props.color || '#64748B';
           ctx.lineWidth = element.props.strokeWidth || 2;
 
-          if (element.props.dashed) {
-            ctx.setLineDash([10, 10]);
+          // Apply dash pattern if enabled
+          if (element.props.dashed && element.props.dashPattern) {
+            const pattern = element.props.dashPattern.split(',').map(Number);
+            ctx.setLineDash(pattern);
+          } else if (element.props.dashed) {
+            ctx.setLineDash([5, 5]);
+          } else {
+            ctx.setLineDash([]);
           }
 
           ctx.beginPath();
@@ -1628,13 +1646,47 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
             if (img.complete && img.naturalWidth > 0) {
               const width = element.props.width || 100;
               const height = element.props.height || 100;
-              ctx.drawImage(
-                img,
-                element.x - width / 2,
-                element.y - height / 2,
-                width,
-                height
-              );
+              const x = element.x - width / 2;
+              const y = element.y - height / 2;
+
+              // If background removal is active, show checkered pattern behind image
+              if (element.props.removeBackground) {
+                ctx.save();
+
+                // Create clipping region for image area
+                ctx.beginPath();
+                ctx.rect(x, y, width, height);
+                ctx.clip();
+
+                // Draw checkered pattern
+                const checkSize = 10;
+                ctx.fillStyle = '#e5e7eb';
+                ctx.fillRect(x, y, width, height);
+
+                ctx.fillStyle = '#d1d5db';
+                for (let row = 0; row < Math.ceil(height / checkSize); row++) {
+                  for (let col = 0; col < Math.ceil(width / checkSize); col++) {
+                    if ((row + col) % 2 === 0) {
+                      ctx.fillRect(
+                        x + col * checkSize,
+                        y + row * checkSize,
+                        checkSize,
+                        checkSize
+                      );
+                    }
+                  }
+                }
+
+                // Draw image with transparency effect
+                ctx.globalAlpha = 0.95;
+                ctx.drawImage(img, x, y, width, height);
+                ctx.globalAlpha = 1.0;
+
+                ctx.restore();
+              } else {
+                // Normal image rendering
+                ctx.drawImage(img, x, y, width, height);
+              }
             } else {
               // Show placeholder while loading
               ctx.fillStyle = '#374151';
@@ -3413,7 +3465,7 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
           </div>
 
           {activeTab === 'templates' ? (
-          <div className="space-y-4 p-4">
+          <div className="space-y-4 p-4 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 120px)' }}>
             {/* Add Elements */}
             <div>
               <h3 className="text-xs font-semibold text-gray-400 uppercase mb-2 tracking-wide">Add Elements</h3>
@@ -3542,7 +3594,61 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
                         className="w-full px-2 py-1 bg-gray-800 rounded text-sm text-white"
                       />
                     </div>
-                    <div>
+
+                    {/* Font Style Selection */}
+                    <div className="mt-2">
+                      <label className="text-xs text-gray-500">Font Style</label>
+                      <select
+                        value={selectedElement.props.fontFamily || 'sans-serif'}
+                        onChange={(e) => updateElement(selectedElement.id, {
+                          props: { ...selectedElement.props, fontFamily: e.target.value }
+                        })}
+                        className="w-full px-2 py-1 bg-gray-800 rounded text-sm text-white"
+                      >
+                        <optgroup label="Standard Fonts">
+                          <option value="sans-serif">Sans Serif</option>
+                          <option value="serif">Serif</option>
+                          <option value="monospace">Monospace</option>
+                        </optgroup>
+                        <optgroup label="Handwritten Fonts">
+                          <option value="'Kalam', cursive">Kalam (Casual)</option>
+                          <option value="'Caveat', cursive">Caveat (Smooth)</option>
+                          <option value="'Shadows Into Light', cursive">Shadows Into Light</option>
+                          <option value="'Amatic SC', cursive">Amatic SC (Thin)</option>
+                          <option value="'Permanent Marker', cursive">Permanent Marker</option>
+                          <option value="'Indie Flower', cursive">Indie Flower</option>
+                          <option value="'Patrick Hand', cursive">Patrick Hand</option>
+                          <option value="'Gloria Hallelujah', cursive">Gloria Hallelujah</option>
+                        </optgroup>
+                        <optgroup label="Decorative Fonts">
+                          <option value="'Pacifico', cursive">Pacifico</option>
+                          <option value="'Dancing Script', cursive">Dancing Script</option>
+                          <option value="'Satisfy', cursive">Satisfy</option>
+                          <option value="'Great Vibes', cursive">Great Vibes</option>
+                        </optgroup>
+                      </select>
+                    </div>
+
+                    {/* Font Weight for some fonts */}
+                    <div className="mt-2">
+                      <label className="text-xs text-gray-500">Font Weight</label>
+                      <select
+                        value={selectedElement.props.fontWeight || 'normal'}
+                        onChange={(e) => updateElement(selectedElement.id, {
+                          props: { ...selectedElement.props, fontWeight: e.target.value }
+                        })}
+                        className="w-full px-2 py-1 bg-gray-800 rounded text-sm text-white"
+                      >
+                        <option value="normal">Normal</option>
+                        <option value="bold">Bold</option>
+                        <option value="300">Light</option>
+                        <option value="500">Medium</option>
+                        <option value="700">Bold</option>
+                        <option value="900">Black</option>
+                      </select>
+                    </div>
+
+                    <div className="mt-2">
                       <label className="text-xs text-gray-500">Size</label>
                       <input
                         type="range"
@@ -3581,6 +3687,42 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
                         }}
                         className="w-full text-xs text-gray-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-medium file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer"
                       />
+                    </div>
+
+                    {/* Background Removal Toggle */}
+                    <div className="mt-3 mb-3 p-3 bg-gray-800 rounded-lg border border-gray-700">
+                      <div className="flex items-center justify-between mb-2">
+                        <label htmlFor="removeBackground" className="text-xs text-gray-300 font-medium cursor-pointer">
+                          🎨 Remove Background
+                        </label>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            id="removeBackground"
+                            checked={selectedElement.props.removeBackground || false}
+                            onChange={(e) => {
+                              updateElement(selectedElement.id, {
+                                props: { ...selectedElement.props, removeBackground: e.target.checked }
+                              });
+                            }}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                        </label>
+                      </div>
+                      {selectedElement.props.removeBackground && (
+                        <div className="mt-2 text-xs">
+                          <p className="text-green-400 flex items-center gap-1">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                            Background removed
+                          </p>
+                          <p className="text-gray-500 mt-1">
+                            Transparent areas show as checkered pattern
+                          </p>
+                        </div>
+                      )}
                     </div>
 
                     {/* Aspect Ratio Lock */}
@@ -3665,6 +3807,70 @@ export default function ModernSceneBuilder({ initialCommands = [], onSave }: Mod
                       })}
                       className="w-full h-8 bg-gray-800 rounded cursor-pointer"
                     />
+                  </div>
+                )}
+
+                {/* Line Style (for lines and arrows) */}
+                {(selectedElement.type === 'line' || selectedElement.type === 'arrow') && (
+                  <div className="mt-3 p-3 bg-gray-800 rounded-lg border border-gray-700">
+                    <label className="text-xs text-gray-400 font-medium block mb-2">Line Style</label>
+
+                    {/* Dash Style Toggle */}
+                    <div className="flex items-center justify-between mb-3">
+                      <label htmlFor="dashLine" className="text-xs text-gray-300 cursor-pointer">
+                        Dashed Line
+                      </label>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          id="dashLine"
+                          checked={selectedElement.props.dashed || false}
+                          onChange={(e) => {
+                            updateElement(selectedElement.id, {
+                              props: { ...selectedElement.props, dashed: e.target.checked }
+                            });
+                          }}
+                          className="sr-only peer"
+                        />
+                        <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                      </label>
+                    </div>
+
+                    {/* Dash Pattern Input (when dashed is true) */}
+                    {selectedElement.props.dashed && (
+                      <div>
+                        <label className="text-xs text-gray-500 block mb-1">Dash Pattern</label>
+                        <select
+                          value={selectedElement.props.dashPattern || '5,5'}
+                          onChange={(e) => updateElement(selectedElement.id, {
+                            props: { ...selectedElement.props, dashPattern: e.target.value }
+                          })}
+                          className="w-full px-2 py-1 bg-gray-700 rounded text-sm text-white"
+                        >
+                          <option value="5,5">Standard (- - -)</option>
+                          <option value="10,5">Long Dash (— — —)</option>
+                          <option value="2,2">Dotted (· · ·)</option>
+                          <option value="10,5,2,5">Dash Dot (— · —)</option>
+                          <option value="15,10,5,10">Mixed (— - —)</option>
+                        </select>
+                      </div>
+                    )}
+
+                    {/* Line Width */}
+                    <div className="mt-3">
+                      <label className="text-xs text-gray-500">Line Width</label>
+                      <input
+                        type="range"
+                        min="1"
+                        max="10"
+                        value={selectedElement.props.strokeWidth || 2}
+                        onChange={(e) => updateElement(selectedElement.id, {
+                          props: { ...selectedElement.props, strokeWidth: Number(e.target.value) }
+                        })}
+                        className="w-full"
+                      />
+                      <span className="text-xs text-gray-500">{selectedElement.props.strokeWidth || 2}px</span>
+                    </div>
                   </div>
                 )}
 

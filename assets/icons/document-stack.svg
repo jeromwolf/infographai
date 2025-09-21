@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Document Stack Icon -->
+  <g>
+    <!-- Back Document -->
+    <path d="M 30 25 L 65 25 L 65 70 L 30 70 Z" fill="#E5E7EB" stroke="#9CA3AF" stroke-width="1"/>
+
+    <!-- Middle Document -->
+    <path d="M 27 22 L 62 22 L 62 67 L 27 67 Z" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1"/>
+
+    <!-- Front Document with folded corner -->
+    <path d="M 25 20 L 55 20 L 60 25 L 60 65 L 25 65 Z" fill="#FFFFFF" stroke="#6B7280" stroke-width="1.5"/>
+    <path d="M 55 20 L 55 25 L 60 25" fill="none" stroke="#6B7280" stroke-width="1"/>
+
+    <!-- Document lines -->
+    <line x1="30" y1="32" x2="55" y2="32" stroke="#9CA3AF" stroke-width="1"/>
+    <line x1="30" y1="38" x2="55" y2="38" stroke="#9CA3AF" stroke-width="1"/>
+    <line x1="30" y1="44" x2="50" y2="44" stroke="#9CA3AF" stroke-width="1"/>
+    <line x1="30" y1="50" x2="55" y2="50" stroke="#9CA3AF" stroke-width="1"/>
+    <line x1="30" y1="56" x2="45" y2="56" stroke="#9CA3AF" stroke-width="1"/>
+  </g>
+</svg>

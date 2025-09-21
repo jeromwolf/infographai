@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Legal Scale / Balance Icon -->
+  <g>
+    <!-- Base -->
+    <rect x="35" y="75" width="30" height="8" rx="2" fill="#6B7280"/>
+    <rect x="45" y="70" width="10" height="6" fill="#6B7280"/>
+
+    <!-- Center pole -->
+    <rect x="48" y="25" width="4" height="45" fill="#374151"/>
+
+    <!-- Top decoration -->
+    <circle cx="50" cy="22" r="4" fill="#F59E0B"/>
+
+    <!-- Balance beam -->
+    <rect x="20" y="35" width="60" height="2" fill="#374151"/>
+
+    <!-- Left chain -->
+    <line x1="25" y1="37" x2="25" y2="50" stroke="#6B7280" stroke-width="1.5"/>
+
+    <!-- Right chain -->
+    <line x1="75" y1="37" x2="75" y2="50" stroke="#6B7280" stroke-width="1.5"/>
+
+    <!-- Left plate -->
+    <path d="M 15 50 L 35 50 L 32 58 L 18 58 Z" fill="#9CA3AF" stroke="#6B7280" stroke-width="1"/>
+
+    <!-- Right plate (slightly lower to show imbalance) -->
+    <path d="M 65 52 L 85 52 L 82 60 L 68 60 Z" fill="#9CA3AF" stroke="#6B7280" stroke-width="1"/>
+  </g>
+</svg>

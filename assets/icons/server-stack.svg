@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Server Stack Icon -->
+  <g>
+    <!-- Top Server -->
+    <rect x="20" y="15" width="60" height="20" rx="2" fill="#374151" stroke="#6B7280" stroke-width="1"/>
+    <circle cx="28" cy="25" r="2" fill="#10B981"/>
+    <circle cx="35" cy="25" r="2" fill="#3B82F6"/>
+    <rect x="45" y="23" width="25" height="4" rx="1" fill="#4B5563"/>
+
+    <!-- Middle Server -->
+    <rect x="20" y="40" width="60" height="20" rx="2" fill="#374151" stroke="#6B7280" stroke-width="1"/>
+    <circle cx="28" cy="50" r="2" fill="#10B981"/>
+    <circle cx="35" cy="50" r="2" fill="#F59E0B"/>
+    <rect x="45" y="48" width="25" height="4" rx="1" fill="#4B5563"/>
+
+    <!-- Bottom Server -->
+    <rect x="20" y="65" width="60" height="20" rx="2" fill="#374151" stroke="#6B7280" stroke-width="1"/>
+    <circle cx="28" cy="75" r="2" fill="#10B981"/>
+    <circle cx="35" cy="75" r="2" fill="#EF4444"/>
+    <rect x="45" y="73" width="25" height="4" rx="1" fill="#4B5563"/>
+  </g>
+</svg>
