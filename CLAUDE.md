@@ -555,4 +555,152 @@ User has decided to postpone fixing this issue: "잘 안되네. 나중에 다시
 - GIF export is working correctly and can be used as temporary alternative
 - The component has 171 assets successfully integrated
 - Animation system (fadeIn, slideIn, zoomIn, typewriter) is functional
+
+## Recent Canvas Builder Updates (2025-09-21)
+
+### ✅ Completed Work
+1. **Drag & Drop Fix**
+   - Fixed drag functionality for all element types (text, rect, circle, image, assets)
+   - Used useRef for immediate state access to solve async update issues
+   - Now all elements can be moved with mouse drag
+
+2. **New UI Features**
+   - **Line Styles**: Added dash/dot patterns (solid, dashed, dotted, dash-dot, long-dash)
+   - **Handwritten Fonts**: 12 new fonts (Kalam, Caveat, Shadows Into Light, etc.)
+   - **Remove Background**: Toggle for images with checkered transparency display
+   - **Font Weight Options**: Light, Normal, Medium, Bold, Black
+   - **Stroke Width Control**: For lines and arrows
+
+3. **Properties Panel Fix**
+   - Added overflow-y-auto and maxHeight
+   - Fixed scrolling issue where content was hidden below Animation section
+   - All properties now accessible via scroll
+
+4. **New Assets Added**
+   - server-stack.svg
+   - document-stack.svg
+   - graphql-logo.svg
+   - legal-scale.svg
+   - browser-window.svg
+
+### 🚧 Current Tasks
+
+#### 42 Templates Redesign (HIGH PRIORITY)
+- **Problem**: Templates in `/lib/preset-templates.ts` have poor layouts
+- **Requirements**:
+  - Better visual hierarchy and positioning
+  - Add animations to each template
+  - Integrate new SVG assets
+  - Professional layouts for education
+- **Categories to update**:
+  - DevOps (Docker, K8s, CI/CD, Git, Jenkins, Terraform)
+  - Cloud (AWS, Microservices, Load Balancer, Event-Driven)
+  - Database (SQL/NoSQL, Indexing, Sharding)
+  - Programming (REST, OAuth, MVC, Design Patterns)
+  - Networking (OSI, TCP/UDP, DNS, HTTP/HTTPS)
+  - Security (Authentication, Encryption)
+  - AI/ML (Neural Network, RAG, Knowledge Graph)
+  - Finance (Stock Dashboard, Trading, Blockchain, DeFi)
+
+#### Code Refactoring (URGENT)
+- **Problem**: ModernSceneBuilder.tsx is 4237 lines - too long to maintain
+- **Solution**: Split into smaller components
+  - PropertiesPanel component
+  - CanvasRenderer component
+  - ExportFunctions utility
+  - Custom hooks for interactions
+- **Impact**: Critical for development speed
+
+### 📝 Pending Features
+1. **Freehand Curve Drawing** - Pen tool implementation
+2. **Improved Resize Handles** - Better mouse interaction
+3. **Background Removal Fix** - Display issues with transparency
+
+### 🔧 Known Issues
+- Browser cache preventing UI updates (requires hard refresh)
+- Next.js hot reload not reflecting changes properly
+- Properties panel updates not showing immediately
 - Canvas rendering and element manipulation working properly
+- **Duplicate .js and .tsx files**: Need to remove compiled .js files when .tsx files exist
+
+## Recent Development Session (2025-09-22)
+
+### 🎨 Assets Library Major Expansion
+**Objective**: Expand asset library from 135 to 209+ assets with comprehensive development tools
+
+#### Asset Categories Added
+1. **DevOps Tools** (15+ assets)
+   - Jenkins, GitLab, Terraform, Ansible, CircleCI, Travis CI, Bamboo, TeamCity
+   - Puppet, Chef, Salt Stack, Consul, Vault, Packer, Vagrant
+
+2. **Cloud Providers** (10+ assets)
+   - Azure, Google Cloud, DigitalOcean, Alibaba Cloud, Oracle Cloud
+   - Netlify, Vercel, Cloudflare, Heroku, Linode
+
+3. **Databases** (15+ assets)
+   - PostgreSQL, MySQL, MongoDB, Redis, Elasticsearch, Cassandra
+   - DynamoDB, CouchDB, Neo4j, InfluxDB, MariaDB, SQLite
+   - Firestore, RethinkDB, ArangoDB
+
+4. **Programming Languages** (12+ assets)
+   - Go, Rust, Java, C++, C#, PHP, Ruby, Swift, Kotlin
+   - TypeScript, Scala, R
+
+5. **Additional Categories**
+   - **Monitoring**: Grafana, Prometheus, Datadog, New Relic, Splunk
+   - **Message Queues**: RabbitMQ, Kafka, ActiveMQ, SQS, Pub/Sub
+   - **Security**: Auth0, Okta, Keycloak, Cognito
+   - **Frontend**: Vue, Angular, Svelte, Ember, Gatsby, Nuxt
+   - **Testing**: Jest, Cypress, Selenium, Playwright, Mocha
+   - **Build Tools**: Webpack, Rollup, Parcel, Vite, Gulp, Grunt
+   - **Package Managers**: npm, yarn, pnpm, pip, gem, cargo
+   - **API Gateways**: Kong, Apigee, Zuul, Tyk
+   - **IDEs**: VS Code, IntelliJ, Eclipse, Sublime, Atom
+   - **Blockchain**: Ethereum, Bitcoin, Solana
+   - **IoT**: MQTT, Arduino
+   - **Container Tools**: Podman, containerd
+
+6. **Meme Collection** (12 assets) 😂
+   - 🤔 Thinking Face
+   - 🔥 This Is Fine
+   - 📈 Stonks
+   - 🙅‍♂️ Drake
+   - 😮 Surprised Pikachu
+   - 🧠 Galaxy Brain
+   - 🐕 Doge
+   - 💪 Success Kid
+   - 🔫 Always Has Been
+   - 🚪 Exit 12
+   - 🦋 Is This?
+   - 🕷️ Spider-Man Pointing
+
+#### UI Improvements to AssetsLibrary Component
+- **Added Meme Tab**: New dedicated tab for meme assets with 😂 emoji
+- **2-Row Tab Layout**: Better space utilization for 6 categories
+  - Row 1: All, Images, Icons, Shapes
+  - Row 2: Animations, 😂 Memes
+- **Asset Type Extension**: Added 'meme' type to Asset interface
+- **Render Optimization**: Meme assets render as images with SVG support
+
+#### Technical Challenges Resolved
+1. **Text Positioning Fix in DrawingEngine**
+   - Issue: Canvas text baseline alignment causing misalignment
+   - Solution: Modified `drawAnimatedText` to use proper `textBaseline: 'middle'`
+   - Added conditional `textAlign` based on `shouldCenter` flag
+
+2. **File Duplication Issue**
+   - Problem: Both `.js` and `.tsx` files existed, causing import conflicts
+   - Next.js was loading old `.js` files instead of updated `.tsx` files
+   - Solution: Removed duplicate `.js` files and kept only `.tsx` versions
+
+3. **Asset Library Expansion Strategy**
+   - Pivoted from complex template positioning fixes to asset library expansion
+   - Created comprehensive SVG-based assets using data URIs
+   - Maintained file size efficiency with compact SVG representations
+
+### 📊 Current Asset Status
+- **Total Assets**: 209+ (from initial 135)
+- **New Assets Added**: 74+
+- **Categories**: 14 major categories including memes
+- **File Format**: SVG data URIs for optimal performance
+- **Component Location**: `/components/builder/AssetsLibrary.tsx`

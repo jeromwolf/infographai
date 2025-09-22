@@ -1,17 +1,22 @@
 // KodeKloud Style Preset Templates Collection
 // 50+ Professional Educational Animation Templates
 
+export type AnimationType = 'fadeIn' | 'slideIn' | 'zoomIn' | 'typewriter' | 'bounce' | 'rotate' | 'glow' | 'pulse';
+
 export type DrawCommand =
-  | { type: 'line'; x1: number; y1: number; x2: number; y2: number; color?: string; width?: number }
-  | { type: 'rect'; x: number; y: number; width: number; height: number; color?: string; filled?: boolean }
-  | { type: 'circle'; x: number; y: number; radius: number; color?: string; filled?: boolean }
-  | { type: 'text'; text: string; x: number; y: number; size?: number; color?: string }
-  | { type: 'arrow'; x1: number; y1: number; x2: number; y2: number; color?: string }
-  | { type: 'path'; points: Array<{x: number; y: number}>; color?: string; closed?: boolean }
+  | { type: 'line'; x1: number; y1: number; x2: number; y2: number; color?: string; width?: number; animation?: AnimationType; delay?: number }
+  | { type: 'rect'; x: number; y: number; width: number; height: number; color?: string; filled?: boolean; rx?: number; animation?: AnimationType; delay?: number }
+  | { type: 'circle'; x: number; y: number; radius: number; color?: string; filled?: boolean; animation?: AnimationType; delay?: number }
+  | { type: 'text'; text: string; x: number; y: number; size?: number; color?: string; fontWeight?: string; animation?: AnimationType; delay?: number }
+  | { type: 'arrow'; x1: number; y1: number; x2: number; y2: number; color?: string; width?: number; animation?: AnimationType; delay?: number }
+  | { type: 'asset'; name: string; x: number; y: number; width: number; height: number; animation?: AnimationType; delay?: number }
+  | { type: 'path'; points: Array<{x: number; y: number}>; color?: string; closed?: boolean; animation?: AnimationType; delay?: number }
+  | { type: 'gradient'; x: number; y: number; width: number; height: number; colors: string[]; angle?: number; animation?: AnimationType; delay?: number }
+  | { type: 'group'; elements: DrawCommand[]; animation?: AnimationType; delay?: number }
   | { type: 'clear' }
   | { type: 'wait'; duration: number }
   | { type: 'parallel'; commands: DrawCommand[] }
-  | { type: 'highlight'; x: number; y: number; width: number; height: number; color?: string };
+  | { type: 'highlight'; x: number; y: number; width: number; height: number; color?: string; animation?: AnimationType; delay?: number };
 
 export interface PresetTemplate {
   name: string;
@@ -27,13 +32,61 @@ export const presetTemplates: PresetTemplate[] = [
     category: 'DevOps',
     description: 'Basic Docker container concepts',
     commands: [
-      { type: 'text', text: 'What is Docker?', x: 960, y: 200, size: 48, color: '#4ade80' },
-      { type: 'rect', x: 560, y: 300, width: 300, height: 200, color: '#3b82f6', filled: true },
-      { type: 'text', text: 'Container', x: 710, y: 400, size: 32, color: '#ffffff' },
-      { type: 'arrow', x1: 880, y1: 400, x2: 1040, y2: 400, color: '#fbbf24' },
-      { type: 'rect', x: 1060, y: 300, width: 300, height: 200, color: '#ef4444', filled: true },
-      { type: 'text', text: 'Application', x: 1210, y: 400, size: 32, color: '#ffffff' },
-      { type: 'text', text: 'Lightweight, Portable, Consistent', x: 960, y: 600, size: 24, color: '#9ca3af' },
+      // Background
+      { type: 'rect', x: 0, y: 0, width: 1200, height: 700, color: '#0f172a', filled: true },
+
+      // Main title - adjusted Y position
+      { type: 'text', text: 'What is Docker?', x: 600, y: 40, size: 40, color: '#4ade80' },
+      { type: 'text', text: 'Container Technology', x: 600, y: 75, size: 18, color: '#64748b' },
+
+      // Container box - better proportions
+      { type: 'rect', x: 80, y: 120, width: 280, height: 300, color: '#3b82f6', filled: true },
+      { type: 'text', text: 'Container', x: 220, y: 170, size: 28, color: '#ffffff' },
+      { type: 'rect', x: 100, y: 190, width: 240, height: 2, color: '#ffffff', filled: true },
+      { type: 'text', text: 'Isolated Process', x: 220, y: 230, size: 16, color: '#bfdbfe' },
+      { type: 'text', text: 'Lightweight', x: 220, y: 260, size: 16, color: '#bfdbfe' },
+      { type: 'text', text: 'Fast Startup', x: 220, y: 290, size: 16, color: '#bfdbfe' },
+      { type: 'text', text: 'Resource Efficient', x: 220, y: 320, size: 16, color: '#bfdbfe' },
+      { type: 'circle', x: 130, y: 230, radius: 3, color: '#bfdbfe', filled: true },
+      { type: 'circle', x: 130, y: 260, radius: 3, color: '#bfdbfe', filled: true },
+      { type: 'circle', x: 130, y: 290, radius: 3, color: '#bfdbfe', filled: true },
+      { type: 'circle', x: 130, y: 320, radius: 3, color: '#bfdbfe', filled: true },
+
+      // Arrow to application
+      { type: 'arrow', x1: 380, y1: 270, x2: 460, y2: 270, color: '#fbbf24' },
+      { type: 'text', text: 'Runs', x: 420, y: 250, size: 14, color: '#fbbf24' },
+
+      // Application box - better proportions
+      { type: 'rect', x: 480, y: 120, width: 280, height: 300, color: '#10b981', filled: true },
+      { type: 'text', text: 'Application', x: 620, y: 170, size: 28, color: '#ffffff' },
+      { type: 'rect', x: 500, y: 190, width: 240, height: 2, color: '#ffffff', filled: true },
+      { type: 'text', text: 'Your Code', x: 620, y: 230, size: 16, color: '#a7f3d0' },
+      { type: 'text', text: 'Dependencies', x: 620, y: 260, size: 16, color: '#a7f3d0' },
+      { type: 'text', text: 'Libraries', x: 620, y: 290, size: 16, color: '#a7f3d0' },
+      { type: 'text', text: 'Configuration', x: 620, y: 320, size: 16, color: '#a7f3d0' },
+      { type: 'circle', x: 530, y: 230, radius: 3, color: '#a7f3d0', filled: true },
+      { type: 'circle', x: 530, y: 260, radius: 3, color: '#a7f3d0', filled: true },
+      { type: 'circle', x: 530, y: 290, radius: 3, color: '#a7f3d0', filled: true },
+      { type: 'circle', x: 530, y: 320, radius: 3, color: '#a7f3d0', filled: true },
+
+      // VM comparison box - better proportions
+      { type: 'rect', x: 880, y: 120, width: 280, height: 300, color: '#64748b', filled: true },
+      { type: 'text', text: 'Virtual Machine', x: 1020, y: 170, size: 28, color: '#ffffff' },
+      { type: 'rect', x: 900, y: 190, width: 240, height: 2, color: '#ffffff', filled: true },
+      { type: 'text', text: 'Full OS', x: 1020, y: 230, size: 16, color: '#cbd5e0' },
+      { type: 'text', text: 'Heavy Resources', x: 1020, y: 260, size: 16, color: '#cbd5e0' },
+      { type: 'text', text: 'Slow Boot', x: 1020, y: 290, size: 16, color: '#cbd5e0' },
+      { type: 'text', text: 'More Overhead', x: 1020, y: 320, size: 16, color: '#cbd5e0' },
+      { type: 'circle', x: 930, y: 230, radius: 3, color: '#cbd5e0', filled: true },
+      { type: 'circle', x: 930, y: 260, radius: 3, color: '#cbd5e0', filled: true },
+      { type: 'circle', x: 930, y: 290, radius: 3, color: '#cbd5e0', filled: true },
+      { type: 'circle', x: 930, y: 320, radius: 3, color: '#cbd5e0', filled: true },
+
+      // Bottom summary - better positioned
+      { type: 'rect', x: 80, y: 470, width: 1080, height: 120, color: '#1e293b', filled: true },
+      { type: 'text', text: 'Docker Benefits', x: 620, y: 510, size: 24, color: '#ffffff' },
+      { type: 'rect', x: 100, y: 525, width: 1040, height: 2, color: '#4ade80', filled: true },
+      { type: 'text', text: 'Lightweight • Portable • Consistent • Fast • Scalable', x: 620, y: 560, size: 20, color: '#94a3b8' }
     ]
   },
   {
@@ -41,18 +94,74 @@ export const presetTemplates: PresetTemplate[] = [
     category: 'DevOps',
     description: 'Continuous Integration and Deployment flow',
     commands: [
-      { type: 'text', text: 'CI/CD Pipeline Flow', x: 960, y: 180, size: 42, color: '#4ade80' },
-      { type: 'circle', x: 510, y: 400, radius: 50, color: '#3b82f6', filled: true },
-      { type: 'text', text: 'Code', x: 510, y: 400, size: 20, color: '#ffffff' },
-      { type: 'arrow', x1: 560, y1: 400, x2: 710, y2: 400, color: '#4ade80' },
-      { type: 'rect', x: 710, y: 350, width: 150, height: 100, color: '#fbbf24', filled: false },
-      { type: 'text', text: 'Build', x: 785, y: 400, size: 24, color: '#fbbf24' },
-      { type: 'arrow', x1: 860, y1: 400, x2: 1010, y2: 400, color: '#4ade80' },
-      { type: 'rect', x: 1010, y: 350, width: 150, height: 100, color: '#ef4444', filled: false },
-      { type: 'text', text: 'Test', x: 1085, y: 400, size: 24, color: '#ef4444' },
-      { type: 'arrow', x1: 1160, y1: 400, x2: 1310, y2: 400, color: '#4ade80' },
-      { type: 'circle', x: 1360, y: 400, radius: 50, color: '#4ade80', filled: true },
-      { type: 'text', text: 'Deploy', x: 1360, y: 400, size: 20, color: '#ffffff' },
+      // Background
+      { type: 'rect', x: 0, y: 0, width: 1200, height: 700, color: '#1a1a2e', filled: true },
+
+      // Title - better positioned with animation
+      { type: 'text', text: 'CI/CD Pipeline Flow', x: 600, y: 50, size: 42, color: '#4ade80', animation: 'fadeIn', delay: 0 },
+      { type: 'text', text: 'Automated Deployment Process', x: 600, y: 90, size: 18, color: '#94a3b8', animation: 'fadeIn', delay: 100 },
+
+      // Pipeline line
+      { type: 'rect', x: 100, y: 345, width: 1000, height: 10, color: '#2d3748', filled: true },
+
+      // Developer/Code stage with animations
+      { type: 'circle', x: 150, y: 350, radius: 70, color: '#3b82f6', filled: true, animation: 'zoomIn', delay: 200 },
+      { type: 'circle', x: 150, y: 350, radius: 60, color: '#2563eb', filled: true, animation: 'zoomIn', delay: 250 },
+      { type: 'text', text: 'Code', x: 150, y: 340, size: 24, color: '#ffffff', animation: 'fadeIn', delay: 300 },
+      { type: 'text', text: 'Developer', x: 150, y: 370, size: 14, color: '#bfdbfe', animation: 'fadeIn', delay: 350 },
+      { type: 'text', text: 'git push', x: 150, y: 450, size: 16, color: '#94a3b8', animation: 'typewriter', delay: 400 },
+
+      // Arrow to Build with glow animation
+      { type: 'arrow', x1: 230, y1: 350, x2: 330, y2: 350, color: '#10b981', animation: 'glow', delay: 500 },
+      { type: 'text', text: 'trigger', x: 280, y: 330, size: 12, color: '#10b981', animation: 'fadeIn', delay: 550 },
+
+      // Build stage with slide animation
+      { type: 'rect', x: 350, y: 280, width: 160, height: 140, color: '#fbbf24', filled: true, animation: 'slideIn', delay: 600 },
+      { type: 'rect', x: 360, y: 290, width: 140, height: 120, color: '#f59e0b', filled: true, animation: 'slideIn', delay: 650 },
+      { type: 'text', text: 'BUILD', x: 430, y: 330, size: 26, color: '#ffffff', animation: 'fadeIn', delay: 700 },
+      { type: 'text', text: 'Compile', x: 430, y: 360, size: 14, color: '#fef3c7', animation: 'fadeIn', delay: 750 },
+      { type: 'text', text: 'Package', x: 430, y: 380, size: 14, color: '#fef3c7', animation: 'fadeIn', delay: 800 },
+      { type: 'text', text: '~2 min', x: 430, y: 450, size: 14, color: '#94a3b8', animation: 'fadeIn', delay: 850 },
+
+      // Arrow to Test with glow
+      { type: 'arrow', x1: 530, y1: 350, x2: 630, y2: 350, color: '#10b981', animation: 'glow', delay: 900 },
+
+      // Test stage with pulse animation
+      { type: 'rect', x: 650, y: 280, width: 160, height: 140, color: '#ef4444', filled: true, animation: 'slideIn', delay: 1000 },
+      { type: 'rect', x: 660, y: 290, width: 140, height: 120, color: '#dc2626', filled: true, animation: 'slideIn', delay: 1050 },
+      { type: 'text', text: 'TEST', x: 730, y: 330, size: 26, color: '#ffffff', animation: 'fadeIn', delay: 1100 },
+      { type: 'text', text: 'Unit Tests', x: 730, y: 360, size: 14, color: '#fecaca', animation: 'fadeIn', delay: 1150 },
+      { type: 'text', text: 'Integration', x: 730, y: 380, size: 14, color: '#fecaca', animation: 'fadeIn', delay: 1200 },
+      { type: 'text', text: '~3 min', x: 730, y: 450, size: 14, color: '#94a3b8', animation: 'fadeIn', delay: 1250 },
+
+      // Arrow to Deploy with glow
+      { type: 'arrow', x1: 830, y1: 350, x2: 930, y2: 350, color: '#10b981', animation: 'glow', delay: 1300 },
+
+      // Deploy stage with glow effect
+      { type: 'rect', x: 950, y: 280, width: 160, height: 140, color: '#10b981', filled: true, animation: 'slideIn', delay: 1400 },
+      { type: 'rect', x: 960, y: 290, width: 140, height: 120, color: '#059669', filled: true, animation: 'slideIn', delay: 1450 },
+      { type: 'text', text: 'DEPLOY', x: 1030, y: 330, size: 26, color: '#ffffff', animation: 'fadeIn', delay: 1500 },
+      { type: 'text', text: 'Production', x: 1030, y: 360, size: 14, color: '#a7f3d0', animation: 'fadeIn', delay: 1550 },
+      { type: 'text', text: 'Live!', x: 1030, y: 380, size: 14, color: '#a7f3d0', animation: 'pulse', delay: 1600 },
+      { type: 'text', text: '~1 min', x: 1030, y: 450, size: 14, color: '#94a3b8', animation: 'fadeIn', delay: 1650 },
+
+      // Success indicators
+      { type: 'circle', x: 430, y: 500, radius: 5, color: '#10b981', filled: true },
+      { type: 'text', text: 'Automated', x: 430, y: 530, size: 14, color: '#10b981' },
+
+      { type: 'circle', x: 580, y: 500, radius: 5, color: '#10b981', filled: true },
+      { type: 'text', text: 'Consistent', x: 580, y: 530, size: 14, color: '#10b981' },
+
+      { type: 'circle', x: 730, y: 500, radius: 5, color: '#10b981', filled: true },
+      { type: 'text', text: 'Fast', x: 730, y: 530, size: 14, color: '#10b981' },
+
+      { type: 'circle', x: 880, y: 500, radius: 5, color: '#10b981', filled: true },
+      { type: 'text', text: 'Reliable', x: 880, y: 530, size: 14, color: '#10b981' },
+
+      // Bottom metrics bar
+      { type: 'rect', x: 100, y: 580, width: 1000, height: 60, color: '#1e293b', filled: true },
+      { type: 'text', text: 'Total Pipeline Time: ~6 minutes', x: 400, y: 615, size: 16, color: '#e2e8f0' },
+      { type: 'text', text: 'Success Rate: 95%', x: 800, y: 615, size: 16, color: '#e2e8f0' }
     ]
   },
   {
@@ -60,20 +169,72 @@ export const presetTemplates: PresetTemplate[] = [
     category: 'DevOps',
     description: 'K8s cluster components overview',
     commands: [
-      { type: 'text', text: 'Kubernetes Cluster', x: 600, y: 60, size: 42, color: '#4ade80' },
-      { type: 'rect', x: 100, y: 150, width: 1000, height: 450, color: '#374151', filled: false },
-      { type: 'text', text: 'Master Node', x: 300, y: 200, size: 28, color: '#3b82f6' },
-      { type: 'rect', x: 150, y: 230, width: 300, height: 150, color: '#3b82f6', filled: false },
-      { type: 'text', text: 'API Server', x: 300, y: 270, size: 20, color: '#ffffff' },
-      { type: 'text', text: 'Scheduler', x: 300, y: 310, size: 20, color: '#ffffff' },
-      { type: 'text', text: 'Controller', x: 300, y: 350, size: 20, color: '#ffffff' },
-      { type: 'text', text: 'Worker Nodes', x: 800, y: 200, size: 28, color: '#fbbf24' },
-      { type: 'rect', x: 600, y: 230, width: 200, height: 100, color: '#fbbf24', filled: false },
-      { type: 'text', text: 'Pod', x: 700, y: 280, size: 20, color: '#ffffff' },
-      { type: 'rect', x: 850, y: 230, width: 200, height: 100, color: '#fbbf24', filled: false },
-      { type: 'text', text: 'Pod', x: 950, y: 280, size: 20, color: '#ffffff' },
-      { type: 'arrow', x1: 450, y1: 305, x2: 600, y2: 280, color: '#4ade80' },
-      { type: 'arrow', x1: 450, y1: 305, x2: 850, y2: 280, color: '#4ade80' },
+      // Background
+      { type: 'rect', x: 0, y: 0, width: 1200, height: 700, color: '#0f172a', filled: true },
+
+      // Title with animation
+      { type: 'text', text: 'Kubernetes Cluster Architecture', x: 600, y: 45, size: 40, color: '#4ade80', animation: 'fadeIn', delay: 0 },
+      { type: 'text', text: 'Container Orchestration Platform', x: 600, y: 80, size: 18, color: '#94a3b8', animation: 'fadeIn', delay: 100 },
+
+      // Cluster boundary
+      { type: 'rect', x: 80, y: 120, width: 1040, height: 500, color: '#334155', filled: false, animation: 'fadeIn', delay: 200 },
+      { type: 'text', text: 'Kubernetes Cluster', x: 100, y: 140, size: 14, color: '#64748b', animation: 'fadeIn', delay: 250 },
+
+      // Master Node Section
+      { type: 'rect', x: 120, y: 180, width: 400, height: 380, color: '#1e3a8a', filled: true, animation: 'slideIn', delay: 300 },
+      { type: 'rect', x: 130, y: 190, width: 380, height: 360, color: '#1e40af', filled: true, animation: 'slideIn', delay: 350 },
+      { type: 'text', text: 'Control Plane', x: 320, y: 220, size: 28, color: '#ffffff', animation: 'fadeIn', delay: 400 },
+      { type: 'rect', x: 150, y: 240, width: 340, height: 2, color: '#60a5fa', filled: true, animation: 'fadeIn', delay: 450 },
+
+      // Control Plane Components
+      { type: 'rect', x: 160, y: 270, width: 320, height: 50, color: '#2563eb', filled: true, animation: 'fadeIn', delay: 500 },
+      { type: 'text', text: '📡 API Server', x: 320, y: 295, size: 18, color: '#ffffff', animation: 'fadeIn', delay: 550 },
+
+      { type: 'rect', x: 160, y: 340, width: 320, height: 50, color: '#2563eb', filled: true, animation: 'fadeIn', delay: 600 },
+      { type: 'text', text: '📅 Scheduler', x: 320, y: 365, size: 18, color: '#ffffff', animation: 'fadeIn', delay: 650 },
+
+      { type: 'rect', x: 160, y: 410, width: 320, height: 50, color: '#2563eb', filled: true, animation: 'fadeIn', delay: 700 },
+      { type: 'text', text: '🎮 Controller Manager', x: 320, y: 435, size: 18, color: '#ffffff', animation: 'fadeIn', delay: 750 },
+
+      { type: 'rect', x: 160, y: 480, width: 320, height: 50, color: '#2563eb', filled: true, animation: 'fadeIn', delay: 800 },
+      { type: 'text', text: '💾 etcd', x: 320, y: 505, size: 18, color: '#ffffff', animation: 'fadeIn', delay: 850 },
+
+      // Worker Nodes Section
+      { type: 'rect', x: 580, y: 180, width: 500, height: 380, color: '#14532d', filled: true, animation: 'slideIn', delay: 900 },
+      { type: 'text', text: 'Worker Nodes', x: 830, y: 220, size: 28, color: '#ffffff', animation: 'fadeIn', delay: 950 },
+      { type: 'rect', x: 600, y: 240, width: 460, height: 2, color: '#86efac', filled: true, animation: 'fadeIn', delay: 1000 },
+
+      // Node 1
+      { type: 'rect', x: 610, y: 270, width: 200, height: 120, color: '#166534', filled: true, animation: 'zoomIn', delay: 1050 },
+      { type: 'text', text: 'Node 1', x: 710, y: 295, size: 16, color: '#ffffff', animation: 'fadeIn', delay: 1100 },
+      { type: 'rect', x: 620, y: 315, width: 80, height: 60, color: '#22c55e', filled: true, animation: 'fadeIn', delay: 1150 },
+      { type: 'text', text: 'Pod', x: 660, y: 345, size: 14, color: '#ffffff', animation: 'fadeIn', delay: 1200 },
+      { type: 'rect', x: 710, y: 315, width: 80, height: 60, color: '#22c55e', filled: true, animation: 'fadeIn', delay: 1250 },
+      { type: 'text', text: 'Pod', x: 750, y: 345, size: 14, color: '#ffffff', animation: 'fadeIn', delay: 1300 },
+
+      // Node 2
+      { type: 'rect', x: 850, y: 270, width: 200, height: 120, color: '#166534', filled: true, animation: 'zoomIn', delay: 1350 },
+      { type: 'text', text: 'Node 2', x: 950, y: 295, size: 16, color: '#ffffff', animation: 'fadeIn', delay: 1400 },
+      { type: 'rect', x: 860, y: 315, width: 80, height: 60, color: '#22c55e', filled: true, animation: 'fadeIn', delay: 1450 },
+      { type: 'text', text: 'Pod', x: 900, y: 345, size: 14, color: '#ffffff', animation: 'fadeIn', delay: 1500 },
+      { type: 'rect', x: 950, y: 315, width: 80, height: 60, color: '#22c55e', filled: true, animation: 'fadeIn', delay: 1550 },
+      { type: 'text', text: 'Pod', x: 990, y: 345, size: 14, color: '#ffffff', animation: 'fadeIn', delay: 1600 },
+
+      // Node 3
+      { type: 'rect', x: 730, y: 420, width: 200, height: 120, color: '#166534', filled: true, animation: 'zoomIn', delay: 1650 },
+      { type: 'text', text: 'Node 3', x: 830, y: 445, size: 16, color: '#ffffff', animation: 'fadeIn', delay: 1700 },
+      { type: 'rect', x: 740, y: 465, width: 80, height: 60, color: '#22c55e', filled: true, animation: 'fadeIn', delay: 1750 },
+      { type: 'text', text: 'Pod', x: 780, y: 495, size: 14, color: '#ffffff', animation: 'fadeIn', delay: 1800 },
+      { type: 'rect', x: 830, y: 465, width: 80, height: 60, color: '#22c55e', filled: true, animation: 'fadeIn', delay: 1850 },
+      { type: 'text', text: 'Pod', x: 870, y: 495, size: 14, color: '#ffffff', animation: 'fadeIn', delay: 1900 },
+
+      // Communication arrows
+      { type: 'arrow', x1: 520, y1: 295, x2: 610, y2: 330, color: '#fbbf24', animation: 'glow', delay: 2000 },
+      { type: 'arrow', x1: 520, y1: 365, x2: 850, y2: 330, color: '#fbbf24', animation: 'glow', delay: 2100 },
+      { type: 'arrow', x1: 520, y1: 435, x2: 730, y2: 480, color: '#fbbf24', animation: 'glow', delay: 2200 },
+
+      // Legend
+      { type: 'text', text: 'Components: API Server • Scheduler • Controller Manager • etcd • Kubelet • Pods', x: 600, y: 640, size: 16, color: '#64748b', animation: 'fadeIn', delay: 2300 }
     ]
   },
   {

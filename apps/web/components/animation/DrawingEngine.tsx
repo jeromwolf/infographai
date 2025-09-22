@@ -292,11 +292,16 @@ export default function DrawingEngine({
     // textBaseline을 middle로 설정하여 수직 중앙 정렬
     ctx.textBaseline = 'middle';
 
-    // textAlign은 left로 고정 (위치를 직접 계산하므로)
-    ctx.textAlign = 'left';
-
-    // Draw text at calculated position
-    ctx.fillText(displayText, finalX, position.y);
+    // Use center alignment when shouldCenter is true
+    if (position.shouldCenter) {
+      ctx.textAlign = 'center';
+      // When using center alignment, use position.x directly
+      ctx.fillText(displayText, position.x, position.y);
+    } else {
+      ctx.textAlign = 'left';
+      // Use calculated finalX for left alignment
+      ctx.fillText(displayText, finalX, position.y);
+    }
 
     // 디버그 정보 텍스트로 항상 표시 (애니메이션과 무관하게)
     ctx.save();
